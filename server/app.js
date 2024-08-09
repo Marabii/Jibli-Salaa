@@ -1,7 +1,6 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const path = require("path");
 const passport = require("passport");
 const port = process.env.PORT;
 
@@ -52,7 +51,7 @@ app.use((req, res, next) => {
 app.use(require("./routes/index"));
 
 //watch collections
-require("./lib/algoliaSearch").watchProductCollection();
+// require("./lib/algoliaSearch").watchProductCollection();
 
 /**
  * -------------- SERVER ----------------

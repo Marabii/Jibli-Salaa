@@ -1,45 +1,50 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const { Schema, model } = mongoose;
 
-// Define a sub-schema for cart items
-const CartItemSchema = new Schema(
+const AddressSchema = new Schema(
   {
-    productId: {
+    street: {
       type: String,
-      ref: "Product", // Assuming a Product model exists
       required: true,
+      minlength: 5,
+      maxlength: 100,
+      match: /^[a-zA-Z0-9\s,'-]*$/,
     },
-    quantity: {
-      type: Number,
+    city: {
+      type: String,
       required: true,
-      min: 1, // Minimum quantity should be at least 1
+      minlength: 2,
+      maxlength: 50,
+      match: /^[a-zA-Z\s,'-]*$/,
+    },
+    postalCode: {
+      type: String,
+      required: true,
+      match: /^[A-Za-z0-9]{3,10}$/,
+    },
+    country: {
+      type: String,
+      required: true,
+      minlength: 2,
+      maxlength: 50,
+      match: /^[a-zA-Z\s,'-]*$/,
     },
   },
-  { _id: false }
+  {
+    _id: false,
+  }
 );
 
-// Define a sub-schema for email verification code
-const EmailVerificationCodeSchema = new Schema(
-  {
-    code: {
-      type: String,
-    },
-    dateCreated: {
-      type: Date,
-      default: Date.now,
-    },
-  },
-  { _id: false }
-); // Setting _id: false to avoid generating a separate ID for the sub-document
-
-// Main User schema
 const UserSchema = new Schema({
-  username: {
+  name: { type: String, required: true, unique: true, trim: true, index: true },
+  email: {
     type: String,
-    required: [true, "Username is required"],
-    trim: true, // Removes whitespace around the username
-    unique: true, // Ensures usernames are unique across the collection
-    index: true, // Indexes this field for faster query performance
+    required: [true, "Email is required"],
+    trim: true,
+    unique: true,
+    lowercase: true,
+    match: [/.+\@.+\..+/, "Please fill a valid email address"],
+    index: true,
   },
   hash: {
     type: String,
@@ -49,28 +54,20 @@ const UserSchema = new Schema({
     type: String,
     required: [true, "Salt is required for password hashing"],
   },
-  email: {
-    type: String,
-    required: [true, "Email is required"],
-    trim: true,
-    unique: true,
-    lowercase: true, // Converts email to lowercase to avoid case-sensitive issues
-    match: [/.+\@.+\..+/, "Please fill a valid email address"], // Regex pattern to validate email
-    index: true,
+  profilePicture: { type: String },
+  phoneNumber: { type: String, required: true, maxLength: 10, minLength: 10 },
+  address: { type: AddressSchema, required: true },
+  isVerified: { type: Boolean, default: false },
+  verificationDetails: {
+    isEmailVerified: { type: Boolean, default: false },
+    isPhoneNumberVerified: { type: Boolean, default: false },
   },
-  isAdmin: {
-    type: Boolean,
-    default: false,
-  },
-  cart: [CartItemSchema],
-  isEmailVerified: {
-    type: Boolean,
-    default: false,
-  },
-  emailVerificationCode: EmailVerificationCodeSchema, // Use the defined sub-schema
+  createdAt: { type: Date, immutable: true, default: () => Date.now() },
+  updatedAt: { type: Date, default: () => Date.now() },
+  typeOfUser: { type: String, enum: ["shopper", "traveler"] },
 });
 
-// Create the model from the schema
-const User = mongoose.model("User", UserSchema);
+// Create and export the User model
+const UserModel = model("User", UserSchema);
 
-module.exports = User; // Export the model
+module.exports = UserModel;

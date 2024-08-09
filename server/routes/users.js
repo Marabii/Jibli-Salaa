@@ -42,20 +42,28 @@ router.post("/api/login", function (req, res, next) {
 });
 
 // Register a new user
-router.post("/api/register", function (req, res, next) {
-  const saltHash = utils.genPassword(req.body.password);
-
-  const salt = saltHash.salt;
-  const hash = saltHash.hash;
-
-  const newUser = new User({
-    username: req.body.name,
-    email: req.body.email,
-    hash: hash,
-    salt: salt,
-  });
-
+router.post("/api/register", async (req, res, next) => {
   try {
+    const saltHash = utils.genPassword(req.body.password);
+
+    const salt = saltHash.salt;
+    const hash = saltHash.hash;
+
+    const newUser = await User.create({
+      name: req.body.name,
+      email: req.body.email,
+      phoneNumber: req.body.phoneNumber,
+      address: {
+        street: req.body.address.street,
+        city: req.body.address.city,
+        postalCode: req.body.address.postalCode,
+        country: req.body.address.country,
+      },
+      // profilePicture: req.body.profilePicture,
+      hash: hash,
+      salt: salt,
+    });
+
     newUser.save().then(() => {
       res.json({ success: true });
     });
