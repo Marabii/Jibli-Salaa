@@ -3,6 +3,7 @@ const router = require("express").Router();
 const User = mongoose.model("User");
 const passport = require("passport");
 const utils = require("../lib/utils");
+const isAuthenticated = require("../middlewares/isAuthenticated");
 
 // Validate an existing user and issue a JWT
 router.post("/api/login", function (req, res, next) {
@@ -24,6 +25,7 @@ router.post("/api/login", function (req, res, next) {
 
       if (isValid) {
         const tokenObject = utils.issueJWT(user);
+        console.log(tokenObject.token);
 
         res.status(200).json({
           success: true,
@@ -53,13 +55,6 @@ router.post("/api/register", async (req, res, next) => {
       name: req.body.name,
       email: req.body.email,
       phoneNumber: req.body.phoneNumber,
-      address: {
-        street: req.body.address.street,
-        city: req.body.address.city,
-        postalCode: req.body.address.postalCode,
-        country: req.body.address.country,
-      },
-      // profilePicture: req.body.profilePicture,
       hash: hash,
       salt: salt,
     });
@@ -71,5 +66,7 @@ router.post("/api/register", async (req, res, next) => {
     res.json({ success: false, msg: err });
   }
 });
+
+router.get("/api/verifyUser", isAuthenticated);
 
 module.exports = router;

@@ -3,12 +3,12 @@ const { Schema, model } = mongoose;
 
 const TravelerSchema = new Schema({
   userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-  bio: { type: String, required: true },
+  bio: { type: String, required: false },
   languagesSpoken: { type: [String], required: true },
-  preferredDeliveryLocations: { type: [String], required: true },
+  preferredDeliveryLocations: { type: [String], required: false },
   deliveryCapacity: {
-    weightLimit: { type: Number, required: true },
-    volumeLimit: { type: Number, required: true },
+    weightLimit: { type: Number, required: false },
+    volumeLimit: { type: Number, required: false },
   },
   ratings: {
     averageRating: { type: Number, default: 0 },
@@ -23,15 +23,14 @@ const TravelerSchema = new Schema({
       destinationCity: { type: String, required: true },
       departureDate: { type: Date, required: true },
       arrivalDate: { type: Date, required: true },
-      flightDetails: {
-        airline: { type: String, required: true },
-        flightNumber: { type: String, required: true },
-        layovers: { type: [String], required: true },
+      travelDetails: {
+        isInternational: { type: Boolean, required: true },
+        areTaxesIncluded: { type: Boolean, default: false, required: true },
       },
     },
   ],
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
+  createdAt: { type: Date, default: () => Date.now() },
+  updatedAt: { type: Date, default: () => Date.now() },
 });
 
 // Create and export the Traveler model

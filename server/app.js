@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const passport = require("passport");
 const port = process.env.PORT;
+const path = require("path");
 
 // Create the Express application
 var app = express();
@@ -24,10 +25,10 @@ app.use(passport.initialize());
 
 app.use(
   cors({
-    origin: process.env.FRONT_END,
+    origin: ["http://localhost:3000", "http://localhost:3001"],
     methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD", "DELETE", "PATCH"],
     credentials: true,
-    exposedHeaders: ["X-Total-Count"],
+    exposedHeaders: ["jwtToken", "tokenExpiration"],
   })
 );
 
@@ -46,6 +47,8 @@ app.use((req, res, next) => {
     express.urlencoded({ extended: true })(req, res, next);
   }
 });
+
+app.use(express.static(path.join(__dirname, "assets")));
 
 // Imports all of the routes from ./routes/index.js
 app.use(require("./routes/index"));

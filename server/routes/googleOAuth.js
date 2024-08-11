@@ -1,9 +1,8 @@
 const passport = require("passport");
 const router = require("express").Router();
 const url = require("url");
-
-console.log(process.env.GoogleOAuth_CLient_ID);
-console.log(process.env.GoogleOAuth_CLient_Secret);
+const utils = require("../lib/utils");
+const User = require("mongoose").model("User");
 
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
 
@@ -12,12 +11,39 @@ passport.use(
     {
       clientID: process.env.GoogleOAuth_CLient_ID,
       clientSecret: process.env.GoogleOAuth_CLient_Secret,
-      callbackURL: "http://localhost:3001/google/callback",
+      callbackURL: `${process.env.BACK_END}/google/callback`,
       passReqToCallback: true,
     },
-    function (request, accessToken, refreshToken, profile, done) {
-      console.log(profile);
-      return done(null, profile);
+    async function (request, accessToken, refreshToken, profile, done) {
+      try {
+        let user = await User.findOne({ email: profile.emails[0].value });
+
+        if (!user) {
+          console.log("User not found, creating new user.");
+          user = new User({
+            name: profile.displayName,
+            email: profile.emails[0].value,
+            profilePicture: profile.photos[0].value,
+            isAuthenticatedByGoogle: true,
+            verificationDetails: {
+              isEmailVerified: profile.email_verified,
+              isPhoneNumberVerified: false,
+            },
+          });
+
+          await user.save().then(() => {
+            console.log("User created:", user);
+          });
+          console.log("New user created:", user);
+        } else {
+          console.log("User found:", user);
+        }
+
+        return done(null, user);
+      } catch (err) {
+        console.log("Google authentication error:", err);
+        return done(err, null);
+      }
     }
   )
 );
@@ -39,14 +65,33 @@ router.get(
   })
 );
 
+const cookie = require("cookie");
+
 router.get(
   "/google/callback",
   passport.authenticate("google", { session: false }),
   (req, res) => {
     const tokenObject = utils.issueJWT(req.user);
-    res.redirect(
-      `${process.env.FRONT_END}/?token=${tokenObject.token}&expiresIn=${tokenObject.expires}&fromGoogle=true`
-    );
+
+    // Set the JWT token as a cookie
+    res.setHeader("Set-Cookie", [
+      cookie.serialize("jwtToken", tokenObject.token, {
+        httpOnly: true, // Ensures the cookie is only accessible via HTTP(S), not JavaScript
+        secure: process.env.NODE_ENV === "production", // Ensures the cookie is only sent over HTTPS
+        maxAge: 3600 * 1000,
+        path: "/", // Root path, so the cookie is available site-wide
+      }),
+      cookie.serialize("tokenExpiration", tokenObject.expires, {
+        httpOnly: true, // Optional: could be set to false if you need to access it via JavaScript
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 3600 * 1000,
+
+        path: "/",
+      }),
+    ]);
+
+    // Redirect the user to the desired page
+    res.redirect(process.env.FRONT_END);
   }
 );
 

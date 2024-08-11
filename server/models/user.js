@@ -1,42 +1,9 @@
 const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
-const AddressSchema = new Schema(
-  {
-    street: {
-      type: String,
-      required: true,
-      minlength: 5,
-      maxlength: 100,
-      match: /^[a-zA-Z0-9\s,'-]*$/,
-    },
-    city: {
-      type: String,
-      required: true,
-      minlength: 2,
-      maxlength: 50,
-      match: /^[a-zA-Z\s,'-]*$/,
-    },
-    postalCode: {
-      type: String,
-      required: true,
-      match: /^[A-Za-z0-9]{3,10}$/,
-    },
-    country: {
-      type: String,
-      required: true,
-      minlength: 2,
-      maxlength: 50,
-      match: /^[a-zA-Z\s,'-]*$/,
-    },
-  },
-  {
-    _id: false,
-  }
-);
-
 const UserSchema = new Schema({
   name: { type: String, required: true, unique: true, trim: true, index: true },
+  isAuthenticatedByGoogle: { type: Boolean, default: false }, // Changed default to false
   email: {
     type: String,
     required: [true, "Email is required"],
@@ -48,15 +15,21 @@ const UserSchema = new Schema({
   },
   hash: {
     type: String,
-    required: [true, "Password hash is required"],
+    required: function () {
+      return !this.isAuthenticatedByGoogle;
+    },
   },
   salt: {
     type: String,
-    required: [true, "Salt is required for password hashing"],
+    required: function () {
+      return !this.isAuthenticatedByGoogle;
+    },
   },
-  profilePicture: { type: String },
-  phoneNumber: { type: String, required: true, maxLength: 10, minLength: 10 },
-  address: { type: AddressSchema, required: true },
+  profilePicture: {
+    type: String,
+    default: `${process.env.BACK_END}/images/defaultUserIcon.png`,
+  },
+  phoneNumber: { type: String, required: false, maxLength: 10, minLength: 10 },
   isVerified: { type: Boolean, default: false },
   verificationDetails: {
     isEmailVerified: { type: Boolean, default: false },
