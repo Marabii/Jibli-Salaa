@@ -1,69 +1,60 @@
-"use client"; // Ensure the component runs on the client side
-import { useSearchParams, useRouter } from "next/navigation"; // Correct hook to use
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { jwtDecode } from "jwt-decode"; // No need for curly braces
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { jwtDecode } from "jwt-decode";
 
-const Login = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const serverURL = process.env.NEXT_PUBLIC_SERVERURL; // Use NEXT_PUBLIC_ for environment variables in Next.js
-  const [formData, setFormData] = useState({ password: "", email: "" });
-  const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect") || "/";
-  const router = useRouter();
+export default async function Login({ searchParams }) {
+  const serverURL = process.env.NEXT_PUBLIC_SERVERURL;
+  const redirectTo = searchParams?.redirect || "/";
 
-  useEffect(() => {
-    if (redirect !== "/") {
-      alert("Your session has expired, please log in again.");
+  if (searchParams?.redirect !== "/") {
+    // If the redirect is not the home page, we assume the session has expired
+    console.log("Your session has expired, please log in again.");
+  }
+
+  // Handle the form submission on the server
+  async function handleLoginSubmit(formData) {
+    "use server";
+
+    // Extract email and password from formData
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    // Create an object with only the required fields
+    const loginData = {
+      email,
+      password,
+    };
+
+    const response = await fetch(`${serverURL}/api/login`, {
+      method: "POST",
+      body: JSON.stringify(loginData),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      const token = data.token;
+      const decodedToken = jwtDecode(token);
+      const expirationTime = decodedToken.exp * 1000;
+
+      const cookieStore = cookies();
+      cookieStore.set("jwtToken", token, { expires: new Date(expirationTime) });
+      cookieStore.set("tokenExpiration", expirationTime, {
+        expires: new Date(expirationTime),
+      });
+
+      console.log("Logged In Successfully");
+
+      redirect(redirectTo); // Redirect after login
+    } else {
+      throw new Error("Unable to log in");
     }
-  }, [redirect]);
+  }
 
-  const storeToken = (token) => {
-    const decodedToken = jwtDecode(token);
-    const expirationTime = decodedToken.exp * 1000;
-
-    // Delete existing cookies (if they exist)
-    document.cookie = "jwtToken=;";
-    document.cookie = "tokenExpiration=;";
-
-    // Set new cookies with the new token and expiration time
-    document.cookie = `jwtToken=${token}; path=/;`;
-    document.cookie = `tokenExpiration=${expirationTime}; path=/;`;
-  };
-
-  const handleLoginSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post(`${serverURL}/api/login`, formData);
-      if (response.data.success) {
-        const { token } = response.data;
-        storeToken(token);
-        setIsLoggedIn(true);
-        alert("Logged In Successfully");
-        router.replace(redirect); // Redirect after login
-      } else {
-        throw new Error("Unable to log in");
-      }
-    } catch (error) {
-      setIsLoggedIn(false);
-      alert("Unable to log in");
-      console.error(error);
-    }
-  };
-
-  const handleRegisterClick = (e) => {
-    e.preventDefault();
-    router.push("/register");
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
+  // Render the login form
   return (
     <div className="mt-20 pb-36">
       <div className="text-center flex w-full flex-col items-center bg-white pt-20">
@@ -72,8 +63,8 @@ const Login = () => {
           Please fill your email and password to login
         </p>
         <form
+          action={handleLoginSubmit}
           className="w-full max-w-[550px] space-y-5 px-5"
-          onSubmit={handleLoginSubmit}
         >
           <div>
             <label
@@ -89,8 +80,7 @@ const Login = () => {
               autoComplete="on"
               id="email"
               placeholder="Type Your Email"
-              value={formData.email}
-              onChange={handleChange}
+              required
             />
           </div>
           <div>
@@ -107,8 +97,7 @@ const Login = () => {
               autoComplete="on"
               id="password"
               placeholder="Enter Your Password"
-              value={formData.password}
-              onChange={handleChange}
+              required
             />
           </div>
           <button
@@ -119,17 +108,15 @@ const Login = () => {
           </button>
           <p className="mt-5 w-full text-start text-gray-800">
             Don't Have An Account?{" "}
-            <button
+            <a
+              href="/register"
               className="ml-5 border-b-2 border-black text-lg font-bold text-black"
-              onClick={handleRegisterClick}
             >
               Register
-            </button>
+            </a>
           </p>
         </form>
       </div>
     </div>
   );
-};
-
-export default Login;
+}
