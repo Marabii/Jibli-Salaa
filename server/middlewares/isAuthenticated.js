@@ -8,10 +8,11 @@ const isAuthenticated = (req, res, next) => {
     if (!user) {
       return res
         .status(401)
-        .json({ success: false, user: null, message: "Unauthorized" });
+        .json({ success: false, user: user, message: "Unauthorized" });
     }
+    // If authentication is successful, proceed to the next middleware or route handler
     req.user = user;
-    return res.status(200).json({ success: true, user });
+    next();
   })(req, res, next);
 };
 

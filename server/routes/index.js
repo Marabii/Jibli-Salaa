@@ -4,8 +4,10 @@ const router = require("express").Router();
 
 const users = require("./users");
 const googleOAuth = require("./googleOAuth");
+const traveler = require("./traveler");
 
 router.use(users);
 router.use(googleOAuth);
+router.use(traveler);
 
 module.exports = router;

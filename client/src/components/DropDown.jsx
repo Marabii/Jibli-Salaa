@@ -1,4 +1,5 @@
-import React, { useState, useRef } from "react";
+"use client";
+import React, { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import useOutsideClick from "@/hooks/useOutsideClick";
 
@@ -7,10 +8,17 @@ export default function Dropdown({
   options,
   onSelect,
   multiple = false,
-  selected = [],
+  selected,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const [selectedItems, setSelectedItems] = useState([]);
+
+  useEffect(() => {
+    if (selected) {
+      setSelectedItems(selected);
+    }
+  }, [selected]);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -18,27 +26,25 @@ export default function Dropdown({
 
   const handleOptionClick = (option) => {
     if (multiple) {
-      // Handle multiple selections
-      const isSelected = selected.some((o) => o.value === option.value);
+      const isSelected = selectedItems.includes(option.value);
       let newSelectedOptions;
 
       if (isSelected) {
-        // If already selected, remove it
-        newSelectedOptions = selected.filter((o) => o.value !== option.value);
+        newSelectedOptions = selectedItems.filter(
+          (value) => value !== option.value
+        );
       } else {
-        // Otherwise, add it
-        newSelectedOptions = [...selected, option];
+        newSelectedOptions = [...selectedItems, option.value];
       }
 
+      setSelectedItems(newSelectedOptions);
       onSelect(newSelectedOptions);
     } else {
-      // Handle single selection
-      onSelect(option);
+      onSelect(option.value);
       setIsOpen(false);
     }
   };
 
-  // Close dropdown if clicked outside
   useOutsideClick(dropdownRef, () => setIsOpen(false));
 
   return (
@@ -49,11 +55,17 @@ export default function Dropdown({
         onClick={toggleDropdown}
       >
         {multiple
-          ? selected.length > 0
-            ? selected.map((opt) => opt.label).join(", ")
+          ? selectedItems.length > 0
+            ? selectedItems
+                .map(
+                  (value) =>
+                    options.find((option) => option.value === value)?.label
+                )
+                .join(", ")
             : label
-          : selected && selected.label
-          ? selected.label
+          : selectedItems &&
+            options.find((option) => option.value === selectedItems)?.label
+          ? options.find((option) => option.value === selectedItems)?.label
           : label}
         <ChevronDown
           className="ml-2 h-5 w-5 text-gray-500"
@@ -68,7 +80,7 @@ export default function Dropdown({
               <li
                 key={option.value}
                 className={`cursor-pointer hover:bg-gray-100 px-4 py-2 ${
-                  multiple && selected.some((o) => o.value === option.value)
+                  multiple && selectedItems.includes(option.value)
                     ? "bg-gray-200"
                     : ""
                 }`}

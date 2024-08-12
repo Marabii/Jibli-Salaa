@@ -1,6 +1,8 @@
 "use client";
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { useState, useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setTravelerTrip } from "@/store/TravelerTripSlice/slice";
 
 import {
   ControlPosition,
@@ -12,18 +14,31 @@ import {
   useAdvancedMarkerRef,
 } from "@vis.gl/react-google-maps";
 
-export default function MapWithAutocomplete({ setLocation }) {
+export default function MapWithAutocomplete({ pos = "start" }) {
   const [isClient, setIsClient] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [markerRef, marker] = useAdvancedMarkerRef();
+  const dispatch = useDispatch();
+  const travelerTrip = useSelector((state) => state.travelerTrip.value);
 
   useEffect(() => {
     setIsClient(true);
-  }, []);
+
+    if (travelerTrip[pos]) {
+      // Initialize the map and marker with the destination data
+      setSelectedPlace(travelerTrip[pos]);
+    }
+  }, [travelerTrip, pos]);
 
   if (!isClient) {
     return null;
   }
+
+  const setLocation = (place, pos) => {
+    console.log(place);
+    dispatch(setTravelerTrip({ [pos]: place }));
+  };
+
   return (
     <APIProvider
       apiKey={process.env.NEXT_PUBLIC_GoogleMaps_API}
@@ -32,7 +47,9 @@ export default function MapWithAutocomplete({ setLocation }) {
       <Map
         mapId={"bf51a910020fa25a"}
         defaultZoom={3}
-        defaultCenter={{ lat: 22.54992, lng: 0 }}
+        defaultCenter={
+          selectedPlace?.geometry?.location || { lat: 22.54992, lng: 0 }
+        }
         gestureHandling={"greedy"}
         style={{
           height: "100vh",
@@ -42,13 +59,19 @@ export default function MapWithAutocomplete({ setLocation }) {
         }}
         disableDefaultUI={true}
       >
-        <AdvancedMarker ref={markerRef} position={null} />
+        <AdvancedMarker
+          ref={markerRef}
+          position={selectedPlace?.geometry?.location || null}
+        />
       </Map>
       <MapControl position={ControlPosition.TOP}>
         <div className="autocomplete-control">
           <PlaceAutocomplete
-            onPlaceSelect={setSelectedPlace}
-            setLocation={setLocation}
+            onPlaceSelect={(place) => {
+              setSelectedPlace(place);
+              setLocation(place, pos);
+            }}
+            pos={pos}
           />
         </div>
       </MapControl>
@@ -73,7 +96,7 @@ const MapHandler = ({ place, marker }) => {
   return null;
 };
 
-const PlaceAutocomplete = ({ onPlaceSelect, setLocation }) => {
+const PlaceAutocomplete = ({ onPlaceSelect, pos }) => {
   const [placeAutocomplete, setPlaceAutocomplete] = useState(null);
   const inputRef = useRef(null);
   const places = useMapsLibrary("places");
@@ -94,9 +117,8 @@ const PlaceAutocomplete = ({ onPlaceSelect, setLocation }) => {
     placeAutocomplete.addListener("place_changed", () => {
       const place = placeAutocomplete.getPlace();
       onPlaceSelect(place);
-      setLocation(place);
     });
-  }, [onPlaceSelect, placeAutocomplete, setLocation]);
+  }, [onPlaceSelect, placeAutocomplete]);
 
   return (
     <div className="autocomplete-container">

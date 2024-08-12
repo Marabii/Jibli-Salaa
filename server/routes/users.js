@@ -67,6 +67,8 @@ router.post("/api/register", async (req, res, next) => {
   }
 });
 
-router.get("/api/verifyUser", isAuthenticated);
+router.get("/api/verifyUser", isAuthenticated, (req, res) => {
+  return res.json({ success: true, user: req.user });
+});
 
 module.exports = router;

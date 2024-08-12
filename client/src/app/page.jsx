@@ -1,4 +1,3 @@
-export default async function HomePage() {
-  await new Promise((resolve) => setTimeout(resolve, 3000));
-  return <h1>Hello World</h1>;
+export default function HomePage() {
+  return <h1>Home Page</h1>;
 }

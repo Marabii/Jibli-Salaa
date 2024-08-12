@@ -1,10 +1,47 @@
 const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
+const AddressSchema = new Schema({
+  formatted_address: { type: String, required: true },
+  geometry: {
+    location: {
+      lat: { type: Number, required: true },
+      lng: { type: Number, required: true },
+    },
+  },
+  name: { type: String, required: true },
+  html_attributions: [{ type: String, required: false }],
+});
+
+const TripSchema = new Schema(
+  {
+    departureCity: { type: AddressSchema, required: true },
+    destinationCity: { type: AddressSchema, required: true },
+    departureDate: { type: Date, required: true },
+    arrivalDate: { type: Date, required: true },
+    travelDetails: {
+      isInternational: { type: Boolean, required: false },
+      areTaxesIncluded: { type: Boolean, default: false, required: false },
+    },
+  },
+  { _id: true }
+);
+
+const LanguageSchema = new Schema(
+  {
+    name: { type: String, required: true },
+    code: { type: String, required: true },
+  },
+  { _id: false }
+);
+
 const TravelerSchema = new Schema({
   userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
   bio: { type: String, required: false },
-  languagesSpoken: { type: [String], required: true },
+  spokenLanguages: {
+    type: [{ type: LanguageSchema, required: true }],
+    required: true,
+  },
   preferredDeliveryLocations: { type: [String], required: false },
   deliveryCapacity: {
     weightLimit: { type: Number, required: false },
@@ -18,15 +55,8 @@ const TravelerSchema = new Schema({
   premiumMember: { type: Boolean, default: false },
   trips: [
     {
-      tripId: { type: Schema.Types.ObjectId, required: true },
-      departureCity: { type: String, required: true },
-      destinationCity: { type: String, required: true },
-      departureDate: { type: Date, required: true },
-      arrivalDate: { type: Date, required: true },
-      travelDetails: {
-        isInternational: { type: Boolean, required: true },
-        areTaxesIncluded: { type: Boolean, default: false, required: true },
-      },
+      type: TripSchema,
+      required: false,
     },
   ],
   createdAt: { type: Date, default: () => Date.now() },

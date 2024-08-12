@@ -22,7 +22,6 @@ export async function middleware(request) {
     );
 
     const response = await result.json();
-    console.log(response);
     const success = response.success;
 
     if (!success) {
