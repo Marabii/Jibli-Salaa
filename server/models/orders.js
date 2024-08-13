@@ -3,29 +3,32 @@ const { Schema, model } = mongoose;
 
 const AddressSchema = new Schema({
   formatted_address: { type: String, required: true },
-  geometry: {
-    location: {
-      lat: { type: Number, required: true },
-      lng: { type: Number, required: true },
-    },
-  },
-  name: { type: String, required: true },
-  html_attributions: [{ type: String, required: false }],
+  lat: { type: Number, required: true },
+  lng: { type: Number, required: true },
 });
 
 const OrderSchema = new Schema({
   buyerId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-  travelerId: { type: Schema.Types.ObjectId, ref: "Traveler", required: true },
+  travelerId: {
+    type: Schema.Types.ObjectId,
+    ref: "Traveler",
+    required: () => this.isOrderAccepted,
+  },
   productId: { type: Schema.Types.ObjectId, ref: "Product", required: true },
-  status: { type: String, required: true },
   placedAt: { type: Date, default: () => Date.now() },
   prefferedPickupPlace: { type: AddressSchema, required: true },
   acceptedAt: { type: Date },
+  isOrderAccepted: { type: Boolean, default: false },
   deliveredAt: { type: Date },
-  deliveryFee: {
+  initialDeliveryFee: {
     type: Number,
     min: [0, "Delivery fee cannot be negative"],
     required: true,
+  },
+  actualDeliveryFee: {
+    type: Number,
+    min: [0, "Delivery fee cannot be negative"],
+    required: false,
   },
   deliveryInstructions: { type: String },
   trackingDetails: {

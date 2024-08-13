@@ -15,9 +15,10 @@ export const BuyerOrderSlice = createSlice({
         },
         productURL: "",
         value: 0,
+        quantity: 1,
       },
-      status: "pending", // Default status when the order is created
-      deliveryInstructions: "", // Any special instructions for the delivery
+      deliveryFee: 0,
+      deliveryInstructions: "",
     },
   },
   reducers: {

@@ -7,19 +7,22 @@ import { setTravelerTrip } from "@/store/TravelerTripSlice/slice";
 import {
   ControlPosition,
   MapControl,
-  AdvancedMarker,
   Map,
   useMap,
   useMapsLibrary,
-  useAdvancedMarkerRef,
+  Marker,
 } from "@vis.gl/react-google-maps";
 
 export default function MapWithAutocomplete({ pos = "destination" }) {
   const [isClient, setIsClient] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState(null);
-  const [markerRef, marker] = useAdvancedMarkerRef();
+  const [marker, setMarker] = useState(null);
   const dispatch = useDispatch();
   const travelerTrip = useSelector((state) => state.travelerTrip.value);
+
+  useEffect(() => {
+    console.log("marker: ", marker);
+  }, [marker]);
 
   useEffect(() => {
     setIsClient(true);
@@ -35,9 +38,42 @@ export default function MapWithAutocomplete({ pos = "destination" }) {
   }
 
   const setLocation = (place, pos) => {
-    console.log(place);
-    dispatch(setTravelerTrip({ [pos]: place }));
+    const { formatted_address, geometry } = place;
+    const location = {
+      formatted_address,
+      lat: geometry.location.lat,
+      lng: geometry.location.lng,
+    };
+    dispatch(setTravelerTrip({ [pos]: location }));
   };
+
+  const handleMapClick = (event) => {
+    const latLng = event.detail.latLng;
+    if (!latLng) return;
+
+    const location = {
+      lat: latLng.lat,
+      lng: latLng.lng,
+    };
+
+    // Reverse Geocoding to get place name
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ location }, (results, status) => {
+      if (status === "OK" && results[0]) {
+        const place = {
+          formatted_address: results[0].formatted_address,
+          geometry: { location: latLng },
+        };
+
+        setMarker(place);
+        setLocation(place, pos);
+      } else {
+        console.error("Geocoder failed due to: " + status);
+      }
+    });
+  };
+
+  const handleMarkerClick = () => setMarker(null);
 
   return (
     <APIProvider
@@ -47,9 +83,7 @@ export default function MapWithAutocomplete({ pos = "destination" }) {
       <Map
         mapId={"bf51a910020fa25a"}
         defaultZoom={3}
-        defaultCenter={
-          selectedPlace?.geometry?.location || { lat: 22.54992, lng: 0 }
-        }
+        defaultCenter={selectedPlace || { lat: 22.54992, lng: 0 }}
         gestureHandling={"greedy"}
         style={{
           height: "100vh",
@@ -58,40 +92,41 @@ export default function MapWithAutocomplete({ pos = "destination" }) {
           maxHeight: "500px",
         }}
         disableDefaultUI={true}
+        onClick={handleMapClick}
       >
-        <AdvancedMarker
-          ref={markerRef}
-          position={selectedPlace?.geometry?.location || null}
-        />
+        {marker && (
+          <Marker
+            key={marker.formatted_address}
+            position={marker.geometry.location}
+            onClick={() => handleMarkerClick(index)}
+          />
+        )}
       </Map>
       <MapControl position={ControlPosition.TOP}>
         <div className="autocomplete-control">
           <PlaceAutocomplete
             onPlaceSelect={(place) => {
-              setSelectedPlace(place);
+              setSelectedPlace(place.geometry.location);
               setLocation(place, pos);
             }}
             pos={pos}
           />
         </div>
       </MapControl>
-      <MapHandler place={selectedPlace} marker={marker} />
+      <MapHandler place={selectedPlace} />
     </APIProvider>
   );
 }
 
-const MapHandler = ({ place, marker }) => {
+const MapHandler = ({ place }) => {
   const map = useMap();
 
   useEffect(() => {
-    if (!map || !place || !marker) return;
+    if (!map || !place) return;
 
-    if (place.geometry?.viewport) {
-      map.fitBounds(place.geometry?.viewport);
-    }
-
-    marker.position = place.geometry?.location;
-  }, [map, place, marker]);
+    map.panTo(place);
+    map.setZoom(15); // Zoom in when a place is selected
+  }, [map, place]);
 
   return null;
 };
@@ -105,7 +140,7 @@ const PlaceAutocomplete = ({ onPlaceSelect, pos }) => {
     if (!places || !inputRef.current) return;
 
     const options = {
-      fields: ["geometry", "name", "formatted_address"],
+      fields: ["geometry", "formatted_address"],
     };
 
     setPlaceAutocomplete(new places.Autocomplete(inputRef.current, options));
@@ -122,7 +157,7 @@ const PlaceAutocomplete = ({ onPlaceSelect, pos }) => {
 
   return (
     <div className="autocomplete-container">
-      <input ref={inputRef} />
+      <input ref={inputRef} placeholder="Search a place" />
     </div>
   );
 };

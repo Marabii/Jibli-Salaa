@@ -16,9 +16,13 @@ import {
 export default function MapWithAutocomplete({ pos = "pickup" }) {
   const [isClient, setIsClient] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState(null);
-  const [markers, setMarkers] = useState([]);
+  const [marker, setMarker] = useState(null);
   const dispatch = useDispatch();
   const buyerOrder = useSelector((state) => state.buyerOrder.value);
+
+  useEffect(() => {
+    console.log("marker: ", marker);
+  }, [marker]);
 
   useEffect(() => {
     setIsClient(true);
@@ -61,7 +65,7 @@ export default function MapWithAutocomplete({ pos = "pickup" }) {
           geometry: { location: latLng },
         };
 
-        setMarkers((prevMarkers) => [...prevMarkers, place]);
+        setMarker(place);
         setLocation(place, pos);
       } else {
         console.error("Geocoder failed due to: " + status);
@@ -69,11 +73,7 @@ export default function MapWithAutocomplete({ pos = "pickup" }) {
     });
   };
 
-  const handleMarkerClick = (markerIndex) => {
-    setMarkers((prevMarkers) =>
-      prevMarkers.filter((_, index) => index !== markerIndex)
-    );
-  };
+  const handleMarkerClick = () => setMarker(null);
 
   return (
     <APIProvider
@@ -94,13 +94,13 @@ export default function MapWithAutocomplete({ pos = "pickup" }) {
         disableDefaultUI={true}
         onClick={handleMapClick}
       >
-        {markers.map((marker, index) => (
+        {marker && (
           <Marker
-            key={index}
+            key={marker.formatted_address}
             position={marker.geometry.location}
             onClick={() => handleMarkerClick(index)}
           />
-        ))}
+        )}
       </Map>
       <MapControl position={ControlPosition.TOP}>
         <div className="autocomplete-control">

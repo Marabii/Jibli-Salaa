@@ -3,14 +3,8 @@ const { Schema, model } = mongoose;
 
 const AddressSchema = new Schema({
   formatted_address: { type: String, required: true },
-  geometry: {
-    location: {
-      lat: { type: Number, required: true },
-      lng: { type: Number, required: true },
-    },
-  },
-  name: { type: String, required: true },
-  html_attributions: [{ type: String, required: false }],
+  lat: { type: Number, required: true },
+  lng: { type: Number, required: true },
 });
 
 const TripSchema = new Schema(
