@@ -37,8 +37,6 @@ export async function middleware(request) {
   }
 }
 
-function redirectUser(request) {}
-
 export const config = {
-  matcher: "/traveler",
+  matcher: ["/traveler", "/buyer"],
 };

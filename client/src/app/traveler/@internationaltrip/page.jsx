@@ -9,10 +9,12 @@ export default function InternationalTripPage() {
 
   const isTripInternational = () => {
     const { start, destination } = travelerTrip;
-    const startCountry = start?.formatted_address?.split(",")[1]?.trim();
+    const startCountry = start?.formatted_address
+      ?.split(",")
+      [start?.formatted_address.length - 1]?.trim();
     const destinationCountry = destination?.formatted_address
-      ?.split(",")[1]
-      ?.trim();
+      ?.split(",")
+      [destination?.formatted_address.length - 1]?.trim();
     return start && destination && startCountry !== destinationCountry;
   };
 

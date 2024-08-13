@@ -1,6 +1,6 @@
-const router = require("express").Router();
+const express = require("express");
+const router = express.Router();
 const Traveler = require("../models/travelers");
-// const User = require("../models/users");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 
 router.post("/api/createTraveler", isAuthenticated, async (req, res) => {
@@ -14,45 +14,62 @@ router.post("/api/createTraveler", isAuthenticated, async (req, res) => {
     isInternational,
     areTaxesIncluded,
   } = req.body;
-  console.log("req.body---------------------------------", req.body);
+
+  // Validate required fields
+  if (!start || !destination || !departureDate || !arrivalDate) {
+    return res
+      .status(400)
+      .json({ success: false, error: "Missing required fields" });
+  }
+
   try {
-    const traveler = await Traveler.findOne({ userId: userId });
+    let traveler = await Traveler.findOne({ userId });
+
+    const tripData = {
+      departureCity: start,
+      destinationCity: destination,
+      departureDate,
+      arrivalDate,
+      travelDetails: {
+        isInternational,
+        areTaxesIncluded,
+      },
+    };
+
     if (traveler) {
-      traveler.spokenLanguages = spokenLanguages;
-      traveler.trips.push({
-        departureCity: start,
-        destinationCity: destination,
-        departureDate: departureDate,
-        arrivalDate: arrivalDate,
-        travelDetails: {
-          isInternational: isInternational,
-          areTaxesIncluded: areTaxesIncluded,
-        },
-      });
+      // Update existing traveler
+      traveler.spokenLanguages = spokenLanguages || traveler.spokenLanguages;
+      traveler.trips.push(tripData);
       await traveler.save();
     } else {
+      // Create a new traveler
       const newTraveler = new Traveler({
-        userId: userId,
-        spokenLanguages: spokenLanguages,
-        trips: [
-          {
-            departureCity: start,
-            destinationCity: destination,
-            departureDate: departureDate,
-            arrivalDate: arrivalDate,
-            travelDetails: {
-              isInternational: isInternational,
-              areTaxesIncluded: areTaxesIncluded,
-            },
-          },
-        ],
+        userId,
+        spokenLanguages,
+        trips: [tripData],
       });
-      await newTraveler.save();
+      traveler = await newTraveler.save();
     }
-    res.json({ success: true });
+
+    return res.status(200).json({ success: true, traveler });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ success: false, error: err });
+    console.error("Error creating/updating traveler:", err.message);
+    return res
+      .status(500)
+      .json({ success: false, error: "Internal server error" });
+  }
+});
+
+router.get("/api/getTraveler", isAuthenticated, async (req, res) => {
+  const userId = req.user._id;
+  try {
+    const traveler = await Traveler.findOne({ userId });
+    return res.status(200).json({ success: true, traveler });
+  } catch (err) {
+    console.error("Error getting traveler:", err.message);
+    return res
+      .status(500)
+      .json({ success: false, error: "Internal server error" });
   }
 });
 
