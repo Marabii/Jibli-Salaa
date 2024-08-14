@@ -1,11 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const sanitizeLocation = (location) => ({
+  ...location,
+  lat: typeof location.lat === "function" ? location.lat() : location.lat,
+  lng: typeof location.lng === "function" ? location.lng() : location.lng,
+});
+
 export const TravelerTripSlice = createSlice({
   name: "travelerTrip",
   initialState: {
     value: {
-      start: {},
-      destination: {},
+      start: {
+        formatted_address: "",
+        lat: null,
+        lng: null,
+      },
+      destination: {
+        formatted_address: "",
+        lat: null,
+        lng: null,
+      },
       spokenLanguages: [],
       departureDate: "",
       arrivalDate: "",
@@ -15,14 +29,25 @@ export const TravelerTripSlice = createSlice({
   },
   reducers: {
     setTravelerTrip: (state, action) => {
+      const { start, destination, ...rest } = action.payload;
+
+      if (start) {
+        const sanitizedStart = sanitizeLocation(start);
+        state.value.start = { ...state.value.start, ...sanitizedStart };
+      }
+
+      if (destination) {
+        const sanitizedDestination = sanitizeLocation(destination);
+        state.value.destination = {
+          ...state.value.destination,
+          ...sanitizedDestination,
+        };
+      }
+
+      // Merge the rest of the payload into the state without overwriting start or destination
       state.value = {
         ...state.value,
-        ...action.payload,
-        start: { ...state.value.start, ...action.payload.start },
-        destination: {
-          ...state.value.destination,
-          ...action.payload.destination,
-        },
+        ...rest,
       };
     },
   },

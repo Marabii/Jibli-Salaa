@@ -5,10 +5,10 @@ const Order = require("../models/orders");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 
 router.post("/api/createOrder", isAuthenticated, async (req, res) => {
-  const userId = req.user._id;
   const { product, deliveryInstructions, deliveryFee, pickup } = req.body;
 
   try {
+    const userId = req.user._id;
     const newProduct = new Product({
       name: product.name,
       description: product.description,

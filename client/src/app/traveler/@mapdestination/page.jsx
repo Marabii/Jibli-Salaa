@@ -1,7 +1,7 @@
 "use client";
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { useState, useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setTravelerTrip } from "@/store/TravelerTripSlice/slice";
 
 import {
@@ -10,7 +10,7 @@ import {
   Map,
   useMap,
   useMapsLibrary,
-  Marker,
+  AdvancedMarker,
 } from "@vis.gl/react-google-maps";
 
 export default function MapWithAutocomplete({ pos = "destination" }) {
@@ -18,32 +18,29 @@ export default function MapWithAutocomplete({ pos = "destination" }) {
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [marker, setMarker] = useState(null);
   const dispatch = useDispatch();
-  const travelerTrip = useSelector((state) => state.travelerTrip.value);
-
-  useEffect(() => {
-    console.log("marker: ", marker);
-  }, [marker]);
 
   useEffect(() => {
     setIsClient(true);
-
-    if (travelerTrip[pos]) {
-      // Initialize the map and marker with the destination data
-      setSelectedPlace(travelerTrip[pos]);
-    }
-  }, [travelerTrip, pos]);
+  }, []);
 
   if (!isClient) {
     return null;
   }
 
   const setLocation = (place, pos) => {
+    if (!place || !place.geometry || !place.geometry.location) {
+      console.error("Invalid place object:", place);
+      return;
+    }
+
     const { formatted_address, geometry } = place;
     const location = {
       formatted_address,
       lat: geometry.location.lat,
       lng: geometry.location.lng,
     };
+
+    console.log("Dispatching location:", location);
     dispatch(setTravelerTrip({ [pos]: location }));
   };
 
@@ -83,7 +80,7 @@ export default function MapWithAutocomplete({ pos = "destination" }) {
       <Map
         mapId={"bf51a910020fa25a"}
         defaultZoom={3}
-        defaultCenter={selectedPlace || { lat: 22.54992, lng: 0 }}
+        defaultCenter={{ lat: 22.54992, lng: 0 }}
         gestureHandling={"greedy"}
         style={{
           height: "100vh",
@@ -95,10 +92,10 @@ export default function MapWithAutocomplete({ pos = "destination" }) {
         onClick={handleMapClick}
       >
         {marker && (
-          <Marker
+          <AdvancedMarker
             key={marker.formatted_address}
             position={marker.geometry.location}
-            onClick={() => handleMarkerClick(index)}
+            onClick={() => handleMarkerClick()}
           />
         )}
       </Map>
@@ -124,6 +121,8 @@ const MapHandler = ({ place }) => {
   useEffect(() => {
     if (!map || !place) return;
 
+    console.log("place: ", place);
+
     map.panTo(place);
     map.setZoom(15); // Zoom in when a place is selected
   }, [map, place]);
@@ -131,7 +130,7 @@ const MapHandler = ({ place }) => {
   return null;
 };
 
-const PlaceAutocomplete = ({ onPlaceSelect, pos }) => {
+const PlaceAutocomplete = ({ onPlaceSelect }) => {
   const [placeAutocomplete, setPlaceAutocomplete] = useState(null);
   const inputRef = useRef(null);
   const places = useMapsLibrary("places");

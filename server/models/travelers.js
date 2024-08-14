@@ -5,6 +5,17 @@ const AddressSchema = new Schema({
   formatted_address: { type: String, required: true },
   lat: { type: Number, required: true },
   lng: { type: Number, required: true },
+  country: {
+    type: String,
+  },
+});
+
+AddressSchema.pre("save", function (next) {
+  if (this.formatted_address) {
+    const addressParts = this.formatted_address.split(",");
+    this.country = addressParts[addressParts.length - 1].trim();
+  }
+  next();
 });
 
 const TripSchema = new Schema(

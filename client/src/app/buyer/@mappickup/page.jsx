@@ -10,7 +10,7 @@ import {
   Map,
   useMap,
   useMapsLibrary,
-  Marker,
+  AdvancedMarker,
 } from "@vis.gl/react-google-maps";
 
 export default function MapWithAutocomplete({ pos = "pickup" }) {
@@ -18,32 +18,35 @@ export default function MapWithAutocomplete({ pos = "pickup" }) {
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [marker, setMarker] = useState(null);
   const dispatch = useDispatch();
+
   const buyerOrder = useSelector((state) => state.buyerOrder.value);
 
   useEffect(() => {
-    console.log("marker: ", marker);
-  }, [marker]);
+    console.log("buyerOrder: ", buyerOrder);
+  }, [buyerOrder]);
 
   useEffect(() => {
     setIsClient(true);
-
-    if (buyerOrder[pos]) {
-      // Initialize the map and marker with the destination data
-      setSelectedPlace(buyerOrder[pos]);
-    }
-  }, [buyerOrder, pos]);
+  }, []);
 
   if (!isClient) {
     return null;
   }
 
   const setLocation = (place, pos) => {
+    if (!place || !place.geometry || !place.geometry.location) {
+      console.error("Invalid place object:", place);
+      return;
+    }
+
     const { formatted_address, geometry } = place;
     const location = {
       formatted_address,
       lat: geometry.location.lat,
       lng: geometry.location.lng,
     };
+
+    setMarker(place);
     dispatch(setBuyerOrder({ [pos]: location }));
   };
 
@@ -83,7 +86,7 @@ export default function MapWithAutocomplete({ pos = "pickup" }) {
       <Map
         mapId={"bf51a910020fa25a"}
         defaultZoom={3}
-        defaultCenter={selectedPlace || { lat: 22.54992, lng: 0 }}
+        defaultCenter={{ lat: 22.54992, lng: 0 }}
         gestureHandling={"greedy"}
         style={{
           height: "100vh",
@@ -95,10 +98,10 @@ export default function MapWithAutocomplete({ pos = "pickup" }) {
         onClick={handleMapClick}
       >
         {marker && (
-          <Marker
+          <AdvancedMarker
             key={marker.formatted_address}
             position={marker.geometry.location}
-            onClick={() => handleMarkerClick(index)}
+            onClick={() => handleMarkerClick()}
           />
         )}
       </Map>
@@ -124,6 +127,8 @@ const MapHandler = ({ place }) => {
   useEffect(() => {
     if (!map || !place) return;
 
+    console.log("place: ", place);
+
     map.panTo(place);
     map.setZoom(15); // Zoom in when a place is selected
   }, [map, place]);
@@ -131,7 +136,7 @@ const MapHandler = ({ place }) => {
   return null;
 };
 
-const PlaceAutocomplete = ({ onPlaceSelect, pos }) => {
+const PlaceAutocomplete = ({ onPlaceSelect }) => {
   const [placeAutocomplete, setPlaceAutocomplete] = useState(null);
   const inputRef = useRef(null);
   const places = useMapsLibrary("places");

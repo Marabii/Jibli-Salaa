@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const Traveler = require("../models/travelers");
+const Product = require("../models/products");
+const Order = require("../models/orders");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 
 router.post("/api/createTraveler", isAuthenticated, async (req, res) => {
@@ -70,6 +72,30 @@ router.get("/api/getTraveler", isAuthenticated, async (req, res) => {
     return res
       .status(500)
       .json({ success: false, error: "Internal server error" });
+  }
+});
+
+router.get("/api/getOrders", isAuthenticated, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const tripId = req.query.tripId;
+
+    const traveler = await Traveler.findOne({ userId });
+    const trip = traveler.trips.find((trip) => trip._id == tripId);
+
+    const departureCountry = trip.departureCity.country;
+    const arrivalCountry = trip.destinationCity.country;
+
+    const orders = await Order.find({
+      $or: [
+        { "prefferedPickupPlace.country": departureCountry },
+        { "prefferedPickupPlace.country": arrivalCountry },
+      ],
+    });
+    res.status(200).json(orders);
+  } catch (e) {
+    console.log("getting orders error: ", e);
+    res.status(500).json({ success: false, error: e.message });
   }
 });
 

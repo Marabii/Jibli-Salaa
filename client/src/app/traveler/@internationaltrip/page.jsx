@@ -9,17 +9,22 @@ export default function InternationalTripPage() {
 
   const isTripInternational = () => {
     const { start, destination } = travelerTrip;
-    const startCountry = start?.formatted_address
-      ?.split(",")
-      [start?.formatted_address.length - 1]?.trim();
-    const destinationCountry = destination?.formatted_address
-      ?.split(",")
-      [destination?.formatted_address.length - 1]?.trim();
-    return start && destination && startCountry !== destinationCountry;
+    const addressPartsStart = start?.formatted_address.split(",");
+    const addressPartsDestination = destination?.formatted_address.split(",");
+    const startCountry =
+      addressPartsStart[addressPartsStart?.length - 1]?.trim();
+    const destinationCountry =
+      addressPartsDestination[addressPartsDestination?.length - 1]?.trim();
+    if (
+      startCountry &&
+      destinationCountry &&
+      startCountry !== destinationCountry
+    )
+      return true;
+    return false;
   };
 
   console.log("isTripInternational: ", isTripInternational());
-  console.log("hello");
 
   return (
     <>
