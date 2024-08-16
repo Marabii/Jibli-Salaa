@@ -4,9 +4,12 @@ const cors = require("cors");
 const passport = require("passport");
 const port = process.env.PORT;
 const path = require("path");
+const cookieParser = require("cookie-parser");
 
 // Create the Express application
 var app = express();
+
+app.use(cookieParser());
 
 // Configures the database and opens a global connection that can be used in any module with `mongoose.connection`
 require("./config/database");
@@ -47,6 +50,8 @@ app.use((req, res, next) => {
     express.urlencoded({ extended: true })(req, res, next);
   }
 });
+
+app.use(require("./middlewares/jwtMiddleware"));
 
 app.use(express.static(path.join(__dirname, "assets")));
 

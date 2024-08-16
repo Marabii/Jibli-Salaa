@@ -1,60 +1,47 @@
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { jwtDecode } from "jwt-decode";
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-export default async function Login({ searchParams }) {
-  const serverURL = process.env.NEXT_PUBLIC_SERVERURL;
+export default function Login({ searchParams }) {
+  const [errorMessage, setErrorMessage] = useState("");
+  const router = useRouter();
   const redirectTo = searchParams?.redirect || "/";
 
-  if (searchParams?.redirect !== "/") {
-    // If the redirect is not the home page, we assume the session has expired
-    console.log("Your session has expired, please log in again.");
-  }
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
 
-  // Handle the form submission on the server
-  async function handleLoginSubmit(formData) {
-    "use server";
-
-    // Extract email and password from formData
-    const email = formData.get("email");
-    const password = formData.get("password");
-
-    // Create an object with only the required fields
+    const formData = new FormData(e.target);
     const loginData = {
-      email,
-      password,
+      email: formData.get("email"),
+      password: formData.get("password"),
     };
 
-    const response = await fetch(`${serverURL}/api/login`, {
-      method: "POST",
-      body: JSON.stringify(loginData),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVERURL}/api/login`,
+        {
+          method: "POST",
+          body: JSON.stringify(loginData),
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (data.success) {
-      const token = data.token;
-      const decodedToken = jwtDecode(token);
-      const expirationTime = decodedToken.exp * 1000;
-
-      const cookieStore = cookies();
-      cookieStore.set("jwtToken", token, { expires: new Date(expirationTime) });
-      cookieStore.set("tokenExpiration", expirationTime, {
-        expires: new Date(expirationTime),
-      });
-
-      console.log("Logged In Successfully");
-
-      redirect(redirectTo); // Redirect after login
-    } else {
-      throw new Error("Unable to log in");
+      if (data.success) {
+        // Redirect after login
+        router.push(redirectTo);
+      } else {
+        throw new Error(data.msg || "Login failed");
+      }
+    } catch (error) {
+      setErrorMessage(error.message);
     }
-  }
+  };
 
-  // Render the login form
   return (
     <div className="mt-20 pb-36">
       <div className="text-center flex w-full flex-col items-center bg-white pt-20">
@@ -62,8 +49,9 @@ export default async function Login({ searchParams }) {
         <p className="py-5 text-lg text-gray-400">
           Please fill your email and password to login
         </p>
+        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
         <form
-          action={handleLoginSubmit}
+          onSubmit={handleLoginSubmit}
           className="w-full max-w-[550px] space-y-5 px-5"
         >
           <div>
@@ -75,7 +63,7 @@ export default async function Login({ searchParams }) {
             </label>
             <input
               className="w-full border-2 border-black p-5"
-              type="email" // Use email type for better validation
+              type="email"
               name="email"
               autoComplete="on"
               id="email"
@@ -92,7 +80,7 @@ export default async function Login({ searchParams }) {
             </label>
             <input
               className="w-full border-2 border-black p-5"
-              type="password" // Password type for security
+              type="password"
               name="password"
               autoComplete="on"
               id="password"

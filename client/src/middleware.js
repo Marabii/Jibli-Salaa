@@ -3,8 +3,15 @@ export async function middleware(request) {
 
   if (!jwtToken) {
     console.log("No JWT token found in cookies");
+
+    // Preserve the query string along with the pathname
+    const originalUrl = request.nextUrl.clone();
     const loginUrl = new URL("/login", request.nextUrl.origin);
-    loginUrl.searchParams.set("redirect", request.nextUrl.pathname);
+
+    loginUrl.searchParams.set(
+      "redirect",
+      originalUrl.pathname + originalUrl.search
+    ); // Preserve both pathname and query string
     return Response.redirect(loginUrl, 302);
   }
 
@@ -25,18 +32,34 @@ export async function middleware(request) {
     const success = response.success;
 
     if (!success) {
+      const originalUrl = request.nextUrl.clone();
       const loginUrl = new URL("/login", request.nextUrl.origin);
-      loginUrl.searchParams.set("redirect", request.nextUrl.pathname);
+
+      loginUrl.searchParams.set(
+        "redirect",
+        originalUrl.pathname + originalUrl.search
+      ); // Preserve both pathname and query string
       return Response.redirect(loginUrl, 302);
     }
   } catch (error) {
     console.log("Error:", error);
+
+    const originalUrl = request.nextUrl.clone();
     const loginUrl = new URL("/login", request.nextUrl.origin);
-    loginUrl.searchParams.set("redirect", request.nextUrl.pathname);
+
+    loginUrl.searchParams.set(
+      "redirect",
+      originalUrl.pathname + originalUrl.search
+    ); // Preserve both pathname and query string
     return Response.redirect(loginUrl, 302);
   }
 }
 
 export const config = {
-  matcher: ["/traveler", "/buyer"],
+  matcher: [
+    "/traveler",
+    "/buyer",
+    "/select-trip",
+    "/select-trip/accept-orders",
+  ],
 };

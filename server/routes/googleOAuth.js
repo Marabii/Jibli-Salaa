@@ -31,12 +31,7 @@ passport.use(
             },
           });
 
-          await user.save().then(() => {
-            console.log("User created:", user);
-          });
-          console.log("New user created:", user);
-        } else {
-          console.log("User found:", user);
+          await user.save();
         }
 
         return done(null, user);
@@ -78,14 +73,13 @@ router.get(
       cookie.serialize("jwtToken", tokenObject.token, {
         httpOnly: true, // Ensures the cookie is only accessible via HTTP(S), not JavaScript
         secure: process.env.NODE_ENV === "production", // Ensures the cookie is only sent over HTTPS
-        maxAge: 3600 * 1000,
+        maxAge: 3600,
         path: "/", // Root path, so the cookie is available site-wide
       }),
       cookie.serialize("tokenExpiration", tokenObject.expires, {
         httpOnly: true, // Optional: could be set to false if you need to access it via JavaScript
         secure: process.env.NODE_ENV === "production",
-        maxAge: 3600 * 1000,
-
+        maxAge: 3600,
         path: "/",
       }),
     ]);

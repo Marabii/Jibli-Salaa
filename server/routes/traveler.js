@@ -83,6 +83,12 @@ router.get("/api/getOrders", isAuthenticated, async (req, res) => {
     const traveler = await Traveler.findOne({ userId });
     const trip = traveler.trips.find((trip) => trip._id == tripId);
 
+    if (!trip) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Trip not found" });
+    }
+
     const departureCountry = trip.departureCity.country;
     const arrivalCountry = trip.destinationCity.country;
 
@@ -95,7 +101,7 @@ router.get("/api/getOrders", isAuthenticated, async (req, res) => {
     res.status(200).json(orders);
   } catch (e) {
     console.log("getting orders error: ", e);
-    res.status(500).json({ success: false, error: e.message });
+    res.status(500).json({ success: false, message: e.message });
   }
 });
 

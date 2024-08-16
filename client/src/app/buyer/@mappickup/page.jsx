@@ -1,7 +1,7 @@
 "use client";
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { useState, useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setBuyerOrder } from "@/store/BuyerOrderSlice/slice";
 
 import {
@@ -18,12 +18,6 @@ export default function MapWithAutocomplete({ pos = "pickup" }) {
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [marker, setMarker] = useState(null);
   const dispatch = useDispatch();
-
-  const buyerOrder = useSelector((state) => state.buyerOrder.value);
-
-  useEffect(() => {
-    console.log("buyerOrder: ", buyerOrder);
-  }, [buyerOrder]);
 
   useEffect(() => {
     setIsClient(true);

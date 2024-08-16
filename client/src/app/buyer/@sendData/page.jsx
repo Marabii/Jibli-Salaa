@@ -1,6 +1,6 @@
 "use client";
 import { useSelector } from "react-redux";
-import apiClient from "@/components/apiClient";
+import apiClient from "@/utils/apiClient";
 
 export default function SendData() {
   const buyerOrder = useSelector((state) => state.buyerOrder.value);
