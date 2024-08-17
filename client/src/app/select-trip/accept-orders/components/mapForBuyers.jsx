@@ -1,140 +1,188 @@
 "use client";
-import { useState, useEffect } from "react";
-import {
-  GoogleMap,
-  DirectionsRenderer,
-  useLoadScript,
-  Marker,
-  InfoWindow,
-} from "@react-google-maps/api";
+import { useEffect, useState } from "react";
 import apiClient from "@/utils/apiClient";
+import {
+  APIProvider,
+  Map,
+  useMapsLibrary,
+  useMap,
+  AdvancedMarker,
+  InfoWindow,
+} from "@vis.gl/react-google-maps";
 
-export default function MapForTrip({ data, buyers }) {
-  const [isClient, setIsClient] = useState(false);
-  const [directions, setDirections] = useState(null);
-  const [selectedBuyer, setSelectedBuyer] = useState(null);
-
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GoogleMaps_API,
-  });
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    if (isLoaded && data.departureCity && data.destinationCity) {
-      const directionsService = new google.maps.DirectionsService();
-
-      const origin = {
-        lat: data.departureCity.lat,
-        lng: data.departureCity.lng,
-      };
-      const destination = {
-        lat: data.destinationCity.lat,
-        lng: data.destinationCity.lng,
-      };
-
-      directionsService.route(
-        {
-          origin,
-          destination,
-          travelMode: google.maps.TravelMode.DRIVING,
-        },
-        (result, status) => {
-          if (status === google.maps.DirectionsStatus.OK) {
-            setDirections(result);
-          } else {
-            console.error(`Error fetching directions: ${status}`);
-          }
-        }
-      );
-    }
-  }, [isLoaded, data]);
-
-  if (!isClient || !isLoaded) {
-    return null;
-  }
-
-  const mapContainerStyle = {
-    height: "100vh",
-    width: "100vw",
-    maxWidth: "500px",
-    maxHeight: "500px",
-  };
+export default function MapForBuyers({ route, buyers }) {
+  const [open, setOpen] = useState(false);
 
   const defaultCenter = {
-    lat: data.departureCity.lat,
-    lng: data.departureCity.lng,
-  };
-
-  const handleMarkerClick = async (buyer) => {
-    const user = await apiClient(`/api/getUser/${buyer.buyerId}`);
-    const product = await apiClient(`/api/getProduct/${buyer.productId}`);
-
-    setSelectedBuyer({
-      user: user.userInfo[0],
-      buyer,
-      product: product.product,
-    });
+    lat: route.departureCity.lat,
+    lng: route.departureCity.lng,
   };
 
   return (
-    <GoogleMap
-      mapContainerStyle={mapContainerStyle}
-      zoom={3}
-      center={defaultCenter}
-      options={{
-        gestureHandling: "greedy",
-        disableDefaultUI: true,
-      }}
-    >
-      {/* Render the directions */}
-      {directions && <DirectionsRenderer directions={directions} />}
-      {/* Render the buyers markers */}
-      {buyers.map((buyerData) => (
-        <Marker
-          icon={{
-            url: `https://maps.google.com/mapfiles/kml/paddle/orange-circle.png`,
-            scaledSize: new google.maps.Size(50, 50),
-          }}
+    <div>
+      <APIProvider apiKey={process.env.NEXT_PUBLIC_GoogleMaps_API}>
+        <div className="w-1/2 h-screen">
+          <Map
+            defaultZoom={10}
+            defaultCenter={defaultCenter}
+            mapId={process.env.NEXT_PUBLIC_GoogleMaps_MAPID}
+            fullscreenControl={false}
+          >
+            <Directions />
+            <ShowBuyers buyers={buyers} />
+          </Map>
+        </div>
+      </APIProvider>
+    </div>
+  );
+}
+
+function Directions() {
+  const map = useMap();
+  const routesLibrary = useMapsLibrary("routes");
+  const [directionsService, setDirectionsService] = useState(null);
+  const [directionsRenderer, setDirectionsRenderer] = useState(null);
+  const [routes, setRoutes] = useState([]);
+  const [routeIndex, setRouteIndex] = useState(0);
+  const selected = routes[routeIndex];
+  const leg = selected?.legs[0];
+
+  useEffect(() => {
+    if (!map || !routesLibrary) return;
+    setDirectionsService(new routesLibrary.DirectionsService());
+    setDirectionsRenderer(
+      new routesLibrary.DirectionsRenderer({
+        map,
+      })
+    );
+  }, [routesLibrary, map]);
+
+  useEffect(() => {
+    if (!directionsService || !directionsRenderer) return;
+    directionsService
+      .route({
+        origin: "Errachidia, Morocco",
+        destination: "Tangier, Morocco",
+        travelMode: google.maps.TravelMode.DRIVING,
+        provideRouteAlternatives: true,
+      })
+      .then((response) => {
+        directionsRenderer.setDirections(response);
+        setRoutes(response.routes);
+      });
+  }, [directionsRenderer, directionsService]);
+
+  useEffect(() => {
+    if (!directionsRenderer) return;
+    directionsRenderer.setRouteIndex(routeIndex);
+  }, [routeIndex, directionsRenderer]);
+
+  if (!leg) return;
+
+  return (
+    <div className="text-white w-1/3 absolute top-1 right-1 bg-slate-800 p-3 rounded-md">
+      <h2>{selected?.summary}</h2>
+      <p>
+        From {leg.start_address.split(",")[0]} to{" "}
+        {leg.end_address.split(",")[0]}
+      </p>
+      <p>Distance: {leg.distance?.text}</p>
+      <p>Duration: {leg.duration?.text}</p>
+      <ul>
+        {routes.map((route, index) => {
+          return (
+            <li key={route.summary}>
+              <button onClick={() => setRouteIndex(index)}>
+                {route.summary}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
+function ShowBuyers({ buyers }) {
+  const [selectedBuyer, setSelectedBuyer] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchBuyerInfo = async () => {
+      const userPromises = buyers.map((buyer) =>
+        apiClient(`/api/getUser/${buyer.buyerId}`)
+      );
+      const productPromises = buyers.map((buyer) =>
+        apiClient(`/api/getProduct/${buyer.productId}`)
+      );
+
+      const [userResponses, productResponses] = await Promise.all([
+        Promise.all(userPromises),
+        Promise.all(productPromises),
+      ]);
+
+      const userInfo = userResponses.map((response) => response.userInfo[0]);
+      const productsInfo = productResponses.map((response) => response.product);
+
+      setUsers(userInfo);
+      setProducts(productsInfo);
+    };
+
+    fetchBuyerInfo();
+  }, [buyers]);
+
+  const handleMarkerClick = (buyer) => {
+    setSelectedBuyer(buyer);
+  };
+
+  const selectedUser =
+    selectedBuyer && users.find((u) => u._id === selectedBuyer.buyerId);
+  const selectedProduct =
+    selectedBuyer && products.find((p) => p._id === selectedBuyer.productId);
+
+  return (
+    <>
+      {buyers.map((buyer) => (
+        <AdvancedMarker
+          key={buyer._id}
           position={{
-            lat: buyerData.prefferedPickupPlace.lat,
-            lng: buyerData.prefferedPickupPlace.lng,
+            lat: buyer.prefferedPickupPlace.lat,
+            lng: buyer.prefferedPickupPlace.lng,
           }}
-          key={buyerData._id}
-          onClick={() => handleMarkerClick(buyerData)}
-          children={buyerData.prefferedPickupPlace.formatted_address}
-        />
+          onClick={() => handleMarkerClick(buyer)}
+        >
+          <div className="bg-[#071933] p-2 text-white font-bold">
+            <p>Proposed Fee: {buyer.initialDeliveryFee}</p>
+            <p>
+              Product Price:{" "}
+              {products.find((p) => p._id === buyer.productId)?.value}
+            </p>
+          </div>
+        </AdvancedMarker>
       ))}
-      {/* Render the selected buyer info window */}
-      {selectedBuyer && (
+      {selectedBuyer && selectedUser && selectedProduct && (
         <InfoWindow
           position={{
-            lat: selectedBuyer.buyer.prefferedPickupPlace.lat,
-            lng: selectedBuyer.buyer.prefferedPickupPlace.lng, // Use preferred pickup place coordinates
+            lat: selectedBuyer.prefferedPickupPlace.lat,
+            lng: selectedBuyer.prefferedPickupPlace.lng,
           }}
-          onCloseClick={() => setSelectedBuyer(null)} // Close the InfoWindow
+          onCloseClick={() => setSelectedBuyer(null)}
         >
           <div>
-            <p>Name: {selectedBuyer.user.name}</p>
-            <p>Email: {selectedBuyer.user.email}</p>
-            <img
-              src={selectedBuyer.user.profilePicture}
-              alt="profile picture"
-            />
-            <p>Product Price: {selectedBuyer.product.value}</p>
-            <p>
-              Initial delivery fee: {selectedBuyer.buyer.initialDeliveryFee}
-            </p>
-            {selectedBuyer.user.isVerified && <p>Verified</p>}
+            <p>Name: {selectedUser.name}</p>
+            <p>Email: {selectedUser.email}</p>
+            <img src={selectedUser.profilePicture} alt="profile picture" />
+            <p>Product Price: {selectedProduct.value}</p>
+            <p>Initial delivery fee: {selectedBuyer.initialDeliveryFee}</p>
+            {selectedUser.isVerified && <p>Verified</p>}
             <p>
               Pickup Location:{" "}
-              {selectedBuyer.buyer.prefferedPickupPlace.formatted_address}
+              {selectedBuyer.prefferedPickupPlace.formatted_address}
             </p>
           </div>
         </InfoWindow>
       )}
-    </GoogleMap>
+    </>
   );
 }

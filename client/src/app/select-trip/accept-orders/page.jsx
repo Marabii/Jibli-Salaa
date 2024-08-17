@@ -1,11 +1,11 @@
 import apiServer from "@/utils/apiServer";
-import MapForTrip from "./components/mapForBuyers";
 import { Suspense } from "react";
+import MapForBuyers from "./components/mapForBuyers";
 
 export default async function AcceptOrdersPage({ searchParams }) {
   const { tripId, latStart, lngStart, latEnd, lngEnd } = searchParams;
   const result = await apiServer(`/api/getOrders?tripId=${tripId}`);
-  const data = {
+  const route = {
     departureCity: {
       lat: parseFloat(latStart), // Latitude for New York City
       lng: parseFloat(lngStart), // Longitude for New York City
@@ -15,6 +15,7 @@ export default async function AcceptOrdersPage({ searchParams }) {
       lng: parseFloat(lngEnd), // Longitude for Los Angeles
     },
   };
+
   return (
     <Suspense
       fallback={
@@ -23,7 +24,7 @@ export default async function AcceptOrdersPage({ searchParams }) {
         </div>
       }
     >
-      <MapForTrip data={data} buyers={result} />
+      <MapForBuyers route={route} buyers={result} />
     </Suspense>
   );
 }
