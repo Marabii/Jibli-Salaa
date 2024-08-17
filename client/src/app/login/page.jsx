@@ -31,6 +31,11 @@ export default function Login({ searchParams }) {
 
       const data = await response.json();
 
+      if (data.msg === "Please use Google login") {
+        alert("Please use Google login");
+        return;
+      }
+
       if (data.success) {
         // Redirect after login
         router.push(redirectTo);
@@ -94,6 +99,22 @@ export default function Login({ searchParams }) {
           >
             Login
           </button>
+          <button
+            type="button"
+            className="w-full border-2 border-black bg-black py-4 font-playfair font-bold text-white transition-all duration-300 hover:bg-white hover:text-black"
+            onClick={() => {
+              const currentURL = window.location.href; // Capture the current URL
+              const redirectURL = encodeURIComponent(currentURL); // Encode the URL to safely pass it in the query string
+
+              // Redirect to Google OAuth with the original URL as a query parameter
+              router.push(
+                `${process.env.NEXT_PUBLIC_SERVERURL}/auth/google?redirect=${redirectURL}`
+              );
+            }}
+          >
+            Sign In With Google
+          </button>
+
           <p className="mt-5 w-full text-start text-gray-800">
             Don't Have An Account?{" "}
             <a
