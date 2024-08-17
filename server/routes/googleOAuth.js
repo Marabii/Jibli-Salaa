@@ -71,21 +71,24 @@ router.get(
     // Set the JWT token as a cookie
     res.setHeader("Set-Cookie", [
       cookie.serialize("jwtToken", tokenObject.token, {
-        httpOnly: true, // Ensures the cookie is only accessible via HTTP(S), not JavaScript
-        secure: process.env.NODE_ENV === "production", // Ensures the cookie is only sent over HTTPS
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
         maxAge: 3600,
-        path: "/", // Root path, so the cookie is available site-wide
+        path: "/",
       }),
       cookie.serialize("tokenExpiration", tokenObject.expires, {
-        httpOnly: true, // Optional: could be set to false if you need to access it via JavaScript
+        httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         maxAge: 3600,
         path: "/",
       }),
     ]);
 
-    // Redirect the user to the desired page
-    res.redirect(process.env.FRONT_END);
+    // Extract the original URL (or use a fallback)
+    const originalURL = req.query.redirect || process.env.FRONT_END;
+
+    // Redirect the user to the original URL after login
+    res.redirect(originalURL);
   }
 );
 

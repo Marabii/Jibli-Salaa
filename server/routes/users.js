@@ -17,6 +17,12 @@ router.post("/api/login", (req, res, next) => {
           .json({ success: false, msg: "Could not find user" });
       }
 
+      if (user.isAuthenticatedByGoogle) {
+        return res
+          .status(404)
+          .json({ success: false, msg: "Please use Google login" });
+      }
+
       const isValid = utils.validPassword(
         req.body.password,
         user.hash,
@@ -80,6 +86,29 @@ router.post("/api/register", async (req, res, next) => {
 
 router.get("/api/getUser", isAuthenticated, async (req, res) => {
   const userId = req.user._id;
+  try {
+    const user = await User.find(
+      { _id: userId },
+      {
+        verificationDetails: 1,
+        profilePicture: 1,
+        isVerified: 1,
+        name: 1,
+        email: 1,
+        phoneNumber: 1,
+      }
+    );
+    return res.status(200).json({ success: true, userInfo: user });
+  } catch (err) {
+    console.error("Error getting user:", err.message);
+    return res
+      .status(500)
+      .json({ success: false, error: "Internal server error" });
+  }
+});
+
+router.get("/api/getUser/:id", async (req, res) => {
+  const userId = req.params.id;
   try {
     const user = await User.find(
       { _id: userId },

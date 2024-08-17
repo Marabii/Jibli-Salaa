@@ -136,7 +136,7 @@ const Register = () => {
             type="button"
             className="w-full border-2 border-black bg-black py-4 font-playfair font-bold text-white transition-all duration-300 hover:bg-white hover:text-black"
             onClick={() => {
-              router.push("http://localhost:3001/auth/google");
+              router.push(`${process.env.NEXT_PUBLIC_SERVERURL}/auth/google`);
             }}
           >
             Sign In With Google

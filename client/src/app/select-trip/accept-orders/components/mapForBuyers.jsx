@@ -69,8 +69,14 @@ export default function MapForTrip({ data, buyers }) {
   };
 
   const handleMarkerClick = async (buyer) => {
-    const user = await apiClient("/api/getUser");
-    setSelectedBuyer({ user: user.userInfo[0], buyer });
+    const user = await apiClient(`/api/getUser/${buyer.buyerId}`);
+    const product = await apiClient(`/api/getProduct/${buyer.productId}`);
+
+    setSelectedBuyer({
+      user: user.userInfo[0],
+      buyer,
+      product: product.product,
+    });
   };
 
   return (
@@ -98,6 +104,7 @@ export default function MapForTrip({ data, buyers }) {
           }}
           key={buyerData._id}
           onClick={() => handleMarkerClick(buyerData)}
+          children={buyerData.prefferedPickupPlace.formatted_address}
         />
       ))}
       {/* Render the selected buyer info window */}
@@ -116,6 +123,10 @@ export default function MapForTrip({ data, buyers }) {
               src={selectedBuyer.user.profilePicture}
               alt="profile picture"
             />
+            <p>Product Price: {selectedBuyer.product.value}</p>
+            <p>
+              Initial delivery fee: {selectedBuyer.buyer.initialDeliveryFee}
+            </p>
             {selectedBuyer.user.isVerified && <p>Verified</p>}
             <p>
               Pickup Location:{" "}
