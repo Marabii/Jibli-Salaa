@@ -87,7 +87,7 @@ router.post("/api/register", async (req, res, next) => {
 router.get("/api/getUser", isAuthenticated, async (req, res) => {
   const userId = req.user._id;
   try {
-    const user = await User.find(
+    const user = await User.findOne(
       { _id: userId },
       {
         verificationDetails: 1,

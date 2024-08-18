@@ -1,9 +1,9 @@
 "use client";
+
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { useState, useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
-import { setBuyerOrder } from "@/store/BuyerOrderSlice/slice";
-
+import { useDispatch, useSelector } from "react-redux";
+import { setTravelerTrip } from "@/store/TravelerTripSlice/slice";
 import {
   ControlPosition,
   MapControl,
@@ -13,22 +13,45 @@ import {
   AdvancedMarker,
 } from "@vis.gl/react-google-maps";
 
-export default function MapWithAutocomplete({ pos = "pickup" }) {
-  const [isClient, setIsClient] = useState(false);
-  const [selectedPlace, setSelectedPlace] = useState(null);
-  const [marker, setMarker] = useState(null);
+export default function TravelerMap({ pos = "pickup" }) {
+  const [isClientReady, setIsClientReady] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [currentMarker, setCurrentMarker] = useState(null);
   const dispatch = useDispatch();
+  const travelerTripState = useSelector((state) => state.travelerTrip.value);
 
+  // Ensure a marker is set on page load if the store has data
   useEffect(() => {
-    setIsClient(true);
+    const tripLocation = travelerTripState?.[pos];
+    if (
+      tripLocation?.formatted_address &&
+      tripLocation?.lat &&
+      tripLocation?.lng
+    ) {
+      setCurrentMarker({
+        formatted_address: tripLocation.formatted_address,
+        geometry: {
+          location: {
+            lat: parseFloat(tripLocation.lat),
+            lng: parseFloat(tripLocation.lng),
+          },
+        },
+      });
+    }
+  }, [travelerTripState, pos]);
+
+  // Check if the client is ready
+  useEffect(() => {
+    setIsClientReady(true);
   }, []);
 
-  if (!isClient) {
+  if (!isClientReady) {
     return null;
   }
 
-  const setLocation = (place, pos) => {
-    if (!place || !place.geometry || !place.geometry.location) {
+  // Update location in the Redux store
+  const updateTravelerLocation = (place, pos) => {
+    if (!place?.geometry?.location) {
       console.error("Invalid place object:", place);
       return;
     }
@@ -40,48 +63,40 @@ export default function MapWithAutocomplete({ pos = "pickup" }) {
       lng: geometry.location.lng,
     };
 
-    setMarker(place);
-    dispatch(setBuyerOrder({ [pos]: location }));
+    setCurrentMarker(place);
+    dispatch(setTravelerTrip({ [pos]: location }));
   };
 
+  // Handle map click to set a marker and update location
   const handleMapClick = (event) => {
     const latLng = event.detail.latLng;
     if (!latLng) return;
 
-    const location = {
-      lat: latLng.lat,
-      lng: latLng.lng,
-    };
-
-    // Reverse Geocoding to get place name
     const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ location }, (results, status) => {
+    geocoder.geocode({ location: latLng }, (results, status) => {
       if (status === "OK" && results[0]) {
         const place = {
           formatted_address: results[0].formatted_address,
           geometry: { location: latLng },
         };
 
-        setMarker(place);
-        setLocation(place, pos);
+        updateTravelerLocation(place, pos);
       } else {
-        console.error("Geocoder failed due to: " + status);
+        console.error("Geocoder failed due to:", status);
       }
     });
   };
 
-  const handleMarkerClick = () => setMarker(null);
+  // Remove marker on click
+  const handleMarkerClick = () => setCurrentMarker(null);
 
   return (
-    <APIProvider
-      apiKey={process.env.NEXT_PUBLIC_GoogleMaps_API}
-      solutionChannel="GMP_devsite_samples_v3_rgmautocomplete"
-    >
+    <APIProvider apiKey={process.env.NEXT_PUBLIC_GoogleMaps_API}>
       <Map
-        mapId={"bf51a910020fa25a"}
-        defaultZoom={3}
+        mapId={process.env.NEXT_PUBLIC_GoogleMaps_MAPID}
+        defaultZoom={2}
         defaultCenter={{ lat: 22.54992, lng: 0 }}
-        gestureHandling={"greedy"}
+        gestureHandling="greedy"
         style={{
           height: "100vh",
           width: "100vw",
@@ -91,72 +106,102 @@ export default function MapWithAutocomplete({ pos = "pickup" }) {
         disableDefaultUI={true}
         onClick={handleMapClick}
       >
-        {marker && (
+        {isValidMarker(currentMarker) && (
           <AdvancedMarker
-            key={marker.formatted_address}
-            position={marker.geometry.location}
-            onClick={() => handleMarkerClick()}
+            key={currentMarker.formatted_address}
+            position={{
+              lat: currentMarker.geometry.location.lat,
+              lng: currentMarker.geometry.location.lng,
+            }}
+            onClick={handleMarkerClick}
           />
         )}
       </Map>
       <MapControl position={ControlPosition.TOP}>
-        <div className="autocomplete-control">
-          <PlaceAutocomplete
-            onPlaceSelect={(place) => {
-              setSelectedPlace(place.geometry.location);
-              setLocation(place, pos);
-            }}
-            pos={pos}
-          />
-        </div>
+        <LocationSearch
+          onPlaceSelect={(place) => {
+            setSelectedLocation(place.geometry.location);
+            updateTravelerLocation(place, pos);
+          }}
+          travelerTripState={travelerTripState}
+          pos={pos}
+          currentMarker={currentMarker}
+        />
       </MapControl>
-      <MapHandler place={selectedPlace} />
+      <MapManager selectedLocation={selectedLocation} />
     </APIProvider>
   );
 }
 
-const MapHandler = ({ place }) => {
-  const map = useMap();
+// Component to manage map state and effects
+const MapManager = ({ selectedLocation }) => {
+  const mapInstance = useMap();
 
   useEffect(() => {
-    if (!map || !place) return;
+    if (!mapInstance || !selectedLocation) return;
 
-    console.log("place: ", place);
-
-    map.panTo(place);
-    map.setZoom(15); // Zoom in when a place is selected
-  }, [map, place]);
+    mapInstance.panTo(selectedLocation);
+    mapInstance.setZoom(15); // Zoom in on the selected location
+  }, [mapInstance, selectedLocation]);
 
   return null;
 };
 
-const PlaceAutocomplete = ({ onPlaceSelect }) => {
-  const [placeAutocomplete, setPlaceAutocomplete] = useState(null);
-  const inputRef = useRef(null);
-  const places = useMapsLibrary("places");
+// Autocomplete search component for location input
+const LocationSearch = ({ onPlaceSelect, currentMarker }) => {
+  const [autocompleteInstance, setAutocompleteInstance] = useState(null);
+  const inputElement = useRef(null);
+  const placesLibrary = useMapsLibrary("places");
 
   useEffect(() => {
-    if (!places || !inputRef.current) return;
+    if (isValidMarker(currentMarker) && inputElement.current) {
+      inputElement.current.value = currentMarker.formatted_address;
+    }
+  }, [currentMarker]);
+
+  // Initialize autocomplete on mount
+  useEffect(() => {
+    if (!placesLibrary || !inputElement.current) return;
 
     const options = {
       fields: ["geometry", "formatted_address"],
     };
 
-    setPlaceAutocomplete(new places.Autocomplete(inputRef.current, options));
-  }, [places]);
+    setAutocompleteInstance(
+      new placesLibrary.Autocomplete(inputElement.current, options)
+    );
+  }, [placesLibrary]);
 
+  // Handle place selection
   useEffect(() => {
-    if (!placeAutocomplete) return;
+    if (!autocompleteInstance) return;
 
-    placeAutocomplete.addListener("place_changed", () => {
-      const place = placeAutocomplete.getPlace();
-      onPlaceSelect(place);
+    autocompleteInstance.addListener("place_changed", () => {
+      const selectedPlace = autocompleteInstance.getPlace();
+      onPlaceSelect(selectedPlace);
     });
-  }, [onPlaceSelect, placeAutocomplete]);
+  }, [onPlaceSelect, autocompleteInstance]);
 
   return (
     <div className="autocomplete-container">
-      <input ref={inputRef} placeholder="Search a place" />
+      <input ref={inputElement} placeholder="Search a place" />
     </div>
   );
 };
+
+// Utility function to validate the marker object
+function isValidMarker(marker) {
+  if (!marker || !marker.geometry || !marker.geometry.location) {
+    return false;
+  }
+
+  const { lat, lng } = marker.geometry.location;
+  const isValidLat =
+    typeof lat === "number" ||
+    (typeof lat === "function" && typeof lat() === "number");
+  const isValidLng =
+    typeof lng === "number" ||
+    (typeof lng === "function" && typeof lng() === "number");
+
+  return isValidLat && isValidLng && !!marker.formatted_address;
+}

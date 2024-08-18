@@ -39,8 +39,6 @@ router.post("/api/createTraveler", isAuthenticated, async (req, res) => {
     };
 
     if (traveler) {
-      // Update existing traveler
-      traveler.spokenLanguages = spokenLanguages || traveler.spokenLanguages;
       traveler.trips.push(tripData);
       await traveler.save();
     } else {

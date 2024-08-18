@@ -28,7 +28,7 @@ export default function MapForBuyers({ route, buyers }) {
             mapId={process.env.NEXT_PUBLIC_GoogleMaps_MAPID}
             fullscreenControl={false}
           >
-            <Directions />
+            <Directions route={route} />
             <ShowBuyers buyers={buyers} />
           </Map>
         </div>
@@ -37,7 +37,7 @@ export default function MapForBuyers({ route, buyers }) {
   );
 }
 
-function Directions() {
+function Directions({ route }) {
   const map = useMap();
   const routesLibrary = useMapsLibrary("routes");
   const [directionsService, setDirectionsService] = useState(null);
@@ -61,8 +61,14 @@ function Directions() {
     if (!directionsService || !directionsRenderer) return;
     directionsService
       .route({
-        origin: "Errachidia, Morocco",
-        destination: "Tangier, Morocco",
+        origin: new google.maps.LatLng(
+          route.departureCity.lat,
+          route.departureCity.lng
+        ),
+        destination: new google.maps.LatLng(
+          route.destinationCity.lat,
+          route.destinationCity.lng
+        ),
         travelMode: google.maps.TravelMode.DRIVING,
         provideRouteAlternatives: true,
       })
