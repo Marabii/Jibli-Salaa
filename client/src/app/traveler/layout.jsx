@@ -6,17 +6,17 @@ export const metadata = {
 
 export default function TravelerTripLayout({
   mapstart,
-  spokenlanguages,
   tripdate,
   mapdestination,
   internationaltrip,
   senddata,
+  children,
 }) {
   return (
     <>
+      <div>{children}</div>
       <div>{mapstart}</div>
       <div>{mapdestination}</div>
-      <div>{spokenlanguages}</div>
       <div>{tripdate}</div>
       <div>{internationaltrip}</div>
       <div>{senddata}</div>
