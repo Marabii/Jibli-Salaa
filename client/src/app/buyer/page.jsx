@@ -38,7 +38,7 @@ const BuyerOrderForm = () => {
   return (
     <form className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-semibold text-gray-700 mb-4">
-        Product Details
+        Product Detailss
       </h2>
 
       <label className="block mb-4">
