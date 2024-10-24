@@ -36,10 +36,6 @@ const ProductForm = () => {
   const [formData, setFormData] = useState<FormData>(initialState);
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    console.log(formData);
-  }, [formData]);
-
   // Handle change event for input fields
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
