@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Traveler } from "@/interfaces/Traveler/Traveler";
 
 export default async function HomePage() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   const jwtTokenUndecoded: string | undefined =
     cookieStore.get("jwtToken")?.value;

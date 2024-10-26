@@ -8,7 +8,7 @@ const apiServer = async (
   pathname: string,
   options: RequestOptions = {}
 ): Promise<any> => {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const jwtToken = cookieStore.get("jwtToken")?.value;
 
   if (!jwtToken) {
@@ -40,7 +40,8 @@ const apiServer = async (
   );
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch: ${response.statusText}`);
+    console.error(response);
+    // throw new Error(`Failed to fetch: ${response.statusText}`);
   }
 
   return response.json();

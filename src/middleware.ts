@@ -28,7 +28,6 @@ export async function middleware(request: NextRequest) {
     );
 
     const response = await result.json();
-    console.log("response: ", response);
     const success = response.success;
 
     if (!success) {
@@ -61,5 +60,6 @@ export const config = {
     "/buyer",
     "/select-trip",
     "/select-trip/accept-orders",
+    "/negotiate/:recipientId*",
   ],
 };

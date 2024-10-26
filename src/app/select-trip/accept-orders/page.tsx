@@ -17,10 +17,10 @@ interface SearchParams {
 export default async function AcceptOrdersPage({
   searchParams,
 }: {
-  searchParams: SearchParams;
+  searchParams: Promise<SearchParams>;
 }) {
   const { countryStart, latStart, lngStart, countryEnd, latEnd, lngEnd } =
-    searchParams;
+    await searchParams;
   const result: BuyerOrderState["value"][] = await apiServer(
     `/api/protected/getOrders?countries_params=${countryStart} ${countryEnd}`
   );

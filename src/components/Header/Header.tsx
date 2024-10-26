@@ -4,9 +4,10 @@ import { BuyerOrderState } from "@/interfaces/Order/order";
 import apiServer from "@/utils/apiServer";
 import Link from "next/link";
 import { Traveler } from "@/interfaces/Traveler/Traveler";
+import NotificationsComponent from "./NotificationHeader";
 
 export default async function Header() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   const jwtTokenUndecoded: string | undefined =
     cookieStore.get("jwtToken")?.value;
@@ -80,6 +81,7 @@ export default async function Header() {
           </ul>
         </nav>
         <Link href="/login">Log In</Link>
+        <NotificationsComponent />
       </header>
     </div>
   );

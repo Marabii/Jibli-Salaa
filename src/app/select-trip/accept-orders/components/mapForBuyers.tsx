@@ -12,6 +12,7 @@ import {
 import { AddressObject } from "@/interfaces/Map/AddressObject";
 import { BuyerOrderState } from "@/interfaces/Order/order";
 import { UserInfo } from "@/interfaces/userInfo/userInfo";
+import Link from "next/link";
 
 type Route = {
   departureLocation: Omit<AddressObject, "formatted_address">;
@@ -154,15 +155,17 @@ function ShowBuyers({ orders }: { orders: BuyerOrderState["value"][] }) {
         }
         const lat = order.preferredPickupPlace.lat as number;
         const lng = order.preferredPickupPlace.lng as number;
-
         return (
-          <>
+          <div key={`${lat}-${lng}`}>
             <AdvancedMarker
               key={`${lat}-${lng}`}
               position={new google.maps.LatLng(lat, lng)}
               onClick={() => handleMarkerClick(order)}
             >
-              <div className="bg-[#071933] p-2 text-white font-bold">
+              <div
+                key={`${lat}-${lng}`}
+                className="bg-[#071933] p-2 text-white font-bold"
+              >
                 <p>Proposed Fee: {order.initialDeliveryFee}</p>
                 <p>Product Price: {order.estimatedValue}</p>
               </div>
@@ -185,10 +188,11 @@ function ShowBuyers({ orders }: { orders: BuyerOrderState["value"][] }) {
                     Pickup Location:{" "}
                     {order.preferredPickupPlace.formatted_address}
                   </p>
+                  <Link href={`/negotiate/${order.buyerId}`}>Contact</Link>
                 </div>
               </InfoWindow>
             )}
-          </>
+          </div>
         );
       })}
     </>
