@@ -8,81 +8,101 @@ import NotificationsComponent from "./NotificationHeader";
 
 export default async function Header() {
   const cookieStore = await cookies();
-
-  const jwtTokenUndecoded: string | undefined =
-    cookieStore.get("jwtToken")?.value;
-
-  const userEmail: string | undefined =
-    jwtTokenUndecoded && jwtDecode(jwtTokenUndecoded)?.sub;
-
-  const orders: BuyerOrderState["value"][] | undefined =
+  const jwtTokenUndecoded = cookieStore.get("jwtToken")?.value;
+  const userEmail = jwtTokenUndecoded && jwtDecode(jwtTokenUndecoded)?.sub;
+  const orders: BuyerOrderState["value"][] =
     userEmail && (await apiServer("/api/protected/getOwnOrders"));
-
-  const trips: Traveler[] | undefined =
+  const trips: Traveler[] =
     userEmail && (await apiServer("/api/protected/getOwnTrips"));
 
   return (
-    <div>
-      <header className="flex justify-between mb-20">
-        <Link href="/">
-          <h1 className="w-16 cursor-pointer">Jibli Salaa</h1>
-        </Link>
-        <nav>
-          <ul className="flex space-x-5">
-            {/* Handle navigation based on user role or absence thereof */}
-            {trips && trips.length > 0 && orders && orders.length > 0 ? (
-              <>
-                <Link href="/select-trip">
-                  <li className="cursor-pointer">Manage Trips</li>
-                </Link>
-                <Link href="/manage-orders">
-                  <li className="cursor-pointer">Manage Orders</li>
-                </Link>
-              </>
-            ) : (
-              <>
-                {trips && trips.length > 0 && (
-                  <>
-                    <Link href="/select-trip">
-                      <li className="cursor-pointer">Manage Trips</li>
-                    </Link>
-                    <Link href="/buyer">
-                      <li className="cursor-pointer">Switch to Buyer</li>
-                    </Link>
-                  </>
-                )}
-                {orders && orders.length > 0 && (
-                  <>
-                    <Link href="/manage-orders">
-                      <li className="cursor-pointer">Manage Orders</li>
-                    </Link>
-                    <Link href="/traveler">
-                      <li className="cursor-pointer">Switch to Traveler</li>
-                    </Link>
-                  </>
-                )}
-              </>
-            )}
-            {/* Provide options to become a traveler or buyer if neither */}
-            {(!trips || trips.length === 0) &&
-              (!orders || orders.length === 0) && (
+    <header className="fixed top-0 left-0 w-full z-50 bg-white shadow-md p-5 md:px-10 flex justify-between items-center">
+      <Link href="/">
+        <h1 className="text-xl font-bold text-gray-800 cursor-pointer hover:text-gray-600">
+          Jibli Salaa
+        </h1>
+      </Link>
+      <nav>
+        <ul className="flex space-x-4 md:space-x-8">
+          {trips && trips.length > 0 && orders && orders.length > 0 ? (
+            <>
+              <Link href="/traveler/select-trip">
+                <li className="cursor-pointer text-sm md:text-base text-gray-700 hover:text-blue-500">
+                  Manage Trips
+                </li>
+              </Link>
+              <Link href="/manage-orders">
+                <li className="cursor-pointer text-sm md:text-base text-gray-700 hover:text-blue-500">
+                  Manage Orders
+                </li>
+              </Link>
+            </>
+          ) : (
+            <>
+              {trips && trips.length > 0 && (
                 <>
-                  <Link href="/traveler">
-                    <li className="cursor-pointer">Become a Traveler</li>
+                  <Link href="/traveler/manage-orders">
+                    <li className="cursor-pointer text-sm md:text-base text-gray-700 hover:text-blue-500">
+                      Manage Orders
+                    </li>
                   </Link>
+                  <Link href={"/traveler/select-trip"}>Select Trip</Link>
                   <Link href="/buyer">
-                    <li className="cursor-pointer">Become a Buyer</li>
+                    <li className="cursor-pointer text-sm md:text-base text-gray-700 hover:text-blue-500">
+                      Switch to Buyer
+                    </li>
                   </Link>
                 </>
               )}
-            <Link href="/latest-deals">
-              <li className="cursor-pointer">Latest Deals</li>
+              {orders && orders.length > 0 && (
+                <>
+                  <Link href="/buyer/manage-orders">
+                    <li className="cursor-pointer text-sm md:text-base text-gray-700 hover:text-blue-500">
+                      Manage Orders
+                    </li>
+                  </Link>
+                  <Link href="/traveler">
+                    <li className="cursor-pointer text-sm md:text-base text-gray-700 hover:text-blue-500">
+                      Switch to Traveler
+                    </li>
+                  </Link>
+                </>
+              )}
+            </>
+          )}
+          {(!trips || trips.length === 0) &&
+            (!orders || orders.length === 0) && (
+              <>
+                <Link href="/traveler">
+                  <li className="cursor-pointer text-sm md:text-base text-gray-700 hover:text-blue-500">
+                    Become a Traveler
+                  </li>
+                </Link>
+                <Link href="/buyer">
+                  <li className="cursor-pointer text-sm md:text-base text-gray-700 hover:text-blue-500">
+                    Become a Buyer
+                  </li>
+                </Link>
+              </>
+            )}
+          {userEmail && (
+            <Link href="/contact">
+              <li className="cursor-pointer text-sm md:text-base text-gray-700 hover:text-blue-500">
+                Contact
+              </li>
             </Link>
-          </ul>
-        </nav>
-        <Link href="/login">Log In</Link>
+          )}
+        </ul>
+      </nav>
+      <div className="flex gap-5 items-center justify-between">
+        <Link
+          href="/login"
+          className="text-sm md:text-base text-gray-700 hover:text-blue-500"
+        >
+          Log In
+        </Link>
         <NotificationsComponent />
-      </header>
-    </div>
+      </div>
+    </header>
   );
 }

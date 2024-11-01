@@ -6,7 +6,8 @@ interface RequestOptions extends RequestInit {
 
 const apiServer = async (
   pathname: string,
-  options: RequestOptions = {}
+  options: RequestOptions = {},
+  shouldThrowError: boolean = true
 ): Promise<any> => {
   const cookieStore = await cookies();
   const jwtToken = cookieStore.get("jwtToken")?.value;
@@ -39,9 +40,9 @@ const apiServer = async (
     requestOptions
   );
 
-  if (!response.ok) {
+  if (!response.ok && shouldThrowError) {
     console.error(response);
-    // throw new Error(`Failed to fetch: ${response.statusText}`);
+    throw new Error(`Failed to fetch: ${response.statusText}`);
   }
 
   return response.json();

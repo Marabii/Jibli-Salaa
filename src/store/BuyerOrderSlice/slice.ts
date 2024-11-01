@@ -25,7 +25,7 @@ const initialState: BuyerOrderState = {
     },
     buyerId: "",
     placedAt: null,
-    isOrdeAccepted: false,
+    isOrderAccepted: false,
     orderStatus: ORDER_STATUS.PENDING,
   },
 };

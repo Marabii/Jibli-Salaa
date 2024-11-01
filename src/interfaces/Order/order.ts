@@ -13,6 +13,8 @@ export interface BuyerOrderState {
     images: string[];
     estimatedValue: number;
     initialDeliveryFee: number;
+    actualValue: number;
+    actualDeliveryFee: number;
     deliveryInstructions: string;
     productName: string;
     dimensions: Dimensions;
@@ -20,7 +22,8 @@ export interface BuyerOrderState {
     quantity: number;
     placedAt: Date | null;
     preferredPickupPlace: AddressObject;
-    isOrderAccepted: boolean;
+    orderAccepted: boolean;
     orderStatus: ORDER_STATUS;
+    _id: string;
   };
 }

@@ -6,18 +6,17 @@ import SockJS from "sockjs-client";
 import Stomp, { Client, Message } from "stompjs";
 import type { UserInfo } from "@/interfaces/userInfo/userInfo";
 import type { AppDispatch, RootState } from "@/store/store";
-import type { Notification } from "@/interfaces/Chatting/Notification";
 
 // Define the state type
 interface WebSocketState {
   connected: boolean;
-  notifications: Notification[];
+  hasNewNotification: boolean; // Changed from notifications array to a boolean flag
 }
 
 // Initial state
 const initialState: WebSocketState = {
   connected: false,
-  notifications: [],
+  hasNewNotification: false, // Initialize as false
 };
 
 // Module variable to hold the stompClient
@@ -47,8 +46,8 @@ export const initializeWebSocket = createAsyncThunk<
       stompClient?.subscribe(
         `/user/${userInfo._id}/queue/notifications`,
         (message: Message) => {
-          const notification: Notification = JSON.parse(message.body);
-          dispatch(addNotification(notification));
+          const hasNotification: boolean = JSON.parse(message.body);
+          dispatch(setHasNewNotification(hasNotification));
         }
       );
     });
@@ -78,16 +77,12 @@ const websocketSlice = createSlice({
     setConnected(state, action: PayloadAction<boolean>) {
       state.connected = action.payload;
     },
-    addNotification(state, action: PayloadAction<Notification>) {
-      state.notifications.push(action.payload);
-    },
-    setNotifications(state, action: PayloadAction<Notification[]>) {
-      state.notifications = action.payload;
+    setHasNewNotification(state, action: PayloadAction<boolean>) {
+      state.hasNewNotification = action.payload;
     },
   },
 });
 
-export const { setConnected, addNotification, setNotifications } =
-  websocketSlice.actions;
+export const { setConnected, setHasNewNotification } = websocketSlice.actions;
 
 export default websocketSlice.reducer;

@@ -57,9 +57,17 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/traveler",
+    "/traveler/manage-orders",
+    "/traveler/receive-payment",
+    "/traveler/receive-payment/:orderId",
+    "/traveler/select-trip",
+    "/traveler/select-trip/accept-orders",
     "/buyer",
-    "/select-trip",
-    "/select-trip/accept-orders",
-    "/negotiate/:recipientId*",
+    "/buyer/buyer-pay/:orderId",
+    "/buyer/buyer-pay/confirmDelivery/:orderId",
+    "/buyer/buyer-pay/error",
+    "/buyer/buyer-pay/success",
+    "/buyer/manage-orders",
+    "/negotiate",
   ],
 };

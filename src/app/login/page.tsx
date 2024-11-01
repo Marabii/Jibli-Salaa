@@ -1,6 +1,8 @@
 "use client";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useEffect, useState } from "react";
 
 interface LoginFormInputs {
   email: string;
@@ -13,14 +15,28 @@ interface LoginProps {
   };
 }
 
-export default function Login({ searchParams }: LoginProps) {
+export default function Login({
+  searchParams,
+}: {
+  searchParams: Promise<LoginProps>;
+}) {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormInputs>();
   const router = useRouter();
-  const redirectTo = searchParams?.redirect || "/";
+  const [redirectTo, setRedirectTo] = useState<LoginProps>();
+
+  useEffect(() => {
+    const fetchSearchParams = async () => {
+      const searchParamsResolved = await searchParams;
+      setRedirectTo(searchParamsResolved);
+    };
+    fetchSearchParams();
+  }, [searchParams]);
+
+  const redirectToURL = redirectTo?.searchParams?.redirect || "/";
 
   const handleLoginSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
     try {
@@ -36,7 +52,7 @@ export default function Login({ searchParams }: LoginProps) {
         }
       );
       if (response.ok) {
-        router.replace(redirectTo);
+        router.replace(redirectToURL);
       } else {
         throw new Error(response.statusText);
       }
@@ -47,7 +63,7 @@ export default function Login({ searchParams }: LoginProps) {
 
   return (
     <div className="mt-20 pb-36">
-      <div className="text-center flex w-full flex-col items-center bg-white pt-20">
+      <div className="text-center flex w-full flex-col items-center pt-20">
         <h1 className="font-playfair text-6xl font-bold">Login</h1>
         <p className="py-5 text-lg text-gray-400">
           Please fill your email and password to login
@@ -110,28 +126,32 @@ export default function Login({ searchParams }: LoginProps) {
               <p className="text-red-500">{errors.password.message}</p>
             )}
           </div>
-          <button
-            className="w-full border-2 border-black bg-black py-4 font-playfair font-bold text-white transition-all duration-300 hover:bg-white hover:text-black"
-            type="submit"
-          >
-            Login
-          </button>
-          <a href="https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=http://localhost:8080/google/callback&response_type=code&client_id=1028629889843-gjkff6ielpualsk4cu1700vbp08ggacj.apps.googleusercontent.com&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&access_type=offline">
+          <div className="flex flex-col gap-3">
             <button
-              type="button"
               className="w-full border-2 border-black bg-black py-4 font-playfair font-bold text-white transition-all duration-300 hover:bg-white hover:text-black"
+              type="submit"
             >
-              Sign In With Google
+              Login
             </button>
-          </a>
+            <Link
+              href={`https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${process.env.NEXT_PUBLIC_SERVERURL}/google/callback&response_type=code&client_id=1028629889843-gjkff6ielpualsk4cu1700vbp08ggacj.apps.googleusercontent.com&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&access_type=offline`}
+            >
+              <button
+                className="w-full border-2 border-black bg-black py-4 font-playfair font-bold text-white transition-all duration-300 hover:bg-white hover:text-black"
+                type="submit"
+              >
+                Sign In With Google
+              </button>
+            </Link>
+          </div>
           <p className="mt-5 w-full text-start text-gray-800">
             Don't Have An Account?{" "}
-            <a
+            <Link
               href="/register"
               className="ml-5 border-b-2 border-black text-lg font-bold text-black"
             >
               Register
-            </a>
+            </Link>
           </p>
         </form>
       </div>
