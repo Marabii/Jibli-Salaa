@@ -220,7 +220,11 @@ const LocationSearch = ({
 
   return (
     <div className="autocomplete-container">
-      <input ref={inputElement} placeholder="Search a place" />
+      <input
+        ref={inputElement}
+        className="p-2 relative top-2"
+        placeholder="Search a place"
+      />
     </div>
   );
 };

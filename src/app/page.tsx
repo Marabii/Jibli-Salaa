@@ -1,30 +1,23 @@
 // File: app/page.tsx
 
-import { jwtDecode } from "jwt-decode";
-import { cookies } from "next/headers";
 import { BuyerOrderState } from "@/interfaces/Order/order";
 import apiServer from "@/utils/apiServer";
 import Link from "next/link";
 import { Traveler } from "@/interfaces/Traveler/Traveler";
 import { ORDER_STATUS } from "@/interfaces/Order/ORDER_STATUS";
-import Footer from "@/components/Footer/Footer";
 
 export default async function HomePage() {
-  const cookieStore = await cookies();
+  const orders: BuyerOrderState["value"][] = await apiServer(
+    "/api/protected/getOwnOrders",
+    {},
+    false
+  );
 
-  const jwtTokenUndecoded: string | undefined =
-    cookieStore.get("jwtToken")?.value;
-
-  const userEmail: string | undefined =
-    jwtTokenUndecoded && jwtDecode(jwtTokenUndecoded)?.sub;
-
-  const orders: BuyerOrderState["value"][] = userEmail
-    ? await apiServer("/api/protected/getOwnOrders")
-    : [];
-
-  const trips: Traveler[] = userEmail
-    ? await apiServer("/api/protected/getOwnTrips")
-    : [];
+  const trips: Traveler[] = await apiServer(
+    "/api/protected/getOwnTrips",
+    {},
+    false
+  );
 
   return (
     <div className="font-sans">
@@ -153,7 +146,7 @@ export default async function HomePage() {
             delivery of products, both locally and internationally.
           </p>
           <Link
-            href="/how-it-works"
+            href="#how-it-works"
             className="bg-blue-500 text-white px-6 py-3 rounded-full text-lg hover:bg-blue-600 transition"
           >
             Learn How It Works
@@ -227,7 +220,7 @@ export default async function HomePage() {
       </section>
 
       {/* How It Works Section */}
-      <section className="bg-gray-100 py-20">
+      <section id="how-it-works" className="bg-gray-100 py-20 scroll-m-10">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold mb-8">How It Works</h2>
           <div className="flex flex-wrap -mx-4">
@@ -279,7 +272,7 @@ export default async function HomePage() {
             </div>
           </div>
           <Link
-            href="/sign-up"
+            href="/register"
             className="bg-blue-500 text-white px-6 py-3 rounded-full text-lg hover:bg-blue-600 transition"
           >
             Get Started
@@ -332,13 +325,13 @@ export default async function HomePage() {
           </p>
           <div className="flex justify-center space-x-4">
             <Link
-              href="/sign-up"
+              href="/buyer"
               className="bg-blue-500 text-white px-6 py-3 rounded-full text-lg hover:bg-blue-600 transition"
             >
               Sign Up as Buyer
             </Link>
             <Link
-              href="/sign-up"
+              href="/traveler"
               className="bg-green-500 text-white px-6 py-3 rounded-full text-lg hover:bg-green-600 transition"
             >
               Sign Up as Traveler

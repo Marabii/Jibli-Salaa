@@ -8,22 +8,22 @@ export interface Dimensions {
 
 export interface BuyerOrderState {
   value: {
-    buyerId?: string;
+    buyerId: string;
     description: string;
     images: string[];
     estimatedValue: number;
     initialDeliveryFee: number;
     actualValue: number;
     actualDeliveryFee: number;
-    deliveryInstructions: string;
+    deliveryInstructions: string | null;
     productName: string;
     dimensions: Dimensions;
-    productURL: string;
+    productURL: string | null;
     quantity: number;
     placedAt: Date | null;
     preferredPickupPlace: AddressObject;
     orderAccepted: boolean;
     orderStatus: ORDER_STATUS;
-    _id: string;
+    _id: string | null;
   };
 }

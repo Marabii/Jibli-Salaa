@@ -1,42 +1,22 @@
 "use client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useEffect, useState } from "react";
 
 interface LoginFormInputs {
   email: string;
   password: string;
 }
 
-interface LoginProps {
-  searchParams: {
-    redirect?: string;
-  };
-}
-
-export default function Login({
-  searchParams,
-}: {
-  searchParams: Promise<LoginProps>;
-}) {
+export default function Login() {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormInputs>();
   const router = useRouter();
-  const [redirectTo, setRedirectTo] = useState<LoginProps>();
-
-  useEffect(() => {
-    const fetchSearchParams = async () => {
-      const searchParamsResolved = await searchParams;
-      setRedirectTo(searchParamsResolved);
-    };
-    fetchSearchParams();
-  }, [searchParams]);
-
-  const redirectToURL = redirectTo?.searchParams?.redirect || "/";
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/";
 
   const handleLoginSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
     try {
@@ -52,7 +32,8 @@ export default function Login({
         }
       );
       if (response.ok) {
-        router.replace(redirectToURL);
+        router.replace(redirectTo);
+        router.refresh();
       } else {
         throw new Error(response.statusText);
       }

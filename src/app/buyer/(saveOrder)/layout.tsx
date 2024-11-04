@@ -21,10 +21,17 @@ export default function BuyerLayout({
   sendData,
 }: BuyerLayoutProps) {
   return (
-    <>
+    <div>
       <div>{children}</div>
-      <div>{mappickup}</div>
-      <div>{sendData}</div>
-    </>
+      <div className="flex justify-around items-center flex-wrap">
+        <div className="mt-5">
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+            Choose your preferred pickup place
+          </h2>
+          <div className="flex justify-center mt-5">{mappickup}</div>
+        </div>
+        <div>{sendData}</div>
+      </div>
+    </div>
   );
 }

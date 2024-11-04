@@ -26,11 +26,27 @@ export default function TravelerTripLayout({
 }: TravelerTripLayoutProps) {
   return (
     <>
-      <div>{children}</div>
-      <div>{mapstart}</div>
-      <div>{mapdestination}</div>
-      <div>{tripdate}</div>
-      <div>{senddata}</div>
+      <section className="flex justify-center items-center gap-10">
+        {children}
+      </section>
+      <section className="flex gap-5 my-10 justify-around flex-wrap">
+        <div>
+          <h2 className="text-2xl mb-5 text-center font-semibold text-gray-800">
+            Start Location
+          </h2>
+          <div>{mapstart}</div>
+        </div>
+        <div>
+          <h2 className="text-2xl mb-5 text-center font-semibold text-gray-800">
+            Destination
+          </h2>
+          <div>{mapdestination}</div>
+        </div>
+      </section>
+      <section>
+        <div>{tripdate}</div>
+        <div className="flex justify-center">{senddata}</div>
+      </section>
     </>
   );
 }

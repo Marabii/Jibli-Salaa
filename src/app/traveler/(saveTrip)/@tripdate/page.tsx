@@ -57,19 +57,25 @@ export default function TripDate() {
   };
 
   return (
-    <div>
-      <h2>Enter the departure date and time of your trip</h2>
+    <div className="p-4">
+      <h2 className="text-lg font-semibold text-gray-700 mb-2">
+        Enter the departure date and time of your trip
+      </h2>
       <input
         type="datetime-local"
         value={departureDate}
         onChange={handleDepartureChange}
+        className="w-full p-2 text-gray-700 border rounded-md shadow-sm mb-4"
       />
 
-      <h2>Enter the arrival date and time of your trip</h2>
+      <h2 className="text-lg font-semibold text-gray-700 mb-2">
+        Enter the arrival date and time of your trip
+      </h2>
       <input
         type="datetime-local"
         value={arrivalDate}
         onChange={handleArrivalChange}
+        className="w-full p-2 text-gray-700 border rounded-md shadow-sm mb-4"
       />
     </div>
   );

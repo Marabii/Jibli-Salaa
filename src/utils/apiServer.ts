@@ -7,12 +7,13 @@ interface RequestOptions extends RequestInit {
 const apiServer = async (
   pathname: string,
   options: RequestOptions = {},
-  shouldThrowError: boolean = true
+  shouldThrowError: boolean = true,
+  defaultReturn: any = null // Default value as null
 ): Promise<any> => {
   const cookieStore = await cookies();
   const jwtToken = cookieStore.get("jwtToken")?.value;
 
-  if (!jwtToken) {
+  if (!jwtToken && shouldThrowError) {
     throw new Error("No JWT token found in cookies");
   }
 
@@ -21,7 +22,7 @@ const apiServer = async (
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      Authorization: decodeURI(jwtToken),
+      Authorization: decodeURI(jwtToken || "no token"),
     },
   };
 
@@ -35,17 +36,30 @@ const apiServer = async (
     },
   };
 
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVERURL}${pathname}`,
-    requestOptions
-  );
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVERURL}${pathname}`,
+      requestOptions
+    );
 
-  if (!response.ok && shouldThrowError) {
-    console.error(response);
-    throw new Error(`Failed to fetch: ${response.statusText}`);
+    if (!response.ok) {
+      if (shouldThrowError) {
+        console.error(response);
+        throw new Error(`Failed to fetch: ${response.statusText}`);
+      } else {
+        return defaultReturn; // Return the default value if provided and shouldThrowError is false
+      }
+    }
+
+    return response.json();
+  } catch (error) {
+    if (shouldThrowError) {
+      throw error;
+    } else {
+      console.error("error: ", error);
+      return defaultReturn;
+    }
   }
-
-  return response.json();
 };
 
 export default apiServer;

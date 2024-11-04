@@ -19,5 +19,12 @@ export default function sendData() {
     router.replace("/traveler/select-trip");
   };
 
-  return <button onClick={handleData}>Save Trip</button>;
+  return (
+    <button
+      className="bg-blue-500 text-white px-6 py-3 rounded-full text-lg hover:bg-blue-600 transition"
+      onClick={handleData}
+    >
+      Save Trip
+    </button>
+  );
 }
