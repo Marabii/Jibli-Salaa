@@ -17,7 +17,7 @@ export default function TextForm({
 
         {/* Product URL */}
         <Input
-          label="Product URL"
+          label="Product URL (Optional)"
           type="text"
           name="productURL"
           pattern={String(/^https?:\/\/[^\s/$.?#].[^\s]*$/)}

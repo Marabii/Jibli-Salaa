@@ -10,10 +10,10 @@ import {
   InfoWindow,
 } from "@vis.gl/react-google-maps";
 import { AddressObject } from "@/interfaces/Map/AddressObject";
-import { BuyerOrderState } from "@/interfaces/Order/order";
 import { UserInfo } from "@/interfaces/userInfo/userInfo";
 import Link from "next/link";
 import { PolyLine } from "./Polyline";
+import { CompletedOrder } from "@/interfaces/Order/order";
 
 type Route = {
   departureLocation: Omit<AddressObject, "formatted_address">;
@@ -25,7 +25,7 @@ export default function MapForTravelers({
   orders,
 }: {
   route: Route;
-  orders: BuyerOrderState["value"][];
+  orders: CompletedOrder[];
 }) {
   const defaultCenter = {
     lat: route.departureLocation.lat || 0,
@@ -46,7 +46,7 @@ export default function MapForTravelers({
   ];
 
   return (
-    <div className="">
+    <div className="mb-5">
       <APIProvider apiKey={process.env.NEXT_PUBLIC_GoogleMaps_API ?? ""}>
         <div className="h-screen mx-auto w-[80%]">
           {defaultCenter.lat && defaultCenter.lng && (
@@ -165,14 +165,14 @@ function Directions({
   );
 }
 
-function ShowBuyers({ orders }: { orders: BuyerOrderState["value"][] }) {
+function ShowBuyers({ orders }: { orders: CompletedOrder[] }) {
   // State to keep track of the active marker's info
   const [activeMarker, setActiveMarker] = useState<{
     buyerInfo: UserInfo;
     orderId: string;
   } | null>(null);
 
-  const handleMarkerClick = async (order: BuyerOrderState["value"]) => {
+  const handleMarkerClick = async (order: CompletedOrder) => {
     if (!order._id) {
       return;
     }

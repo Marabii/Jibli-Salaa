@@ -4,7 +4,9 @@ import apiServer from "@/utils/apiServer";
 
 export function getInitialOrderDetails(data: FormData): InitialOrder {
   const result: any = {};
-
+  //handle the dot notation, some inputs have names like: dimensions.lengthInCm, the code
+  //below will create an object by the name dimensions which a key by the name lengthInCm
+  //and a value of whatever the user put in.
   data.forEach((value, key) => {
     if (key.includes(".")) {
       // Handle dot notation for nested fields

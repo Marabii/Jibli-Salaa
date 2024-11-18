@@ -56,8 +56,9 @@ export default function Input({
   ) => {
     const newValue = event.target.value;
 
-    // Validate input against regex pattern if provided
-    if (regex && !regex.test(newValue)) {
+    if (!required && newValue.trim() === "") {
+      setError(null);
+    } else if (regex && !regex.test(newValue)) {
       setError(errorMessage || "Invalid input.");
     } else {
       setError(null);
@@ -68,53 +69,55 @@ export default function Input({
   };
 
   return (
-    <div ref={inputRef} className="relative my-5 w-full">
-      <label
-        htmlFor={name}
-        className={twMerge(
-          "absolute left-2 px-1 text-xs z-0 transition-all duration-300",
-          isFocused || (currentValue !== null && currentValue !== "")
-            ? "-top-[0.5rem] z-20 bg-white text-black"
-            : "top-1/2 -translate-y-1/2 text-md text-gray-500",
-          error && "text-red-500"
+    <>
+      <div ref={inputRef} className="relative mt-5 mb-1 w-full">
+        <label
+          htmlFor={name}
+          className={twMerge(
+            "absolute left-2 px-1 text-xs z-0 transition-all duration-300",
+            isFocused || (currentValue !== null && currentValue !== "")
+              ? "-top-[0.5rem] z-20 bg-white text-black"
+              : "top-1/2 -translate-y-1/2 text-md text-gray-500",
+            error && "text-red-500"
+          )}
+        >
+          {label}
+        </label>
+        {!isTextarea ? (
+          <input
+            onFocus={() => setIsFocused(true)}
+            type={type}
+            name={name}
+            value={currentValue}
+            onChange={handleChange}
+            required={required}
+            className={twMerge(
+              `${
+                className ?? ""
+              } border p-2 relative rounded-md z-10 bg-transparent w-full`,
+              error ? "border-red-500" : "border-black"
+            )}
+            {...props}
+          />
+        ) : (
+          <textarea
+            onFocus={() => setIsFocused(true)}
+            name={name}
+            value={currentValue}
+            onChange={handleChange}
+            style={{ height: textareaHeight }}
+            required={required}
+            className={twMerge(
+              `${
+                className ?? ""
+              } border p-2 relative rounded-md z-10 bg-transparent w-full resize-none`,
+              error ? "border-red-500" : "border-black"
+            )}
+            {...props}
+          />
         )}
-      >
-        {label}
-      </label>
-      {!isTextarea ? (
-        <input
-          onFocus={() => setIsFocused(true)}
-          type={type}
-          name={name}
-          value={currentValue}
-          onChange={handleChange}
-          required={required}
-          className={twMerge(
-            `${
-              className ?? ""
-            } border p-2 relative rounded-md z-10 bg-transparent w-full`,
-            error ? "border-red-500" : "border-black"
-          )}
-          {...props}
-        />
-      ) : (
-        <textarea
-          onFocus={() => setIsFocused(true)}
-          name={name}
-          value={currentValue}
-          onChange={handleChange}
-          style={{ height: textareaHeight }}
-          required={required}
-          className={twMerge(
-            `${
-              className ?? ""
-            } border p-2 relative rounded-md z-10 bg-transparent w-full resize-none`,
-            error ? "border-red-500" : "border-black"
-          )}
-          {...props}
-        />
-      )}
-      {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
-    </div>
+      </div>
+      {error && <p className="text-sm text-red-500">{error}</p>}
+    </>
   );
 }

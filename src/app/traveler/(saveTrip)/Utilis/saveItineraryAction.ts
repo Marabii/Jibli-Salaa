@@ -1,22 +1,24 @@
 "use server";
 
-import { InitialOrder } from "@/interfaces/Order/order";
-import { getInitialOrderDetails, handleSubmit } from "./helperfunctions";
+import { Itinerary } from "@/interfaces/Traveler/Traveler";
+import { getItineraryDetails, handleSubmit } from "./helperfunctions";
 import validateForm, { ValidateFormResponse } from "./validateForm";
 import { Errors } from "@/interfaces/Errors/errors";
+import { revalidatePath } from "next/cache";
 
-export async function saveOrder(
+export async function saveItinerary(
   state: State,
   formData: FormData
 ): Promise<State> {
-  const initialOrderDetails: InitialOrder = getInitialOrderDetails(formData);
-  const result: ValidateFormResponse = validateForm(initialOrderDetails);
+  const itineraryDetails: Itinerary = getItineraryDetails(formData);
+  const result: ValidateFormResponse = validateForm(itineraryDetails);
   if (result.isError) {
     return { status: "failure", errors: result.errors };
   }
 
   try {
-    await handleSubmit(initialOrderDetails);
+    await handleSubmit(itineraryDetails);
+    revalidatePath("/");
     return { status: "success" };
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -34,5 +36,5 @@ export async function saveOrder(
 
 export type State = {
   status: "success" | "failure";
-  errors?: Errors<InitialOrder>;
+  errors?: Errors<Itinerary>;
 } | null;

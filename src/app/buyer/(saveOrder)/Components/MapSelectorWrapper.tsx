@@ -14,14 +14,14 @@ export default function MapSelectorWrapper() {
   return (
     <>
       <MapSelector onLocationSelect={handleLocationSelect} />
-      {location && (
-        <input
-          type="hidden"
-          required
-          name="preferredPickupPlace"
-          value={JSON.stringify(location)}
-        />
-      )}
+      <input
+        type="text"
+        required
+        name="preferredPickupPlace"
+        value={location ? JSON.stringify(location) : ""}
+        readOnly
+        style={{ opacity: 0, height: 0, position: "absolute", zIndex: -1 }}
+      />
     </>
   );
 }

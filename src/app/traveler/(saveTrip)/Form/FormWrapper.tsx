@@ -1,11 +1,11 @@
 "use client";
 
-import { saveOrder, State } from "../Utilis/saveOrderAction";
 import { useActionState } from "react";
 import { useEffect, useState } from "react";
 import CustomTransition from "@/components/Transition";
 import SubmitButton from "@/components/SubmitButton";
 import { useRouter } from "next/navigation";
+import { saveItinerary, State } from "../Utilis/saveItineraryAction";
 
 interface FormWrapperProps {
   children: React.ReactNode;
@@ -15,7 +15,7 @@ export default function FormWrapper({ children }: FormWrapperProps) {
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const router = useRouter();
   const [state, formAction, pending] = useActionState<State, FormData>(
-    saveOrder,
+    saveItinerary,
     null
   );
 
@@ -29,11 +29,11 @@ export default function FormWrapper({ children }: FormWrapperProps) {
     }
   }, [state]);
 
-  //Take the user to home path after successfully saving their order details.
+  //Take the user to select-trip path after successfully saving their order details.
   useEffect(() => {
     if (!pending && state?.status === "success") {
       setTimeout(() => {
-        router.replace("/");
+        router.replace("/traveler/select-trip");
       }, 300);
     }
   }, [pending, state]);
@@ -68,7 +68,7 @@ export default function FormWrapper({ children }: FormWrapperProps) {
       {/* Success Message with Transition */}
       <CustomTransition show={state?.status === "success"}>
         <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-          Your order has been successfully placed!
+          Your itinerary has been successfully saved!
         </div>
       </CustomTransition>
     </form>

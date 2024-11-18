@@ -1,6 +1,6 @@
 import FormWrapper from "./Form/FormWrapper";
 import FormDetails from "./Form/FormDetails";
-import MapSelectorWrapper from "./mappickup/MapSelectorWrapper";
+import MapSelectorWrapper from "./Components/MapSelectorWrapper";
 import FormImages from "./Form/FormImages";
 
 interface Metadata {
