@@ -1,6 +1,6 @@
 import { AddressObject } from "../Map/AddressObject";
 
-export interface Traveler {
+export interface Trip {
   travelerId: string;
   itinerary: Itinerary;
   travelerStatus: TRAVELER_STATUS;

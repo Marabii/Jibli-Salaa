@@ -1,24 +1,25 @@
+"use client";
 import { motion } from "framer-motion";
 import { FaBox, FaPlane } from "react-icons/fa";
 import Link from "next/link";
 import { ORDER_STATUS } from "@/interfaces/Order/ORDER_STATUS";
 import { CompletedOrder } from "@/interfaces/Order/order";
-import { Traveler } from "@/interfaces/Traveler/Traveler";
+import { Trip } from "@/interfaces/Traveler/Traveler";
 
 type DashboardCardProps = {
   type: "order" | "trip";
-  data: CompletedOrder | Traveler;
+  data: CompletedOrder | Trip;
 };
 
 const DashboardCard = ({ type, data }: DashboardCardProps) => {
   return (
     <motion.div
       whileHover={{ scale: 1.05 }}
-      className="border border-secondary p-6 rounded-lg shadow-lg bg-white dark:bg-gray-800 transition"
+      className="border text-black capitalize p-6 rounded-lg shadow-lg bg-gray-100 transition"
     >
       {type === "order" ? (
         <>
-          <FaBox className="text-3xl text-accent mb-4" />
+          <FaBox className="text-3xl text-black mb-4" />
           <h3 className="text-xl font-semibold mb-2">
             {(data as CompletedOrder).productName}
           </h3>
@@ -60,21 +61,17 @@ const DashboardCard = ({ type, data }: DashboardCardProps) => {
         </>
       ) : (
         <>
-          <FaPlane className="text-3xl text-accent mb-4" />
+          <FaPlane className="text-3xl text-black mb-4" />
           <h3 className="text-xl font-semibold mb-2">
-            Trip to {(data as Traveler).itinerary.to.formatted_address}
+            Trip to {(data as Trip).itinerary.to.formatted_address}
           </h3>
-          <p className="text-secondary mb-1">
+          <p className="text-black mb-1">
             Departure:{" "}
-            {new Date(
-              (data as Traveler).itinerary.departure
-            ).toLocaleDateString()}
+            {new Date((data as Trip).itinerary.departure).toLocaleDateString()}
           </p>
-          <p className="text-secondary">
+          <p className="text-black">
             Arrival:{" "}
-            {new Date(
-              (data as Traveler).itinerary.arrival
-            ).toLocaleDateString()}
+            {new Date((data as Trip).itinerary.arrival).toLocaleDateString()}
           </p>
         </>
       )}

@@ -9,8 +9,8 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: "#1f2937", // Custom primary color
-        secondary: "#4B5563", // Tailwind's gray-600
+        primary: "#000000", // Custom primary color
+        secondary: "#fff", // Tailwind's gray-600
         accent: "#3B82F6", // Tailwind's blue-500
         lightGray: "#D1D5DB", // Tailwind's gray-300
       },
@@ -21,6 +21,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-motion")],
 };
 export default config;

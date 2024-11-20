@@ -8,7 +8,7 @@ interface LoginFormInputs {
   password: string;
 }
 
-export default function Login() {
+export default async function Login() {
   const {
     register,
     handleSubmit,
