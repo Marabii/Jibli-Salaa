@@ -12,13 +12,15 @@ export async function saveOrder(
 ): Promise<State> {
   const initialOrderDetails: InitialOrder = getInitialOrderDetails(formData);
   const result: ValidateFormResponse = validateForm(initialOrderDetails);
+  console.log(formData);
+
   if (result.isError) {
     return { status: "failure", errors: result.errors };
   }
 
   try {
-    await handleSubmit(initialOrderDetails);
-    revalidatePath("/");
+    // await handleSubmit(initialOrderDetails);
+    // revalidatePath("/");
     return { status: "success" };
   } catch (error: unknown) {
     if (error instanceof Error) {
