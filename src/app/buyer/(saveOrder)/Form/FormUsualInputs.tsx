@@ -1,13 +1,7 @@
 import "server-only";
 import Input from "@/components/Input";
 
-export default function TextForm({
-  MapComponent,
-  FormImages,
-}: {
-  MapComponent: React.ComponentType;
-  FormImages: React.ComponentType;
-}) {
+export default function FormUsualInputs() {
   return (
     <>
       <>
@@ -115,22 +109,6 @@ export default function TextForm({
           initialValue={5}
           required
         />
-      </>
-
-      {/* Preferred Pickup Place Section */}
-      <>
-        <h2 className="text-2xl font-semibold text-gray-700 mb-4">
-          Choose your preferred pickup place
-        </h2>
-        <MapComponent />
-      </>
-
-      {/* Product Images Section */}
-      <>
-        <h2 className="text-2xl font-semibold text-gray-700 mb-4">
-          Product Images
-        </h2>
-        <FormImages />
       </>
     </>
   );

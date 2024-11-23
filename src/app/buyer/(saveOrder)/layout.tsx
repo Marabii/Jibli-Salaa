@@ -1,7 +1,11 @@
-import FormWrapper from "./Form/FormWrapper";
-import FormDetails from "./Form/FormDetails";
-import MapSelectorWrapper from "./Components/MapSelectorWrapper";
-import FormImages from "./Form/FormImages";
+import FormWrapper from "@/components/Form/FormWrapper";
+import { InitialOrder } from "@/interfaces/Order/order";
+import { saveOrder } from "./Utilis/saveOrderAction";
+import FormMapInput from "./Form/FormMapinput";
+import FormUsualInputs from "./Form/FormUsualInputs";
+import FormImagesInput from "./Form/FormImagesInput";
+import FormErrorHandler from "./Form/FormErrorHandler";
+import FormSubmissionButton from "./Form/FormSubmissionButton";
 
 interface Metadata {
   title: string;
@@ -17,11 +21,12 @@ export const metadata: Metadata = {
 export default function BuyerLayout() {
   return (
     <>
-      <FormWrapper>
-        <FormDetails
-          MapComponent={MapSelectorWrapper}
-          FormImages={FormImages}
-        />
+      <FormWrapper<InitialOrder> action={saveOrder}>
+        <FormUsualInputs />
+        <FormMapInput />
+        <FormImagesInput />
+        <FormErrorHandler />
+        <FormSubmissionButton />
       </FormWrapper>
     </>
   );

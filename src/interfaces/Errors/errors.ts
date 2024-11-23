@@ -1,10 +1,15 @@
-type Flatten<T, Prefix extends string = ""> = {
-  [K in keyof T]: T[K] extends object
-    ? Flatten<T[K], `${Prefix}${string & K}.`>
-    : `${Prefix}${string & K}`;
-}[keyof T];
+// Simplified Flatten type that flattens up to two levels
+type Flatten<T, Prefix extends string = ""> =
+  // Top-level keys
+  | `${Prefix}${Extract<keyof T, string>}`
+  // Second-level keys for object properties
+  | {
+      [K in keyof T]: T[K] extends object
+        ? `${Prefix}${Extract<K, string>}.${Extract<keyof T[K], string>}`
+        : never;
+    }[keyof T];
 
-export type Errors<T> = Partial<Record<Flatten<T>, string>> &
-  Partial<Record<keyof T, string>> & {
-    global?: string;
-  };
+// Simplified Errors type using the two-level Flatten
+export type Errors<T> = Partial<Record<Flatten<T>, string>> & {
+  global?: string;
+};

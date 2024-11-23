@@ -50,6 +50,7 @@ export function LocationSearch({
         className="p-2 left-2 relative top-2"
         ref={inputElement}
         placeholder="Search a place"
+        required
       />
     </div>
   );

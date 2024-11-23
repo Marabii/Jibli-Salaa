@@ -3,40 +3,48 @@
 import { InitialOrder } from "@/interfaces/Order/order";
 import { getInitialOrderDetails, handleSubmit } from "./helperfunctions";
 import validateForm, { ValidateFormResponse } from "./validateForm";
-import { Errors } from "@/interfaces/Errors/errors";
 import { revalidatePath } from "next/cache";
+import { ActionReturn } from "@/interfaces/Form/Form";
 
 export async function saveOrder(
-  state: State,
+  actionReturn: ActionReturn<InitialOrder>,
   formData: FormData
-): Promise<State> {
+): Promise<ActionReturn<InitialOrder>> {
   const initialOrderDetails: InitialOrder = getInitialOrderDetails(formData);
   const result: ValidateFormResponse = validateForm(initialOrderDetails);
-  console.log(formData);
 
   if (result.isError) {
-    return { status: "failure", errors: result.errors };
+    return {
+      status: "failure",
+      errors: result.errors,
+      data: initialOrderDetails,
+    };
   }
 
   try {
+    await new Promise((resolve, reject) =>
+      setTimeout(() => {
+        resolve(console.log("formData: ", initialOrderDetails));
+      }, 5000)
+    );
     // await handleSubmit(initialOrderDetails);
     // revalidatePath("/");
-    return { status: "success" };
+    return { status: "success", data: initialOrderDetails };
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error:", error);
-      return { status: "failure", errors: { global: error.message } };
+      return {
+        status: "failure",
+        errors: { global: error.message },
+        data: initialOrderDetails,
+      };
     } else {
       console.error("An unknown error occurred.");
       return {
         status: "failure",
         errors: { global: "An unknown error occurred." },
+        data: initialOrderDetails,
       };
     }
   }
 }
-
-export type State = {
-  status: "success" | "failure";
-  errors?: Errors<InitialOrder>;
-} | null;

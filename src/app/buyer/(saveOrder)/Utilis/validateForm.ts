@@ -7,6 +7,8 @@ export type ValidateFormResponse = {
 };
 
 const validateForm = (buyerOrder: InitialOrder): ValidateFormResponse => {
+  console.log("--------------------------------");
+  console.log("buyerOrdervalidate: ", buyerOrder);
   let errors: Errors<InitialOrder> = {};
   const regexProductName = /^[a-zA-Z0-9\s.,'-]{3,100}$/;
   const regexDescription = /^[a-zA-Z0-9\s.,'"-]{10,1000}$/;
@@ -89,8 +91,11 @@ const validateForm = (buyerOrder: InitialOrder): ValidateFormResponse => {
   }
 
   // Validate images
-  if (buyerOrder.selectedFiles.length === 0) {
-    errors.selectedFiles = "Please select images before submitting.";
+  if (
+    buyerOrder.selectedFiles.length === 0 ||
+    buyerOrder.selectedFiles.some((file) => file.size === 0)
+  ) {
+    errors.selectedFiles = "Please select valid images before submitting.";
   }
 
   return { isError: Object.keys(errors).length !== 0, errors };

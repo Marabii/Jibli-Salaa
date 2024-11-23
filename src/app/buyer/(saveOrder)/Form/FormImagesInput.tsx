@@ -1,19 +1,11 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
-import {
-  AdditionalDataContext,
-  AdditionalDataContextType,
-} from "./FormWrapper";
+import { useState, useEffect } from "react";
+import useAdditionalData from "../../../../components/Form/useAdditionalData";
 
-export default function FormImages() {
-  const additionalDataContext: AdditionalDataContextType = useContext(
-    AdditionalDataContext
-  );
-
-  // State to hold the selected images
-  const { additionalData, setAdditionalData } = additionalDataContext;
+export default function FormImagesInput() {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const { addAdditionalData } = useAdditionalData();
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -28,8 +20,10 @@ export default function FormImages() {
 
   useEffect(() => {
     const formData = new FormData();
-    selectedImages.forEach((file) => formData.append("images", file));
-    setAdditionalData(formData);
+    selectedImages.forEach(
+      (file) => file.size && formData.append("images", file)
+    );
+    addAdditionalData(formData);
   }, [selectedImages]);
 
   return (
@@ -42,7 +36,6 @@ export default function FormImages() {
           type="file"
           name="selectedFiles"
           accept="image/*"
-          required
           multiple
           onChange={handleImageUpload}
           className="mt-1 block w-full p-2 border rounded border-gray-300"
