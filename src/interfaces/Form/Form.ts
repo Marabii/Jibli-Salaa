@@ -3,6 +3,7 @@ import { Errors } from "../Errors/errors";
 export interface FormWrapperProps<T> {
   children: React.ReactNode;
   redirectTo?: string;
+  className?: string;
   action: (
     actionReturn: ActionReturn<T>,
     formData: FormData

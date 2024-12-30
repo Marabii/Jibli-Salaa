@@ -1,10 +1,11 @@
 "use server";
 
 import { InitialOrder } from "@/interfaces/Order/order";
-import { getInitialOrderDetails, handleSubmit } from "./helperfunctions";
+import { getInitialOrderDetails } from "./helperfunctions";
 import validateForm, { ValidateFormResponse } from "./validateForm";
-import { revalidatePath } from "next/cache";
 import { ActionReturn } from "@/interfaces/Form/Form";
+import { handleSubmit } from "@/app/buyer/(saveOrder)/Utilis/helperfunctions";
+import { revalidatePath } from "next/cache";
 
 export async function saveOrder(
   actionReturn: ActionReturn<InitialOrder>,
@@ -22,13 +23,8 @@ export async function saveOrder(
   }
 
   try {
-    await new Promise((resolve, reject) =>
-      setTimeout(() => {
-        resolve(console.log("formData: ", initialOrderDetails));
-      }, 5000)
-    );
-    // await handleSubmit(initialOrderDetails);
-    // revalidatePath("/");
+    await handleSubmit(initialOrderDetails);
+    revalidatePath("/");
     return { status: "success", data: initialOrderDetails };
   } catch (error: unknown) {
     if (error instanceof Error) {
