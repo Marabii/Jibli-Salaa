@@ -1,10 +1,23 @@
-export default function SubmitButton({ pending }: { pending: boolean }) {
+import { twMerge } from "tailwind-merge";
+
+export default function SubmitButton({
+  pending,
+  className,
+}: {
+  pending: boolean;
+  className: string;
+  defaultText: string;
+  pendingText: string;
+}) {
+  console.log("pending: ", pending);
   return (
     <button
       type="submit"
-      className={`flex items-center justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${
+      className={twMerge(
+        className ||
+          "flex items-center justify-center font-bold py-2 px-4 rounded",
         pending ? "opacity-50 cursor-not-allowed" : ""
-      }`}
+      )}
       disabled={pending}
     >
       {pending && (

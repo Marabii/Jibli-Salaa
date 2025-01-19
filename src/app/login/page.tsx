@@ -5,11 +5,14 @@ import { handleLoginAction, LoginFormInputs } from "./Utilis/handleLoginAction";
 import Input from "@/components/Input";
 import FormWrapper from "@/components/Form/FormWrapper";
 import FormErrorHandler from "./FormErrorHandler";
-import FormSubmissionButton from "./FormSubmissionButton";
+import usePending from "@/components/Form/usePending";
+import SubmitButton from "@/components/SubmitButton";
 
 export default function Login() {
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect") || "/";
+  const pending = usePending();
+
   return (
     <div className="mt-20 pb-36">
       <div className="text-center flex w-full flex-col items-center pt-20">
@@ -34,6 +37,7 @@ export default function Login() {
               type="email"
               name="email"
               label="Type Your Email"
+              labelBgColor="rgb(249 250 251)"
               required
               pattern={String(
                 /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/
@@ -49,10 +53,11 @@ export default function Login() {
               Password
             </label>
             <Input
-              className="w-full border-2 border-black p-5"
+              className="w-full border-2 rounded-none border-black p-5"
               type="password"
               name="password"
               label="Enter Your Password"
+              labelBgColor="rgb(249 250 251)"
               required
               pattern={String(
                 /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).{8,}$/
@@ -61,7 +66,12 @@ export default function Login() {
             />
           </div>
           <div className="flex flex-col gap-3">
-            <FormSubmissionButton />
+            <SubmitButton
+              className="w-full border-2 border-black bg-black py-4 font-playfair font-bold text-white transition-all duration-300 hover:bg-white hover:text-black"
+              pending={pending}
+              defaultText="Login"
+              pendingText="Processing request..."
+            />
             <FormErrorHandler />
             <Link
               href={`https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${process.env.NEXT_PUBLIC_SERVERURL}/google/callback&response_type=code&client_id=1028629889843-gjkff6ielpualsk4cu1700vbp08ggacj.apps.googleusercontent.com&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&access_type=offline`}

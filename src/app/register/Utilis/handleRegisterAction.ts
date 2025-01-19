@@ -1,47 +1,49 @@
 "use server";
 
 import { ActionReturn } from "@/interfaces/Form/Form";
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import {
-  getLoginForm,
-  handleLoginSubmit,
+  getRegisterForm,
+  handleRegisterSubmit,
   validateForm,
   ValidateFormResponse,
 } from "./helperFunctions";
-import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
 
-export interface LoginFormInputs {
-  email?: string;
-  password?: string;
+export interface LanguageOption {
+  languageCode: string;
+  languageName: string;
 }
 
-export interface LoginResponse {
+export interface RegisterResponse {
   token: string;
 }
 
-export async function handleLoginAction(
-  actionReturn: ActionReturn<LoginFormInputs>,
+export interface RegisterFormInputs {
+  name: string;
+  email: string;
+  password: string;
+  phoneNumber: string;
+  spokenLanguages: LanguageOption[];
+}
+
+export async function handleRegisterAction(
+  actionReturn: ActionReturn<RegisterFormInputs>,
   formData: FormData
-): Promise<ActionReturn<LoginFormInputs>> {
-  const loginForm: LoginFormInputs = getLoginForm(formData);
-  const result: ValidateFormResponse = validateForm(loginForm);
+): Promise<ActionReturn<RegisterFormInputs>> {
+  const registerForm: RegisterFormInputs = getRegisterForm(formData);
+  const result: ValidateFormResponse = validateForm(registerForm);
 
   if (result.isError) {
     return {
       status: "failure",
       errors: result.errors,
-      data: loginForm,
+      data: registerForm,
     };
   }
 
   try {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    return {
-      status: "failure",
-      errors: { global: "something went wrong" },
-      data: loginForm,
-    };
-    const loginResponse = await handleLoginSubmit(loginForm);
+    const loginResponse = await handleRegisterSubmit(registerForm);
     const IS_PRODUCTION = process.env.IS_PRODUCTION === "true";
 
     // Parse and validate COOKIES_MAX_AGE
@@ -65,21 +67,20 @@ export async function handleLoginAction(
       maxAge: cookiesMaxAge,
     });
 
-    // Revalidate the path to reflect the updated state
     revalidatePath("/");
-    return { status: "success", data: loginForm };
+    return { status: "success", data: registerForm };
   } catch (error: unknown) {
     if (error instanceof Error) {
       return {
         status: "failure",
         errors: { global: error.message },
-        data: loginForm,
+        data: registerForm,
       };
     } else {
       return {
         status: "failure",
         errors: { global: "An unknown error occurred." },
-        data: loginForm,
+        data: registerForm,
       };
     }
   }
