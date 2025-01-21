@@ -1,7 +1,7 @@
 import { useEffect, useState, RefObject } from "react";
 
 export default function useOutsideClick<T extends HTMLElement>(
-  ref: RefObject<T>,
+  ref: RefObject<T | null>,
   callback: () => void
 ): void {
   const [wasClickedInside, setWasClickedInside] = useState(false);

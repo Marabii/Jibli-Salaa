@@ -18,6 +18,7 @@ interface InputProps {
   textareaHeight?: string;
   initialValue?: string | number;
   required?: boolean;
+  labelBgColor?: string;
 }
 
 export default function Input({
@@ -33,9 +34,25 @@ export default function Input({
   initialValue = "",
   textareaHeight = "100px",
   required = false,
+  labelBgColor = "white",
   ...props
 }: InputProps) {
-  const regex = pattern ? new RegExp(pattern.slice(1, -1)) : null;
+  // Function to parse pattern and flags from a regex string
+  const parseRegex = (patternStr: string): RegExp | null => {
+    const regexParts = patternStr.match(/^\/(.+)\/([a-z]*)$/i);
+    if (regexParts) {
+      const [, patternBody, flags] = regexParts;
+      try {
+        return new RegExp(patternBody, flags);
+      } catch (e) {
+        console.error("Invalid regex pattern:", e);
+        return null;
+      }
+    }
+    return null;
+  };
+
+  const regex = pattern ? parseRegex(pattern) : null;
   const [isFocused, setIsFocused] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentValue, setCurrentValue] = useState<string | number>(
@@ -59,6 +76,7 @@ export default function Input({
     if (!required && newValue.trim() === "") {
       setError(null);
     } else if (regex && !regex.test(newValue)) {
+      console.log("error, regex", regex, "value: ", newValue);
       setError(errorMessage || "Invalid input.");
     } else {
       setError(null);
@@ -73,10 +91,11 @@ export default function Input({
       <div ref={inputRef} className="relative mt-5 mb-1 w-full">
         <label
           htmlFor={name}
+          style={{ backgroundColor: labelBgColor }}
           className={twMerge(
-            "absolute left-2 px-1 text-xs z-0 transition-all duration-300",
+            "absolute left-2 px-1 text-xs -z-10 transition-all duration-300",
             isFocused || (currentValue !== null && currentValue !== "")
-              ? "-top-[0.5rem] z-20 bg-white text-black"
+              ? "-top-[0.5rem] z-20 text-black"
               : "top-1/2 -translate-y-1/2 text-md text-gray-500",
             error && "text-red-500"
           )}
@@ -92,9 +111,9 @@ export default function Input({
             onChange={handleChange}
             required={required}
             className={twMerge(
-              `${
-                className ?? ""
-              } border p-2 relative rounded-md z-10 bg-transparent w-full`,
+              "bg-transparent",
+              className ||
+                "border p-2 relative rounded-md z-10 bg-transparent w-full",
               error ? "border-red-500" : "border-black"
             )}
             {...props}
@@ -108,9 +127,9 @@ export default function Input({
             style={{ height: textareaHeight }}
             required={required}
             className={twMerge(
-              `${
-                className ?? ""
-              } border p-2 relative rounded-md z-10 bg-transparent w-full resize-none`,
+              "bg-transparent",
+              className ||
+                "border p-2 relative rounded-md z-10 bg-transparent w-full resize-none",
               error ? "border-red-500" : "border-black"
             )}
             {...props}

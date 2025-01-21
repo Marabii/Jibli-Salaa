@@ -1,11 +1,6 @@
 "use client";
 
-import React, {
-  useEffect,
-  useState,
-  createContext,
-  useActionState,
-} from "react";
+import React, { useEffect, useState, createContext } from "react";
 import { useRouter } from "next/navigation";
 import {
   ActionReturn,
@@ -13,6 +8,7 @@ import {
   FormWrapperProps,
 } from "@/interfaces/Form/Form";
 import { Errors } from "@/interfaces/Errors/errors";
+import { useActionState } from "react";
 
 // Initialize the context with the combined ActionReturn
 export const AdditionalDataContext = createContext<
@@ -48,6 +44,7 @@ export default function FormWrapper<T>({
   // Redirect user to another directory upon successful server action
   useEffect(() => {
     if (!pending && actionReturn?.status === "success" && redirectTo) {
+      console.log("rerouting the user...");
       router.replace(redirectTo);
     }
   }, [pending, actionReturn, redirectTo, router]);
@@ -143,13 +140,10 @@ function mergeActionReturns<T>(
   }
 
   // If localActionReturn has errors undefined, it means errors have been reset
-  const errors =
-    localActionReturn.errors === undefined
-      ? undefined
-      : {
-          ...actionReturn.errors,
-          ...localActionReturn.errors,
-        };
+  const errors = {
+    ...(actionReturn.errors || {}),
+    ...(localActionReturn.errors || {}),
+  };
 
   const status =
     actionReturn.status === "failure" || localActionReturn.status === "failure"

@@ -5,7 +5,7 @@
 import { UserInfo } from "@/interfaces/userInfo/userInfo";
 import { ChatMessage } from "@/interfaces/Chatting/Message";
 import apiClient from "@/utils/apiClient";
-import { useEffect, useState, useRef, ChangeEvent } from "react";
+import { useEffect, useState, useRef, ChangeEvent, type JSX } from "react";
 import SockJS from "sockjs-client";
 import Stomp, { Client } from "stompjs";
 import { useRouter } from "next/navigation";
