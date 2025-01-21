@@ -47,132 +47,138 @@ const Register = () => {
   };
 
   return (
-    <div className="pb-36">
-      <div className="flex w-full flex-col items-center pt-20 text-center">
-        <h1 className="font-playfair text-6xl font-bold">Create an account</h1>
-        <p className="py-5 text-lg text-gray-400">
-          Create an account and start using Jibli Salaa
-        </p>
-        <FormWrapper<RegisterFormInputs>
-          className="w-full max-w-[550px] space-y-5 px-5"
-          action={handleRegisterAction}
-          redirectTo="/"
-        >
-          <div>
-            <label
-              className="mb-2 block font-playfair text-lg font-bold"
-              htmlFor="name"
-            >
-              Name
-            </label>
-            <Input
-              className="w-full border-2 border-black p-5"
-              name="name"
-              label="Type your name"
-              labelBgColor="rgb(249 250 251)"
-              required
-              pattern="/^[\p{L} ]+$/u"
-              errorMessage="Name can only contain letters and spaces"
-            />
-          </div>
-          <div>
-            <label
-              className="mb-2 block font-playfair text-lg font-bold"
-              htmlFor="email"
-            >
-              Email Address
-            </label>
-            <Input
-              className="w-full border-2 border-black p-5"
-              type="email"
-              name="email"
-              label="Type Your Email"
-              labelBgColor="rgb(249 250 251)"
-              required
-              pattern={String(
-                /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/
-              )}
-              errorMessage="Invalid email address"
-            />
-          </div>
-          <div>
-            <label
-              className="mb-2 block font-playfair text-lg font-bold"
-              htmlFor="password"
-            >
-              Password
-            </label>
-            <Input
-              className="w-full border-2 rounded-none border-black p-5"
-              type="password"
-              name="password"
-              label="Enter Your Password"
-              labelBgColor="rgb(249 250 251)"
-              required
-              pattern={String(
-                /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).{8,}$/
-              )}
-              errorMessage="Password must be at least 8 characters long, and include one uppercase letter, one lowercase letter, one digit, and one special character."
-            />
-          </div>
-          <div>
-            <label
-              className="mb-2 block font-playfair text-lg font-bold"
-              htmlFor="phoneNumber"
-            >
-              Phone Number
-            </label>
-            <Input
-              className="w-full border-2 border-black p-5"
-              type="tel"
-              name="phoneNumber"
-              label="Enter Your Phone Number"
-              labelBgColor="rgb(249 250 251)"
-              required
-              pattern={String(/^[0-9]{10,15}$/)}
-              errorMessage="Invalid phone number"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="languages"
-              className="mb-2 block font-playfair text-lg font-bold"
-            >
-              Languages You Speak
-            </label>
-            <Select
-              id="languages"
-              options={languageOptions}
-              isMulti
-              className="basic-multi-select"
-              classNamePrefix="select"
-              placeholder="Select Languages"
-              onChange={handleLanguageChange}
-            />
-            <input
-              type="hidden"
-              name="spokenLanguages"
-              value={JSON.stringify(spokenLanguages)}
-            />
-          </div>
-          <FormErrorHandler />
+    <>
+      <p className="py-5 text-lg text-gray-400">
+        Create an account and start using Jibli Salaa
+      </p>
+      <FormWrapper<RegisterFormInputs>
+        className="w-full max-w-[550px] space-y-5 px-5"
+        action={handleRegisterAction}
+        redirectTo="/"
+      >
+        <div>
+          <label
+            className="mb-2 block font-playfair text-lg font-bold"
+            htmlFor="name"
+          >
+            Name
+          </label>
+          <Input
+            className="w-full border-2 border-black p-5"
+            name="name"
+            label="Type your name"
+            labelBgColor="rgb(249 250 251)"
+            required
+            pattern="/^[\p{L} ]+$/u"
+            errorMessage="Name can only contain letters and spaces"
+          />
+        </div>
+        <div>
+          <label
+            className="mb-2 block font-playfair text-lg font-bold"
+            htmlFor="email"
+          >
+            Email Address
+          </label>
+          <Input
+            className="w-full border-2 border-black p-5"
+            type="email"
+            name="email"
+            label="Type Your Email"
+            labelBgColor="rgb(249 250 251)"
+            required
+            pattern={String(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/)}
+            errorMessage="Invalid email address"
+          />
+        </div>
+        <div>
+          <label
+            className="mb-2 block font-playfair text-lg font-bold"
+            htmlFor="password"
+          >
+            Password
+          </label>
+          <Input
+            className="w-full border-2 rounded-none border-black p-5"
+            type="password"
+            name="password"
+            label="Enter Your Password"
+            labelBgColor="rgb(249 250 251)"
+            required
+            pattern={String(
+              /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).{8,}$/
+            )}
+            errorMessage="Password must be at least 8 characters long, and include one uppercase letter, one lowercase letter, one digit, and one special character."
+          />
+        </div>
+        <div>
+          <label
+            className="mb-2 block font-playfair text-lg font-bold"
+            htmlFor="phoneNumber"
+          >
+            Phone Number
+          </label>
+          <Input
+            className="w-full border-2 border-black p-5"
+            type="tel"
+            name="phoneNumber"
+            label="Enter Your Phone Number"
+            labelBgColor="rgb(249 250 251)"
+            required
+            pattern={String(/^[0-9]{10,15}$/)}
+            errorMessage="Invalid phone number"
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="languages"
+            className="mb-2 block font-playfair text-lg font-bold"
+          >
+            Languages You Speak
+          </label>
+          <Select
+            id="languages"
+            options={languageOptions}
+            isMulti
+            className="basic-multi-select"
+            classNamePrefix="select"
+            placeholder="Select Languages"
+            onChange={handleLanguageChange}
+          />
+          <input
+            type="hidden"
+            name="spokenLanguages"
+            value={JSON.stringify(spokenLanguages)}
+          />
+        </div>
+        <FormErrorHandler />
+        <div className="flex flex-col gap-3">
           <SubmitButton
+            defaultText="Register"
+            pendingText="Processing request..."
             className="w-full border-2 border-black bg-black py-4 font-playfair font-bold text-white transition-all duration-300 hover:bg-white hover:text-black"
             pending={pending}
           />
-
-          <p className="mt-5 w-full text-start text-gray-800">
-            Already Have An Account?
-            <Link
-              href="/login"
-              className="ml-5 border-b-2 border-black text-lg font-bold text-black"
+          <Link href="/register/signup-with-google">
+            <button
+              className="w-full border-2 border-black bg-black py-4 font-playfair font-bold text-white transition-all duration-300 hover:bg-white hover:text-black"
+              type="submit"
             >
-              Sign-In
-            </Link>
-          </p>
-        </FormWrapper>
-      </div>
-    </div>
+              Sign Up With Google
+            </button>
+          </Link>
+        </div>
+        <p className="mt-5 w-full text-start text-gray-800">
+          Already Have An Account?
+          <Link
+            href="/login"
+            className="ml-5 border-b-2 border-black text-lg font-bold text-black"
+          >
+            Sign-In
+          </Link>
+        </p>
+      </FormWrapper>
+    </>
   );
 };
 

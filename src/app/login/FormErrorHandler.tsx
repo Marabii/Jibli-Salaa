@@ -2,9 +2,13 @@
 
 import useErrors from "@/components/Form/useErrors";
 import CustomTransition from "@/components/Transition";
+import { useSearchParams } from "next/navigation";
 
 export default function FormErrorHandler() {
-  const errorMessages = useErrors();
+  let errorMessages = useErrors();
+  const searchParams = useSearchParams();
+  const oauthError = searchParams.get("error") || "";
+  errorMessages = oauthError ? [...errorMessages, oauthError] : errorMessages;
 
   return (
     <>
