@@ -13,7 +13,7 @@ import SubmitButton from "@/components/SubmitButton";
 import usePending from "@/components/Form/usePending";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import FormErrorHandler from "./FormErrorHandler";
+import FormErrorHandler from "@/components/Form/FormErrorHandler";
 // Dynamically import the Select component to prevent hydration issues.
 const Select = dynamic(() => import("react-select"), { ssr: false });
 

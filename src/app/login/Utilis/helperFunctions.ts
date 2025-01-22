@@ -20,7 +20,7 @@ export const handleLoginSubmit = async (
 
     const responseData: ApiResponse<LoginResponse> = await response.json();
 
-    if (!response.ok) {
+    if (!response.ok || responseData.status === ApiStatus.FAILURE) {
       const errorMessage = responseData?.message || "An unknown error occurred";
       const errorsArray = responseData?.errors || [];
       const formattedErrors = errorsArray
@@ -28,10 +28,6 @@ export const handleLoginSubmit = async (
         .join(",\n");
 
       throw new Error(errorMessage + "\n" + formattedErrors);
-    }
-
-    if (responseData.status !== ApiStatus.SUCCESS) {
-      throw new Error(`Login unsuccessful: ${responseData.message}`);
     }
 
     // Return the data if login is successful

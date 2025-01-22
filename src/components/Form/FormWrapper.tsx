@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, createContext } from "react";
+import React, { useEffect, useState, createContext, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   ActionReturn,
@@ -66,13 +66,13 @@ export default function FormWrapper<T>({
     const mergedData: FormData = mergeFormData(formData, additionalData);
     const sizeInMB = getFormDataSizeInMB(mergedData);
 
-    if (sizeInMB >= 2) {
+    if (sizeInMB > 5) {
       // Set client-side error without sending data to the backend
       setLocalActionReturn({
         status: "failure",
         data: {} as T,
         errors: {
-          global: "Images are too large. Maximum allowed size is 2MB.",
+          global: "Images are too large. Maximum allowed size is 5MB.",
         } as Errors<T>, // Explicitly cast to Errors<T>
       });
       return;
@@ -82,9 +82,9 @@ export default function FormWrapper<T>({
     formAction(mergedData);
   };
 
-  const addAdditionalData = (formData: FormData) => {
-    setAdditionalData(mergeFormData(formData, additionalData));
-  };
+  const addAdditionalData = useCallback((formData: FormData) => {
+    setAdditionalData((prev) => mergeFormData(formData, prev));
+  }, []);
 
   return (
     <AdditionalDataContext.Provider

@@ -4,8 +4,8 @@ import { saveOrder } from "./Utilis/saveOrderAction";
 import FormMapInput from "./Form/FormMapinput";
 import FormUsualInputs from "./Form/FormUsualInputs";
 import FormImagesInput from "./Form/FormImagesInput";
-import FormErrorHandler from "./Form/FormErrorHandler";
 import FormSubmissionButton from "./Form/FormSubmissionButton";
+import FormErrorHandler from "@/components/Form/FormErrorHandler";
 
 interface Metadata {
   title: string;
@@ -21,10 +21,18 @@ export const metadata: Metadata = {
 export default function BuyerLayout() {
   return (
     <>
-      <FormWrapper<InitialOrder> action={saveOrder}>
-        <FormUsualInputs />
-        <FormMapInput />
-        <FormImagesInput />
+      <FormWrapper<InitialOrder>
+        className="relative z-0 m-auto max-w-screen-2xl p-6 bg-white rounded-lg shadow-md"
+        action={saveOrder}
+        redirectTo="/buyer/manage-orders"
+      >
+        <div className="grid 2xl:grid-cols-2 gap-5">
+          <FormUsualInputs />
+          <div className="flex mx-auto flex-col">
+            <FormMapInput />
+            <FormImagesInput />
+          </div>
+        </div>
         <FormErrorHandler />
         <FormSubmissionButton />
       </FormWrapper>

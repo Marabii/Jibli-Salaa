@@ -1,3 +1,4 @@
+import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import { cookies } from "next/headers";
 
 interface RequestOptions extends RequestInit {
@@ -50,18 +51,24 @@ const apiServer = async (
       requestOptions
     );
 
+    const responseData: ApiResponse<unknown> = await response.json();
+
     if (!response.ok) {
-      const error: ApiErrorResponse = await response.json();
       if (shouldThrowError) {
-        throw new Error(
-          error.message || `Failed to fetch: ${response.statusText}`
-        );
+        const errorMessage =
+          responseData?.message || "An unknown error occurred";
+        const errorsArray = responseData?.errors || [];
+        const formattedErrors = errorsArray
+          .map((error) => `● ${error}`)
+          .join(",\n");
+
+        throw new Error(errorMessage + "\n" + formattedErrors);
       } else {
-        return defaultReturn; // Return the default value if provided and shouldThrowError is false
+        return defaultReturn;
       }
     }
 
-    return response.json();
+    return responseData;
   } catch (error) {
     if (shouldThrowError) {
       // If the error has a message property, use it; otherwise, use a generic message

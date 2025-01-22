@@ -90,6 +90,7 @@ const validateForm = (buyerOrder: InitialOrder): ValidateFormResponse => {
 
   // Validate images
   if (
+    !buyerOrder.selectedFiles ||
     buyerOrder.selectedFiles.length === 0 ||
     buyerOrder.selectedFiles.some((file) => file.size === 0)
   ) {

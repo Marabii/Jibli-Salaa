@@ -1,6 +1,10 @@
 import { AddressObject } from "@/interfaces/Map/AddressObject";
 import { InitialOrder, Dimensions } from "@/interfaces/Order/order";
 import apiServer from "@/utils/apiServer";
+import {
+  ApiResponse,
+  ApiStatus,
+} from "../../../../interfaces/Apis/ApiResponse";
 
 export function getInitialOrderDetails(data: FormData): InitialOrder {
   const result: any = {};

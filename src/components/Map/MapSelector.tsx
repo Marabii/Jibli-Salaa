@@ -1,6 +1,6 @@
 "use client";
 import { APIProvider, MapMouseEvent } from "@vis.gl/react-google-maps";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   ControlPosition,
   MapControl,
@@ -12,21 +12,49 @@ import { isValidMarker, updateTravelerLocation } from "./utilityFuncs";
 import { AddressObject } from "@/interfaces/Map/AddressObject";
 import { LocationSearch } from "./MapSearch";
 
+interface MapSelectorProps {
+  onLocationSelect: (selectedLocation: AddressObject) => void;
+  className?: string;
+  initialLocation?: AddressObject; // NEW: to restore user’s prior location
+}
+
 export default function MapSelector({
   onLocationSelect,
-}: {
-  onLocationSelect: (selectedLocation: AddressObject) => void;
-}) {
+  className,
+  initialLocation,
+}: MapSelectorProps) {
   const [isClientReady, setIsClientReady] = useState<boolean>(false);
   const [currentMarker, setCurrentMarker] =
     useState<google.maps.places.PlaceResult>();
-  const [selectedLocation, setSelectedLocation] = useState<AddressObject>({
-    formatted_address: "",
-    lat: null,
-    lng: null,
-  });
+  const [selectedLocation, setSelectedLocation] = useState<AddressObject>(
+    initialLocation || {
+      formatted_address: "",
+      lat: null,
+      lng: null,
+    }
+  );
 
-  // Check if the client is ready
+  // If initialLocation changes (or on mount), set up the marker and location state
+  useEffect(() => {
+    if (
+      initialLocation &&
+      initialLocation.lat !== null &&
+      initialLocation.lng !== null
+    ) {
+      setSelectedLocation(initialLocation);
+      setCurrentMarker({
+        formatted_address: initialLocation.formatted_address,
+        geometry: {
+          location: new google.maps.LatLng(
+            initialLocation.lat,
+            initialLocation.lng
+          ),
+        },
+      });
+    }
+  }, [initialLocation]);
+
+  // Check if the client is ready (avoid SSR issues)
   useEffect(() => {
     setIsClientReady(true);
   }, []);
@@ -35,7 +63,7 @@ export default function MapSelector({
     return null;
   }
 
-  // Handle map click to set a marker and update location
+  // Handle map click to set a marker
   const handleMapClick = (event: MapMouseEvent) => {
     const latLng = event.detail.latLng;
     if (!latLng) return;
@@ -62,7 +90,7 @@ export default function MapSelector({
     });
   };
 
-  // Remove marker on click
+  // Remove marker on marker click, if desired
   const handleMarkerClick = () => setCurrentMarker(undefined);
 
   return (
@@ -72,12 +100,7 @@ export default function MapSelector({
         defaultZoom={2}
         defaultCenter={{ lat: 22.54992, lng: 0 }}
         gestureHandling="greedy"
-        style={{
-          height: "100vh",
-          width: "100vw",
-          maxWidth: "500px",
-          maxHeight: "500px",
-        }}
+        className={className || "w-full h-full"}
         disableDefaultUI={true}
         onClick={handleMapClick}
       >
@@ -91,9 +114,11 @@ export default function MapSelector({
             />
           )}
       </Map>
+
+      {/** Add the autocomplete search on top */}
       <MapControl position={ControlPosition.TOP}>
         <LocationSearch
-          onPlaceSelect={(place: google.maps.places.PlaceResult): void => {
+          onPlaceSelect={(place: google.maps.places.PlaceResult) => {
             if (
               place.geometry &&
               place.geometry.location &&
@@ -107,18 +132,18 @@ export default function MapSelector({
               );
             } else {
               console.error("Invalid place object:", place);
-              return;
             }
           }}
           currentMarker={currentMarker}
         />
       </MapControl>
+
       <MapManager selectedLocation={selectedLocation} />
     </APIProvider>
   );
 }
 
-// Component to manage map state and effects
+/** Manages the map’s center & zoom based on selected location */
 const MapManager = ({
   selectedLocation,
 }: {
@@ -127,12 +152,14 @@ const MapManager = ({
   const mapInstance = useMap();
 
   useEffect(() => {
-    if (!mapInstance || !selectedLocation) return;
+    if (!mapInstance) return;
     if (selectedLocation.lat === null || selectedLocation.lng === null) return;
+
+    // Pan and zoom to the new location
     mapInstance.panTo(
       new google.maps.LatLng(selectedLocation.lat, selectedLocation.lng)
     );
-    mapInstance.setZoom(15); // Zoom in on the selected location
+    mapInstance.setZoom(15);
   }, [mapInstance, selectedLocation]);
 
   return null;

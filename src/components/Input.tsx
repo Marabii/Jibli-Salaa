@@ -76,7 +76,6 @@ export default function Input({
     if (!required && newValue.trim() === "") {
       setError(null);
     } else if (regex && !regex.test(newValue)) {
-      console.log("error, regex", regex, "value: ", newValue);
       setError(errorMessage || "Invalid input.");
     } else {
       setError(null);
