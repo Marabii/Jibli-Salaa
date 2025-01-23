@@ -114,11 +114,6 @@ export async function handleSubmit(initialOrderDetails: InitialOrder) {
       headers: {},
     });
   } catch (error: unknown) {
-    console.error("Error:", error);
-    if (error instanceof Error) {
-      throw error;
-    } else {
-      throw new Error("An unknown error occurred.");
-    }
+    throw error;
   }
 }

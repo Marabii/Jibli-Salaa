@@ -3,38 +3,44 @@
 import { Itinerary } from "@/interfaces/Traveler/Traveler";
 import { getItineraryDetails, handleSubmit } from "./helperfunctions";
 import validateForm, { ValidateFormResponse } from "./validateForm";
-import { Errors } from "@/interfaces/Errors/errors";
 import { revalidatePath } from "next/cache";
+import { ActionReturn } from "@/interfaces/Form/Form";
 
 export async function saveItinerary(
-  state: State,
+  actionReturn: ActionReturn<Itinerary>,
   formData: FormData
-): Promise<State> {
+): Promise<ActionReturn<Itinerary>> {
   const itineraryDetails: Itinerary = getItineraryDetails(formData);
   const result: ValidateFormResponse = validateForm(itineraryDetails);
+
   if (result.isError) {
-    return { status: "failure", errors: result.errors };
+    return {
+      status: "failure",
+      errors: result.errors,
+      data: itineraryDetails,
+    };
   }
 
   try {
+    console.log("Submitting itinerary details:", itineraryDetails);
+    return { status: "failure", data: itineraryDetails };
     await handleSubmit(itineraryDetails);
     revalidatePath("/");
-    return { status: "success" };
+    return { status: "success", data: itineraryDetails };
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error:", error);
-      return { status: "failure", errors: { global: error.message } };
+      return {
+        status: "failure",
+        errors: { global: error.message },
+        data: itineraryDetails,
+      };
     } else {
       console.error("An unknown error occurred.");
       return {
         status: "failure",
         errors: { global: "An unknown error occurred." },
+        data: itineraryDetails,
       };
     }
   }
 }
-
-export type State = {
-  status: "success" | "failure";
-  errors?: Errors<Itinerary>;
-} | null;

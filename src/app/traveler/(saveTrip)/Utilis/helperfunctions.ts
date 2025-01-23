@@ -34,6 +34,8 @@ export function getItineraryDetails(data: FormData): Itinerary {
   // Manually cast and extract fields from result
   const { from, to, departure, arrival } = result;
 
+  console.log("helperFunctions result: ", result);
+
   return {
     from: from as AddressObject,
     to: to as AddressObject,
@@ -55,17 +57,8 @@ function parseValue(value: FormDataEntryValue): any {
 }
 
 export async function handleSubmit(itinerary: Itinerary) {
-  try {
-    await apiServer("/api/protected/postTravelerTrip", {
-      method: "POST",
-      body: JSON.stringify(itinerary),
-    });
-  } catch (error: unknown) {
-    console.error("Error:", error);
-    if (error instanceof Error) {
-      throw error;
-    } else {
-      throw new Error("An unknown error occurred.");
-    }
-  }
+  await apiServer("/api/protected/postTravelerTrip", {
+    method: "POST",
+    body: JSON.stringify(itinerary),
+  });
 }

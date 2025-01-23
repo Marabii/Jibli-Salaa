@@ -1,8 +1,11 @@
-import MapSelectorWrapperFrom from "./Components/MapSelectorWrapperFrom";
-import MapSelectorWrapperTo from "./Components/MapSelectorWrapperTo";
-import TripDates from "./Components/TripDates";
-import FormDetails from "./Form/FormDetails";
-import FormWrapper from "./Form/FormWrapper";
+import MapSelectorWrapperFrom from "./Form/MapSelectorWrapperFrom";
+import MapSelectorWrapperTo from "./Form/MapSelectorWrapperTo";
+import TripDates from "./Form/TripDates";
+import FormWrapper from "@/components/Form/FormWrapper";
+import { Itinerary } from "@/interfaces/Traveler/Traveler";
+import { saveItinerary } from "./Utilis/saveItineraryAction";
+import FormSubmissionButton from "./Form/FormSubmissionButton";
+import FormErrorHandler from "@/components/Form/FormErrorHandler";
 
 interface Metadata {
   title: string;
@@ -15,20 +18,21 @@ export const metadata: Metadata = {
     "This is the traveler page of the Jiblii Salaa where travelers specify the start and end locations of their trip as well as other information to include them in the algorithm",
 };
 
-export default function TravelerTripLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function TravelerTripLayout() {
   return (
     <>
-      {children}
-      <FormWrapper>
-        <FormDetails
-          MapSelectorWrapperFrom={MapSelectorWrapperFrom}
-          MapSelectorWrapperTo={MapSelectorWrapperTo}
-          TripDates={TripDates}
-        />
+      <FormWrapper<Itinerary>
+        action={saveItinerary}
+        redirectTo="/traveler/select-trip"
+        className="w-full pb-5"
+      >
+        <section className="flex gap-5 my-10 justify-around flex-wrap">
+          <MapSelectorWrapperFrom />
+          <MapSelectorWrapperTo />
+        </section>
+        <TripDates />
+        <FormSubmissionButton />
+        <FormErrorHandler />
       </FormWrapper>
     </>
   );

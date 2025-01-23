@@ -83,7 +83,7 @@ export default function FormWrapper<T>({
   };
 
   const addAdditionalData = useCallback((formData: FormData) => {
-    setAdditionalData((prev) => mergeFormData(formData, prev));
+    setAdditionalData((prev) => mergeFormData(prev, formData, true));
   }, []);
 
   return (
@@ -107,17 +107,27 @@ export default function FormWrapper<T>({
   );
 }
 
-function mergeFormData(formData1: FormData, formData2: FormData) {
+function mergeFormData(
+  initialFormData: FormData,
+  newFormData: FormData,
+  overwriteExisting: boolean = false
+): FormData {
   const mergedFormData = new FormData();
 
-  // Append all entries from formData1
-  for (const [key, value] of formData1.entries()) {
+  // Append all entries from initialFormData
+  for (const [key, value] of initialFormData.entries()) {
     mergedFormData.append(key, value);
   }
 
-  // Append all entries from formData2
-  for (const [key, value] of formData2.entries()) {
-    mergedFormData.append(key, value);
+  // Iterate through newFormData
+  for (const [key, value] of newFormData.entries()) {
+    if (overwriteExisting) {
+      // Use 'set' to overwrite existing keys
+      mergedFormData.set(key, value);
+    } else {
+      // Append normally, allowing duplicate keys
+      mergedFormData.append(key, value);
+    }
   }
 
   return mergedFormData;
