@@ -31,6 +31,8 @@ export default function MapSelector({
       formatted_address: "",
       lat: null,
       lng: null,
+      countryName: "",
+      countryCode: "",
     }
   );
 
@@ -71,13 +73,14 @@ export default function MapSelector({
     const geocoder = new google.maps.Geocoder();
     geocoder.geocode({ location: latLng }, (results, status) => {
       if (status === "OK" && results && results[0]) {
-        const place = {
+        // Make sure to include address_components
+        const place: google.maps.places.PlaceResult = {
           formatted_address: results[0].formatted_address,
-          geometry: {
-            location: new google.maps.LatLng(latLng.lat, latLng.lng),
-          },
+          geometry: results[0].geometry,
+          address_components: results[0].address_components,
         };
 
+        // This now passes countryName and countryCode correctly
         updateTravelerLocation(
           place,
           setSelectedLocation,

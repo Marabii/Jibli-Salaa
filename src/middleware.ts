@@ -2,11 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { ROLE } from "./interfaces/userInfo/userRole";
 import apiServer from "./utils/apiServer";
 import { UserInfo } from "./interfaces/userInfo/userInfo";
+import { ApiResponse } from "./interfaces/Apis/ApiResponse";
+
+interface IVerifyUser {
+  success: boolean;
+}
 
 export async function middleware(request: NextRequest) {
   const jwtToken = request.cookies.get("jwtToken")?.value;
   if (!jwtToken) {
-    console.log("No JWT token found in cookies");
     const originalUrl = request.nextUrl.clone();
     const loginUrl = new URL("/login", request.nextUrl.origin);
     loginUrl.searchParams.set(
@@ -17,19 +21,11 @@ export async function middleware(request: NextRequest) {
   }
 
   try {
-    // Verify the user
-    const verifyResult = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVERURL}/api/protected/verifyUser`,
-      {
-        method: "GET",
-        headers: {
-          Cookie: `jwtToken=${jwtToken}`,
-        },
-      }
+    const verifyUserResponse: ApiResponse<IVerifyUser> = await apiServer(
+      "/api/protected/verifyUser"
     );
 
-    const verifyResponse = await verifyResult.json();
-    const success = verifyResponse.success;
+    const success = verifyUserResponse.data.success || false;
 
     if (!success) {
       const originalUrl = request.nextUrl.clone();
@@ -51,8 +47,10 @@ export async function middleware(request: NextRequest) {
     }
 
     // Fetch user info to get the role
-    const userInfo: UserInfo = await apiServer(`/api/protected/getUserInfo`);
-
+    const userInfoResponse: ApiResponse<UserInfo> = await apiServer(
+      `/api/protected/getUserInfo`
+    );
+    const userInfo = userInfoResponse.data;
     // Determine the required role for other paths
     let requiredRole: ROLE | null = null;
 

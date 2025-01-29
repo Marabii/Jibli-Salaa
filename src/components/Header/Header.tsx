@@ -3,23 +3,37 @@ import Link from "next/link";
 import NotificationsComponent from "./NotificationHeader";
 import { UserInfo } from "@/interfaces/userInfo/userInfo";
 import { ROLE } from "@/interfaces/userInfo/userRole";
-import { cookies } from "next/headers";
+import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
+
+interface IVerifyUserResponse {
+  success: boolean;
+}
 
 export default async function Header() {
-  const cookieStore = await cookies();
+  let userInfo: UserInfo | null = null;
+  let isUserAuthenticated = false;
 
-  const userInfo: UserInfo = await apiServer(
-    "/api/protected/getUserInfo",
-    {},
-    false
-  );
+  try {
+    const userInfoResponse: ApiResponse<UserInfo> = await apiServer(
+      "/api/protected/getUserInfo"
+    );
 
-  const isUserAuthenticated: Record<string, boolean> = await apiServer(
-    "/api/protected/verifyUser",
-    {},
-    false,
-    { success: false }
-  );
+    userInfo = userInfoResponse.data;
+  } catch (error) {
+    console.log(
+      "Error getting user info, probably user is not connected",
+      error
+    );
+  }
+
+  try {
+    const verifyUserResponse: ApiResponse<IVerifyUserResponse> =
+      await apiServer("/api/protected/verifyUser");
+
+    isUserAuthenticated = verifyUserResponse.data.success;
+  } catch (error) {
+    console.log("Error verifying user", error);
+  }
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-white shadow-md p-5 md:px-10 flex justify-between items-center">
@@ -106,7 +120,7 @@ export default async function Header() {
         >
           Log In
         </Link>
-        {isUserAuthenticated.success && <NotificationsComponent />}
+        {isUserAuthenticated && <NotificationsComponent />}
       </div>
     </header>
   );

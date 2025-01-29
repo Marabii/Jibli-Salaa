@@ -9,6 +9,7 @@ import apiClient from "@/utils/apiClient";
 import type { Notification } from "@/interfaces/Chatting/Notification";
 import { FaBell } from "react-icons/fa";
 import Link from "next/link";
+import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 
 export default function Notifications() {
   const dispatch = useAppDispatch();
@@ -35,16 +36,15 @@ export default function Notifications() {
 
   const fetchNotifications = async () => {
     try {
-      const response = await apiClient(
-        "/api/protected/notifications",
-        {},
-        false,
-        []
+      const response: ApiResponse<Notification[]> = await apiClient(
+        "/api/protected/notifications"
       );
+
+      const notifications = response.data;
       // Use a Map to filter duplicates based on notification content
       const notificationMap = new Map();
 
-      for (const notification of response) {
+      for (const notification of notifications) {
         // Assuming 'content' is unique enough for duplication check; adjust as needed
         notificationMap.set(notification.content, notification);
       }
@@ -67,13 +67,9 @@ export default function Notifications() {
   // Handle marking all notifications as read
   const handleMarkAllAsRead = async () => {
     try {
-      await apiClient(
-        `/api/protected/notifications/markAllAsRead`,
-        {
-          method: "DELETE",
-        },
-        false
-      );
+      await apiClient(`/api/protected/notifications/markAllAsRead`, {
+        method: "DELETE",
+      });
       setNotifications((prevNotifications) =>
         prevNotifications.map((notification) => ({
           ...notification,

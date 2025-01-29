@@ -1,3 +1,5 @@
+import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
+
 interface RequestOptions extends RequestInit {
   headers?: HeadersInit;
 }
@@ -8,9 +10,7 @@ interface ApiErrorResponse {
 
 const apiClient = async (
   pathname: string,
-  options: RequestOptions = {},
-  shouldThrowError: boolean = true,
-  defaultReturn: any = null // Default value for defaultReturn
+  options: RequestOptions = {}
 ): Promise<any> => {
   const defaultHeaders: Record<string, string> = {};
 
@@ -34,22 +34,25 @@ const apiClient = async (
       requestOptions
     );
 
+    const responseData: ApiResponse<unknown> = await response.json();
+
     if (!response.ok) {
-      const error: ApiErrorResponse = await response.json();
-      if (shouldThrowError) {
-        throw new Error(error.message || "Something went wrong");
-      } else {
-        return defaultReturn; // Return defaultReturn if shouldThrowError is false
-      }
+      const errorMessage = responseData?.message || "An unknown error occurred";
+      const errorsArray = responseData?.errors || [];
+      const formattedErrors = errorsArray
+        .map((error) => `● ${error}`)
+        .join(",\n");
+
+      throw new Error(errorMessage + "\n" + formattedErrors);
     }
 
-    return response.json();
+    return responseData;
   } catch (error) {
-    if (shouldThrowError) {
-      throw new Error("Network error: Unable to reach the server");
-    }
-    console.error(error);
-    return defaultReturn; // Return defaultReturn in case of a network error if shouldThrowError is false
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "Network error: Unable to reach the server";
+    throw new Error(errorMessage);
   }
 };
 

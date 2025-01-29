@@ -31,8 +31,8 @@ export function LocationSearch({
     if (!placesLibrary || !inputElement.current) return;
 
     const options = {
-      fields: ["geometry", "formatted_address"],
-      types: ["geocode"], // Restricting to geocode types; adjust as needed
+      fields: ["geometry", "formatted_address", "address_components"],
+      types: ["geocode"],
     };
 
     const autocomplete = new placesLibrary.Autocomplete(

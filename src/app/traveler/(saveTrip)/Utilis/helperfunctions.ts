@@ -34,8 +34,6 @@ export function getItineraryDetails(data: FormData): Itinerary {
   // Manually cast and extract fields from result
   const { from, to, departure, arrival } = result;
 
-  console.log("helperFunctions result: ", result);
-
   return {
     from: from as AddressObject,
     to: to as AddressObject,

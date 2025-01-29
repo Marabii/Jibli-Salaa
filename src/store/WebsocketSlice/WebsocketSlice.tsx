@@ -6,6 +6,7 @@ import SockJS from "sockjs-client";
 import Stomp, { Client, Message } from "stompjs";
 import type { UserInfo } from "@/interfaces/userInfo/userInfo";
 import type { AppDispatch, RootState } from "@/store/store";
+import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 
 // Define the state type
 interface WebSocketState {
@@ -30,7 +31,10 @@ export const initializeWebSocket = createAsyncThunk<
 >("websocket/initialize", async (_, { dispatch }) => {
   try {
     // Fetch user info
-    const userInfo: UserInfo = await apiClient("/api/protected/getUserInfo");
+    const userInfoResult: ApiResponse<UserInfo> = await apiClient(
+      "/api/protected/getUserInfo"
+    );
+    const userInfo = userInfoResult.data;
     if (!userInfo || !userInfo._id) {
       console.error("User info is not available, cannot connect to WebSocket.");
       return;

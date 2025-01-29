@@ -19,26 +19,44 @@ export function isValidMarker(
   return isValidLat && isValidLng && !!marker.formatted_address;
 }
 
-// Update location
 export function updateTravelerLocation(
   place: google.maps.places.PlaceResult,
-  setSelectedLocation: (location: AddressObject) => void,
-  setCurrentMarker: (currMarker: google.maps.places.PlaceResult) => void,
-  onLocationSelect: (selectedLocation: AddressObject) => void
+  setSelectedLocation: React.Dispatch<React.SetStateAction<AddressObject>>,
+  setCurrentMarker: React.Dispatch<
+    React.SetStateAction<google.maps.places.PlaceResult | undefined>
+  >,
+  onLocationSelect: (location: AddressObject) => void
 ) {
-  if (!place?.geometry?.location) {
-    console.error("Invalid place object:", place);
-    return;
-  }
+  if (!place.geometry || !place.geometry.location) return;
 
-  const { geometry } = place;
-  const location = {
-    formatted_address: place.formatted_address!,
-    lat: geometry.location?.lat()!,
-    lng: geometry.location?.lng()!,
+  const lat = place.geometry.location.lat();
+  const lng = place.geometry.location.lng();
+  const formatted_address = place.formatted_address ?? "";
+
+  // --- Extract country name and code from address_components ---
+  let countryName = "";
+  let countryCode = "";
+  if (place.address_components) {
+    const countryComponent = place.address_components.find((comp) =>
+      comp.types.includes("country")
+    );
+    if (countryComponent) {
+      countryName = countryComponent.long_name || "";
+      countryCode = countryComponent.short_name || "";
+    }
+  }
+  // -------------------------------------------------------------
+
+  const locationToSave: AddressObject = {
+    formatted_address,
+    lat,
+    lng,
+    countryName,
+    countryCode,
   };
 
-  setSelectedLocation(location);
-  onLocationSelect(location);
+  // Update local state & notify parent
+  setSelectedLocation(locationToSave);
   setCurrentMarker(place);
+  onLocationSelect(locationToSave);
 }

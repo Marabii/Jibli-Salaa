@@ -104,7 +104,7 @@ export const validateForm = ({
 
   // Validate spokenLanguages
   if (!spokenLanguages || spokenLanguages.length === 0) {
-    errors.spokenLanguages = "At least one spoken language must be selected";
+    errors.spokenLanguages = "Please select at least 1 language that you speak";
   }
 
   const isError = Object.keys(errors).length > 0;

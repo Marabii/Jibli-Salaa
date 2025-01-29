@@ -22,8 +22,6 @@ export async function saveItinerary(
   }
 
   try {
-    console.log("Submitting itinerary details:", itineraryDetails);
-    return { status: "failure", data: itineraryDetails };
     await handleSubmit(itineraryDetails);
     revalidatePath("/");
     return { status: "success", data: itineraryDetails };

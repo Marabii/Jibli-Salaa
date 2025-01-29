@@ -13,6 +13,8 @@ export default function FormMapInput() {
     formatted_address: "",
     lat: null,
     lng: null,
+    countryName: "",
+    countryCode: "",
   });
 
   // On component mount or when additionalData changes, try to restore the saved location

@@ -14,8 +14,8 @@ export default function TripDates() {
   useEffect(() => {
     if (departureDate && arrivalDate) {
       const formData = new FormData();
-      formData.append("arrivalDate", arrivalDate.toISOString());
-      formData.append("departureDate", departureDate.toISOString());
+      formData.append("arrival", arrivalDate.toISOString());
+      formData.append("departure", departureDate.toISOString());
       addAdditionalData(formData);
     }
   }, [departureDate, arrivalDate, addAdditionalData]);

@@ -144,6 +144,49 @@ const Register = () => {
             classNamePrefix="select"
             placeholder="Select Languages"
             onChange={handleLanguageChange}
+            styles={{
+              control: (baseStyles) => ({
+                ...baseStyles,
+                height: "68px",
+                border: "2px solid black",
+              }),
+              option: (baseStyles, state) => ({
+                ...baseStyles,
+                color: state.isFocused || state.isSelected ? "white" : "black", // Ensure text is white when focused/selected
+                backgroundColor:
+                  state.isFocused || state.isSelected ? "black" : "white", // Black background on hover or selection
+                ":active": {
+                  backgroundColor: "black", // Active option background
+                  color: "white", // Active option text
+                },
+              }),
+              multiValue: (baseStyles) => ({
+                ...baseStyles,
+                backgroundColor: "black", // Background for selected options
+                color: "white", // Ensure selected option text is white
+              }),
+              multiValueLabel: (baseStyles) => ({
+                ...baseStyles,
+                color: "white", // Selected option label color
+              }),
+              multiValueRemove: (baseStyles) => ({
+                ...baseStyles,
+                color: "white",
+                ":hover": {
+                  backgroundColor: "black",
+                  color: "white",
+                },
+              }),
+            }}
+            theme={(theme) => ({
+              ...theme,
+              borderRadius: 0, // Custom border radius
+              colors: {
+                ...theme.colors,
+                primary25: "black", // Hovered option background
+                primary: "black", // Selected option background
+              },
+            })}
           />
           <input
             type="hidden"
