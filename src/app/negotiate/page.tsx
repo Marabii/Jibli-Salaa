@@ -1,71 +1,126 @@
-// pages/negotiate/[recipientId].tsx
-
 "use client";
 
-import { UserInfo } from "@/interfaces/userInfo/userInfo";
-import { ChatMessage } from "@/interfaces/Chatting/Message";
-import apiClient from "@/utils/apiClient";
-import { useEffect, useState, useRef, ChangeEvent, type JSX } from "react";
+import { useEffect, useState, useRef, type JSX, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import SockJS from "sockjs-client";
 import Stomp, { Client } from "stompjs";
-import { useRouter } from "next/navigation";
-import useUsersInfo from "@/hooks/useUsersInfo";
-import { ROLE } from "@/interfaces/userInfo/userRole";
-import { useSearchParams } from "next/navigation";
-import { BuyerOrderState } from "@/interfaces/Order/order";
-import NegotiationForm from "./NegotiationForm";
-import { ORDER_STATUS } from "@/interfaces/Order/ORDER_STATUS";
-import Link from "next/link";
-import { OrderDetails } from "./OrderDetails";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+
+import apiClient from "@/utils/apiClient";
+import { UserInfo } from "@/interfaces/userInfo/userInfo";
+import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
+import { CompletedOrder } from "@/interfaces/Order/order";
+
+import NegotiationControls from "./components/NegotiationControls";
+import OrderDetails from "./components/OrderDetails";
+import MessageBubble from "./components/MessageBubble";
+import MessageInput from "./components/MessageInput";
+import { ChatMessage } from "@/interfaces/Websockets/ChatMessage";
+import {
+  NotificationType,
+  OrderAcceptedNotificationContent,
+} from "@/interfaces/Websockets/Notification";
+
+// Framer Motion variants for simple fade/slide animations
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { when: "beforeChildren", staggerChildren: 0.1 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+};
 
 export default function NegotiatePage(): JSX.Element {
-  const [formData, setFormData] = useState<{ message: string }>({
-    message: "",
-  });
-
   const searchParams = useSearchParams();
-
+  const chatRef = useRef<HTMLDivElement>(null);
   const orderId = searchParams.get("orderId") || "";
   const recipientId = searchParams.get("recipientId") || "";
 
+  // Basic error handling if required params are missing
   if (!recipientId || !orderId) {
-    throw new Error("recipientId and orderId are necessary");
+    throw new Error("Missing required parameters: recipientId or orderId");
   }
-  const router = useRouter();
-  const userInfo: UserInfo | undefined = useUsersInfo("", () =>
-    alert("Something went wrong, please refresh the page")
-  );
-  const recipientInfo: UserInfo | undefined = useUsersInfo(recipientId, () =>
-    router.replace("/negotiate")
-  );
 
-  const [connectionEstablished, setConnectionEstablished] =
-    useState<boolean>(false);
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [recipientInfo, setRecipientInfo] = useState<UserInfo | null>(null);
+
+  const [connectionEstablished, setConnectionEstablished] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [orderInfo, setOrderInfo] = useState<BuyerOrderState["value"]>();
+  const [orderInfo, setOrderInfo] = useState<CompletedOrder | null>(null);
 
+  const stompClientRef = useRef<Client | null>(null);
+
+  // Get notifications from Redux
+  const notifications = useSelector(
+    (state: RootState) => state.notifications.notifications
+  );
+
+  // -- 1. Fetch user info and recipient info
   useEffect(() => {
-    const fetchOrderInfo = async () => {
-      if (!orderId) return;
+    const fetchUserInfo = async () => {
       try {
-        const response = await apiClient(`/api/getOrderById/${orderId}`);
-        if (response) {
-          setOrderInfo(response);
-        }
+        const userInfoResult: ApiResponse<UserInfo> = await apiClient(
+          "/api/protected/getUserInfo"
+        );
+        setUserInfo(userInfoResult.data);
+
+        const recipientInfoResult: ApiResponse<UserInfo> = await apiClient(
+          `/api/protected/getUserInfo/${recipientId}`
+        );
+        setRecipientInfo(recipientInfoResult.data);
       } catch (error) {
-        console.error("Failed to fetch order info:", error);
+        alert("Something went wrong while fetching users. Please try again.");
+        console.error("fetchUserInfo error:", error);
       }
     };
 
-    fetchOrderInfo();
+    fetchUserInfo();
+  }, [recipientId]);
+
+  // Helper function: Fetch order info
+  const fetchOrderInfo = useCallback(async () => {
+    if (!orderId) return;
+    try {
+      const response: ApiResponse<CompletedOrder> = await apiClient(
+        `/api/getOrderById/${orderId}`
+      );
+      if (response?.data) {
+        setOrderInfo(response.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch order info:", error);
+    }
   }, [orderId]);
 
-  // Use refs to persist the socket and client across renders
-  const stompClientRef = useRef<Client | null>(null);
+  // -- 2. Fetch order info initially when orderId changes
+  useEffect(() => {
+    fetchOrderInfo();
+  }, [fetchOrderInfo, orderId]);
 
+  // -- NEW: Refetch order info when an ORDER_ACCEPTED notification is received
+  useEffect(() => {
+    const orderAcceptedNotification = notifications.find((notif) => {
+      return (
+        notif.notificationType === NotificationType.ORDER_ACCEPTED &&
+        (notif.notificationData as OrderAcceptedNotificationContent).orderId ===
+          orderId
+      );
+    });
+    if (orderAcceptedNotification) {
+      fetchOrderInfo();
+    }
+  }, [fetchOrderInfo, notifications, orderId]);
+
+  // -- 3. Initialize and connect WebSocket (SockJS + STOMP)
   useEffect(() => {
     if (userInfo && !stompClientRef.current) {
-      // Initialize SockJS and Stomp client
       const socket = new SockJS(`${process.env.NEXT_PUBLIC_SERVERURL}/ws`);
       const stompClient = Stomp.over(socket);
       stompClientRef.current = stompClient;
@@ -73,20 +128,18 @@ export default function NegotiatePage(): JSX.Element {
       stompClient.connect(
         {},
         (frame) => {
-          console.log("Connected: " + frame);
           setConnectionEstablished(true);
 
           // Subscribe to incoming messages
           stompClient.subscribe(
             `/user/${userInfo._id}/queue/messages`,
             (message) => {
-              console.log("Message received: ", message.body);
               const receivedMessage: ChatMessage = JSON.parse(message.body);
-              setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+              setMessages((prev) => [...prev, receivedMessage]);
             }
           );
 
-          // Register user
+          // Register user on server side
           stompClient.send(
             "/app/user.addUser",
             {},
@@ -95,11 +148,11 @@ export default function NegotiatePage(): JSX.Element {
         },
         (error) => {
           console.error("Connection error:", error);
-          throw new Error("Something went wrong, please try again");
+          alert("Something went wrong connecting to chat. Please try again.");
         }
       );
 
-      // Cleanup on component unmount
+      // Cleanup on unmount
       return () => {
         if (stompClientRef.current && connectionEstablished) {
           stompClientRef.current.disconnect(() => {
@@ -109,18 +162,18 @@ export default function NegotiatePage(): JSX.Element {
         }
       };
     }
-  }, [userInfo]);
+  }, [connectionEstablished, userInfo]);
 
+  // -- 4. Fetch chat history
   useEffect(() => {
     const fetchUserChatHistory = async () => {
       try {
-        const chatHistory: ChatMessage[] = await apiClient(
+        const result: ApiResponse<ChatMessage[]> = await apiClient(
           `/api/protected/getUserChatHistory/${recipientId}`
         );
-        setMessages(chatHistory);
+        setMessages(result.data || []);
       } catch (error) {
         console.error("Failed to fetch user chat history:", error);
-        throw new Error("Something went wrong, please try again");
       }
     };
 
@@ -129,174 +182,119 @@ export default function NegotiatePage(): JSX.Element {
     }
   }, [recipientId]);
 
+  // Scroll down when a new message is received
+  useEffect(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTo({
+        top: chatRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [messages]);
+
+  // Send message function
   const sendMessage = (messageContent: string) => {
+    if (!messageContent.trim()) return;
+
     if (connectionEstablished && stompClientRef.current) {
       const chatMessage: Partial<ChatMessage> = {
         orderId,
-        recipientId: recipientId,
+        recipientId,
         senderId: userInfo?._id,
         content: messageContent,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date(),
       };
+
+      // Send over STOMP
       stompClientRef.current.send("/app/chat", {}, JSON.stringify(chatMessage));
-      // Add the sent message to the chat history
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        chatMessage as ChatMessage,
+
+      // Immediately add to local state so the user sees it
+      setMessages((prev) => [
+        ...prev,
+        chatMessage as ChatMessage, // cast since we know we have everything
       ]);
-      // Clear input field
-      setFormData({ message: "" });
     }
   };
 
-  // Move handleAcceptOrder inside the component
+  // -- 6. Handle traveler acceptance
   async function handleAcceptOrder(orderId: string) {
     try {
       await apiClient(`/api/protected/acceptOrder/${orderId}`, {
         method: "PUT",
       });
-      // Option 1: Re-fetch the order info
-      const response = await apiClient(`/api/getOrderById/${orderId}`);
-      if (response) {
-        setOrderInfo(response);
-      }
-    } catch (e) {
-      console.error("Cannot accept order, something went wrong.");
+
+      // Re-fetch the order info to update local state
+      fetchOrderInfo();
+    } catch (error) {
+      console.error("Cannot accept order:", error);
+      alert("Cannot accept order. Please try again.");
     }
   }
 
   return (
-    <>
-      <div className="flex h-full flex-col p-4">
-        <h2 className="text-xl font-bold mb-4">
-          You are talking to: {recipientInfo?.name}
+    <motion.div
+      className="bg-gray-50 mt-10 text-gray-800 flex flex-col md:flex-row"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      {/* Left panel: Chat section */}
+      <motion.div
+        className="flex-1 flex flex-col p-4 h-fit sticky top-[80px] md:p-6 border-r border-gray-300"
+        variants={itemVariants}
+      >
+        <h2 className="text-2xl font-bold mb-4">
+          Chat with: {recipientInfo?.name}
         </h2>
-        <div className="flex-1 overflow-y-auto mb-4">
-          {/* Chat messages */}
-          {messages.map((msg, index) => {
-            const isSender = msg.senderId === userInfo?._id;
-            return (
-              <div
-                key={msg.id || index}
-                className={`flex mb-2 ${
-                  isSender ? "justify-end" : "justify-start"
-                }`}
-              >
-                <div
-                  className={`relative max-w-xs px-4 py-2 rounded-lg ${
-                    isSender
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-gray-800"
-                  }`}
-                >
-                  {msg.content}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-        <div className="flex my-10">
-          <input
-            type="text"
-            placeholder="Type a message..."
-            className="flex-1 border border-gray-300 rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={formData.message}
-            onChange={(e) => setFormData({ message: e.target.value })}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                sendMessage(formData.message);
-              }
-            }}
-          />
-          <button
-            onClick={() => sendMessage(formData.message)}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-r-lg focus:outline-none"
-          >
-            Send
-          </button>
-        </div>
-        {(userInfo?.role === ROLE.TRAVELER ||
-          (userInfo?.role === ROLE.TRAVELER_AND_BUYER &&
-            recipientInfo?._id === orderInfo?.buyerId)) && (
-          <div className="bg-gray-100 p-4 shadow rounded">
-            <p className="text-lg text-center">
-              You have{" "}
-              {orderInfo?.orderAccepted ? "accepted" : "not yet accepted"} the
-              order
-            </p>
-            {orderInfo?.orderStatus ===
-              ORDER_STATUS[ORDER_STATUS.ORDER_FINALIZED] && (
-              <div className="mt-2">
-                <h2 className="text-xl font-bold text-green-600">
-                  The order is finalized, please proceed to enter your banking
-                  information in order to receive your money once you make the
-                  delivery
-                </h2>
-              </div>
-            )}
-            {!orderInfo?.orderAccepted && (
-              <div className="mt-2 bg-red-100 p-3 rounded">
-                <h2 className="text-xl font-bold">
-                  You must accept the order before you can proceed for the
-                  delivery
-                </h2>
-                <button
-                  className="mt-2 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
-                  onClick={() => handleAcceptOrder(orderId)}
-                >
-                  Accept Order
-                </button>
-              </div>
-            )}
-          </div>
-        )}
 
-        {(userInfo?.role === ROLE.BUYER ||
-          (userInfo?.role === ROLE.TRAVELER_AND_BUYER &&
-            userInfo?._id === orderInfo?.buyerId)) && (
-          <div className="bg-gray-100 p-4 shadow rounded">
-            <h2 className="text-xl text-center font-bold">
-              Please discuss details about the product with the other party
-            </h2>
-            {orderInfo?.orderAccepted ? (
-              orderInfo?.orderStatus ===
-              ORDER_STATUS[ORDER_STATUS.ORDER_FINALIZED] ? (
-                <div className="mt-2">
-                  <h2 className="text-xl font-bold text-green-600">
-                    The order is finalized, please proceed to the payment
-                  </h2>
-                  <Link
-                    href={`/buyer/buyer-pay/${orderId}`}
-                    className="text-blue-500 hover:text-blue-700 transition-colors"
-                  >
-                    Pay for the item
-                  </Link>
-                </div>
-              ) : (
-                orderInfo?.orderStatus ===
-                  ORDER_STATUS[ORDER_STATUS.ORDER_ACCEPTED] && (
-                  <div className="mt-2">
-                    <h2 className="text-xl font-bold">
-                      You must finalize the order before proceeding with the
-                      purchase
-                    </h2>
-                    <p>
-                      Agree with the traveler on the product's cost and the
-                      delivery fee before attempting to finalize the order
-                    </p>
-                    <NegotiationForm orderId={orderId} />
-                  </div>
-                )
-              )
-            ) : (
-              <h2 className="text-red-600 text-xl font-bold">
-                The traveler must first accept the order
-              </h2>
-            )}
-          </div>
+        {/* Chat messages container */}
+        <div
+          ref={chatRef}
+          className="flex-1 max-h-[600px] overflow-y-auto grid grid-cols-1 auto-rows-min space-y-2 pb-4"
+        >
+          <AnimatePresence>
+            {messages.map((msg, index) => {
+              const isSender = msg.senderId === userInfo?._id;
+              return (
+                <motion.div
+                  key={msg.id || index}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <MessageBubble message={msg} isSender={isSender} />
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </div>
+
+        {/* Chat input */}
+        <MessageInput onSendMessage={sendMessage} />
+      </motion.div>
+
+      {/* Right panel: Negotiation & Order Details */}
+      <motion.div
+        className="w-full md:w-1/3 flex flex-col p-4 md:p-6"
+        variants={itemVariants}
+      >
+        <NegotiationControls
+          userInfo={userInfo}
+          recipientInfo={recipientInfo}
+          orderInfo={orderInfo}
+          handleAcceptOrder={handleAcceptOrder}
+        />
+
+        {orderInfo && (
+          <motion.div
+            className="mt-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <OrderDetails orderInfo={orderInfo} />
+          </motion.div>
         )}
-      </div>
-      {orderInfo && <OrderDetails orderInfo={orderInfo} />}
-    </>
+      </motion.div>
+    </motion.div>
   );
 }

@@ -292,7 +292,7 @@ function ShowBuyers({ orders }: { orders: CompletedOrder[] }) {
                 onClick={() => handleMarkerClick(order)}
               >
                 <div className="bg-blue-900 p-2 text-white font-bold rounded">
-                  <p>Fee: {order.initialDeliveryFee}</p>
+                  <p>You get: {order.initialDeliveryFee}</p>
                   <p>Price: {order.estimatedValue}</p>
                   {/* Add more marker info if needed */}
                 </div>

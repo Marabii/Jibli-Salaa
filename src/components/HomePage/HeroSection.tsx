@@ -6,7 +6,7 @@ import Image from "next/image";
 
 const HeroSection = () => {
   return (
-    <section className="bg-black text-white py-20">
+    <section className="bg-black text-white py-32">
       <div className="container mx-auto px-4 flex flex-col-reverse md:flex-row items-center">
         {/* Text Content */}
         <div className="md:w-1/2">

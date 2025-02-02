@@ -4,10 +4,6 @@ interface RequestOptions extends RequestInit {
   headers?: HeadersInit;
 }
 
-interface ApiErrorResponse {
-  message: string;
-}
-
 const apiClient = async (
   pathname: string,
   options: RequestOptions = {}
@@ -21,6 +17,7 @@ const apiClient = async (
   const requestOptions: RequestOptions = {
     method: "GET",
     credentials: "include",
+    cache: "force-cache",
     ...options,
     headers: {
       ...defaultHeaders,

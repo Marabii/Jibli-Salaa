@@ -1,9 +1,9 @@
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header/Header";
-import { StoreProvider } from "@/store/StoreProvider";
 import { ReactNode } from "react";
 import Footer from "@/components/Footer";
+import ReduxProvider from "@/store/ReduxProvider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -22,16 +22,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <StoreProvider>
+    <ReduxProvider>
       <html lang="en">
         <body className={`${poppins.className} bg-gray-50`}>
           <Header />
           <div className="min-h-screen w-full flex flex-col justify-between">
-            <div className="mt-20">{children}</div>
+            <>{children}</>
             <Footer />
           </div>
         </body>
       </html>
-    </StoreProvider>
+    </ReduxProvider>
   );
 }

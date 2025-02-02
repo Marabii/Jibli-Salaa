@@ -7,7 +7,7 @@ const CallToActionSection = () => {
   return (
     <section className="py-20 bg-black">
       <div className="container mx-auto px-4 text-center">
-        <h2 className="text-4xl font-bold mb-4">
+        <h2 className="text-4xl text-white font-bold mb-4">
           Ready to Join the Community?
         </h2>
         <p className="text-xl mb-8 text-secondary">

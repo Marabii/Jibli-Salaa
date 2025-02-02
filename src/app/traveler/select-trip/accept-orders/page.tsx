@@ -24,9 +24,10 @@ interface ICountry {
 export default function TravelersPage() {
   const [orders, setOrders] = useState<CompletedOrder[]>([]);
   const [countries, setCountries] = useState<string[]>([]);
-  const [startDate, setStartDate] = useState<Date | null>(null); // Initialize to null
-  const [endDate, setEndDate] = useState<Date | null>(null); // Initialize to null
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const searchParams = useSearchParams();
   const latStart = searchParams.get("latStart");
   const lngStart = searchParams.get("lngStart");
@@ -77,10 +78,8 @@ export default function TravelersPage() {
   // Helper to get orders placed between date range
   const fetchByDateRange = async (start: Date, end: Date) => {
     try {
-      // Convert dates to ISO string to ensure proper formatting
       const startISO = start.toISOString();
       const endISO = end.toISOString();
-
       const response: ApiResponse<CompletedOrder[]> = await apiClient(
         `/api/protected/placedBetween?startDate=${encodeURIComponent(
           startISO
@@ -110,7 +109,7 @@ export default function TravelersPage() {
         finalOrders = response.data || [];
       }
 
-      // If date range is specified (both startDate & endDate), do a separate call and intersect
+      // If date range is specified, intersect with date-range results
       if (startDate && endDate) {
         const byDates = await fetchByDateRange(startDate, endDate);
         const byDatesIds = new Set(byDates.map((o) => o._id));
@@ -128,7 +127,6 @@ export default function TravelersPage() {
     }
   };
 
-  // Handle Reset
   const handleReset = async () => {
     setIsLoading(true);
     setCountries([]);
@@ -136,15 +134,11 @@ export default function TravelersPage() {
     setEndDate(null);
 
     try {
-      // Fetch all orders without any filters
       const response: ApiResponse<CompletedOrder[]> = await apiClient(
         `/api/protected/getOrders`
       );
       const allOrders = response.data || [];
-
-      // Sort results by highest proposed fee first
       allOrders.sort((a, b) => b.initialDeliveryFee - a.initialDeliveryFee);
-
       setOrders(allOrders);
     } catch (error) {
       console.error("Error in handleReset:", error);
@@ -154,9 +148,8 @@ export default function TravelersPage() {
     }
   };
 
-  // Initial fetch (without any filter) on mount, if desired
+  // Initial fetch on mount (no filters)
   useEffect(() => {
-    // Just do a blank search to get everything
     const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
     handleSearch(syntheticEvent);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -181,13 +174,18 @@ export default function TravelersPage() {
       {/* Filter Card */}
       <motion.form
         onSubmit={handleSearch}
-        className="bg-white w-full flex flex-col md:flex-row items-start md:items-end justify-between gap-5 border border-black rounded-lg mb-8 p-6"
+        /* 
+          Convert to a grid for consistent alignment:
+          - 1 column on small screens
+          - 3 columns on medium and above
+        */
+        className="bg-white w-full grid grid-cols-1 md:grid-cols-3 gap-6 border border-black rounded-lg mb-8 p-6"
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.6, delay: 0.2 }}
       >
         {/* Countries Select */}
-        <div className="flex flex-col flex-1 min-w-[200px]">
+        <div className="flex flex-col min-w-[200px]">
           <label
             htmlFor="Countries"
             className="mb-2 text-sm font-medium text-gray-700"
@@ -207,27 +205,25 @@ export default function TravelersPage() {
                 ...baseStyles,
                 minHeight: "48px",
                 borderRadius: "0.5rem",
-                borderColor: "#4B5563", // Gray-700
+                borderColor: "#4B5563",
                 boxShadow: "none",
                 "&:hover": {
-                  borderColor: "#6B7280", // Gray-600
+                  borderColor: "#6B7280",
                 },
               }),
               option: (baseStyles, state) => ({
                 ...baseStyles,
-                color: "#374151", // Gray-700
+                color: "#374151",
                 backgroundColor:
-                  state.isFocused || state.isSelected
-                    ? "#F3F4F6" // Gray-100
-                    : "white",
+                  state.isFocused || state.isSelected ? "#F3F4F6" : "white",
                 ":active": {
-                  backgroundColor: "#E5E7EB", // Gray-200
-                  color: "#1F2937", // Gray-800
+                  backgroundColor: "#E5E7EB",
+                  color: "#1F2937",
                 },
               }),
               multiValue: (baseStyles) => ({
                 ...baseStyles,
-                backgroundColor: "#6B21A8", // Purple-700
+                backgroundColor: "#6B21A8",
                 color: "white",
               }),
               multiValueLabel: (baseStyles) => ({
@@ -238,7 +234,7 @@ export default function TravelersPage() {
                 ...baseStyles,
                 color: "white",
                 ":hover": {
-                  backgroundColor: "#4C1D95", // Purple-800
+                  backgroundColor: "#4C1D95",
                   color: "white",
                 },
               }),
@@ -256,7 +252,7 @@ export default function TravelersPage() {
         </div>
 
         {/* Date Range Picker */}
-        <div className="flex flex-col flex-1 min-w-[200px]">
+        <div className="flex flex-col min-w-[200px]">
           <label className="mb-2 text-sm font-medium text-gray-700">
             Placed Between
           </label>
@@ -297,7 +293,7 @@ export default function TravelersPage() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row sm:items-end sm:space-x-4 flex-1 min-w-[200px]">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-end gap-4 min-w-[200px]">
           {/* Search Button */}
           <button
             type="submit"
@@ -317,12 +313,12 @@ export default function TravelersPage() {
                   r="10"
                   stroke="currentColor"
                   strokeWidth="4"
-                ></circle>
+                />
                 <path
                   className="opacity-75"
                   fill="currentColor"
                   d="M4 12a8 8 0 018-8v8H4z"
-                ></path>
+                />
               </svg>
             ) : (
               <FiSearch className="mr-2" />
@@ -336,7 +332,7 @@ export default function TravelersPage() {
             onClick={handleReset}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="w-full sm:w-auto flex items-center justify-center px-4 py-2 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-gray-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gray-500 mt-4 sm:mt-0"
+            className="w-full sm:w-auto flex items-center justify-center px-4 py-2 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-gray-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
           >
             <FiRefreshCw className="mr-2" />
             Reset

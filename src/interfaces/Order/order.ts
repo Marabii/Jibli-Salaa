@@ -21,7 +21,6 @@ export interface CompletedOrder {
   quantity: number;
   placedAt: Date | null;
   preferredPickupPlace: AddressObject;
-  isOrderAccepted: boolean;
   orderStatus: ORDER_STATUS;
   _id: string | null;
 }

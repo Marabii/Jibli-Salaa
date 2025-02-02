@@ -25,3 +25,9 @@ body {
 .hide-scrollbar::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
 }
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}

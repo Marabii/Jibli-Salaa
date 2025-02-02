@@ -4,7 +4,7 @@ export interface ChatMessage {
   senderId: string;
   recipientId: string;
   content: string;
-  timestamp: string;
-  isReadByReceiver: boolean;
+  timestamp: Date;
   orderId: string;
+  isReadByReceiver: boolean;
 }

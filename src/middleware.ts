@@ -98,6 +98,7 @@ export const config = {
     "/buyer/buyer-pay/error",
     "/buyer/buyer-pay/success",
     "/buyer/manage-orders",
+    "/contact",
     "/negotiate",
   ],
 };
