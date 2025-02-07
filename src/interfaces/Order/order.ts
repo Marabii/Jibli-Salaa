@@ -8,6 +8,7 @@ export interface Dimensions {
 
 export interface CompletedOrder {
   buyerId: string;
+  travelerId: string;
   description: string;
   images: string[];
   estimatedValue: number;
@@ -29,12 +30,10 @@ export type InitialOrder = Omit<
   CompletedOrder,
   | "buyerId"
   | "placedAt"
-  | "isOrderAccepted"
   | "orderStatus"
   | "images"
   | "actualValue"
   | "actualDeliveryFee"
-  | "isOrderAccepted"
   | "_id"
 > & {
   selectedFiles: File[];

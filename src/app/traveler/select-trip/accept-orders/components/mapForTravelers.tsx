@@ -318,9 +318,6 @@ function ShowBuyers({ orders }: { orders: CompletedOrder[] }) {
                       <p className="text-lg font-semibold">
                         {activeMarker.buyerInfo.name}
                       </p>
-                      <p className="text-sm text-gray-600">
-                        {activeMarker.buyerInfo.email}
-                      </p>
                       <p className="text-md text-gray-800">
                         Product Price: {order.estimatedValue} €
                       </p>

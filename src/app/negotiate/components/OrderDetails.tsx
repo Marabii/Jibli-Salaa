@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { CompletedOrder } from "@/interfaces/Order/order";
 import { ORDER_STATUS } from "@/interfaces/Order/ORDER_STATUS";
 import { motion } from "framer-motion";
@@ -20,34 +19,38 @@ type OrderDetailsProps = {
 export default function OrderDetails({ orderInfo }: OrderDetailsProps) {
   const productValue = orderInfo.actualValue || orderInfo.estimatedValue || 0;
   const deliveryFee =
-    orderInfo.initialDeliveryFee || orderInfo.actualDeliveryFee || 0;
+    orderInfo.actualDeliveryFee || orderInfo.initialDeliveryFee || 0;
 
   return (
     <motion.div
-      className="bg-gray-300 p-4 rounded shadow-lg"
+      className="bg-gradient-to-br from-gray-800 to-gray-900 p-4 md:p-6 rounded-3xl shadow-2xl text-white"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
     >
-      <h1 className="text-xl font-bold mb-4 text-center">Order Details</h1>
-      <div className="space-y-2 text-sm p-3 rounded-md">
+      <h1 className="text-2xl sm:text-3xl font-extrabold mb-4 sm:mb-6 text-center border-b border-gray-600 pb-2">
+        Order Details
+      </h1>
+      <div className="space-y-3 sm:space-y-4 text-sm sm:text-base p-2 sm:p-4 rounded-md">
         {orderInfo.productName && (
           <p>
-            <strong>Product:</strong> {orderInfo.productName}
+            <span className="font-bold">Product:</span> {orderInfo.productName}
           </p>
         )}
         {orderInfo.description && (
           <p>
-            <strong>Description:</strong> {orderInfo.description}
+            <span className="font-bold">Description:</span>{" "}
+            {orderInfo.description}
           </p>
         )}
         {orderInfo.quantity && (
           <p>
-            <strong>Quantity:</strong> {orderInfo.quantity}
+            <span className="font-bold">Quantity:</span> {orderInfo.quantity}
           </p>
         )}
         {productValue > 0 && (
           <p>
-            <strong>Product Price:</strong>{" "}
+            <span className="font-bold">Product Price:</span>{" "}
             {productValue.toLocaleString("en-US", {
               style: "currency",
               currency: "EUR",
@@ -56,7 +59,7 @@ export default function OrderDetails({ orderInfo }: OrderDetailsProps) {
         )}
         {deliveryFee > 0 && (
           <p>
-            <strong>Delivery Fee:</strong>{" "}
+            <span className="font-bold">Delivery Fee:</span>{" "}
             {deliveryFee.toLocaleString("en-US", {
               style: "currency",
               currency: "EUR",
@@ -65,19 +68,19 @@ export default function OrderDetails({ orderInfo }: OrderDetailsProps) {
         )}
         {orderInfo.deliveryInstructions && (
           <p>
-            <strong>Delivery Instructions:</strong>{" "}
+            <span className="font-bold">Delivery Instructions:</span>{" "}
             {orderInfo.deliveryInstructions}
           </p>
         )}
         {orderInfo.placedAt && (
           <p>
-            <strong>Order Placed:</strong>{" "}
+            <span className="font-bold">Order Placed:</span>{" "}
             {new Date(orderInfo.placedAt).toLocaleString()}
           </p>
         )}
         {orderInfo.productURL && (
           <p className="text-blue-400 underline">
-            <strong>Product URL:</strong>{" "}
+            <span className="font-bold">Product URL:</span>{" "}
             <a
               href={orderInfo.productURL}
               target="_blank"
@@ -89,7 +92,7 @@ export default function OrderDetails({ orderInfo }: OrderDetailsProps) {
         )}
         {orderInfo.preferredPickupPlace && (
           <p>
-            <strong>Pickup Place:</strong>{" "}
+            <span className="font-bold">Pickup Place:</span>{" "}
             {orderInfo.preferredPickupPlace.formatted_address}
           </p>
         )}
@@ -97,27 +100,27 @@ export default function OrderDetails({ orderInfo }: OrderDetailsProps) {
           <p className="text-green-400 font-semibold">Order Accepted</p>
         )}
         {orderInfo.images && orderInfo.images.length > 0 && (
-          <>
-            <strong>Images:</strong>
+          <div className="mt-4">
+            <strong className="block mb-2">Images:</strong>
             <Carousel className="w-full" opts={{ loop: true }}>
               <CarouselContent>
                 {orderInfo.images.map((image, index) => (
                   <CarouselItem key={index}>
-                    <Image
-                      src={image}
-                      alt={`Product Image ${index + 1}`}
-                      width={0}
-                      height={0}
-                      sizes="100vw"
-                      className="w-auto h-auto"
-                    />
+                    <div className="relative w-full h-48 sm:h-64 rounded-lg overflow-hidden shadow-lg">
+                      <Image
+                        src={image}
+                        alt={`Product Image ${index + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
+              <CarouselPrevious className="bg-white text-gray-800 hover:bg-gray-300 p-2 rounded-full" />
+              <CarouselNext className="bg-white text-gray-800 hover:bg-gray-300 p-2 rounded-full" />
             </Carousel>
-          </>
+          </div>
         )}
       </div>
     </motion.div>

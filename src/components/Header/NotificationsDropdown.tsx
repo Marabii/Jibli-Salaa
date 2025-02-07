@@ -3,12 +3,17 @@
 import { useState, useRef } from "react";
 import { FaBell } from "react-icons/fa";
 import Link from "next/link";
-import { NotificationType } from "@/interfaces/Websockets/Notification";
+import {
+  MessageNotificationContent,
+  NotificationType,
+} from "@/interfaces/Websockets/Notification";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 import useOutsideClick from "@/hooks/useOutsideClick";
 import { motion, AnimatePresence } from "framer-motion";
+import { ArrowBigRight, Check } from "lucide-react";
+import { NotificationContent } from "../../interfaces/Websockets/Notification";
 
 export default function NotificationsDropdown() {
   // Only use markAsRead from the custom hook now.
@@ -79,24 +84,17 @@ export default function NotificationsDropdown() {
                       : new Date().toString();
 
                   // Determine the display text based on notification type.
-                  let displayText = "";
-                  switch (notificationType) {
-                    case NotificationType.MESSAGE:
-                      displayText =
-                        (notificationData as any).content ||
-                        "You have a new message";
-                      break;
-                    case NotificationType.ORDER_ACCEPTED:
-                      displayText = "Your order has been accepted!";
-                      break;
-                    default:
-                      displayText = "You have a notification.";
-                  }
+                  const displayText = (notificationData as NotificationContent)
+                    .content;
 
-                  // For MESSAGE notifications, optionally include a link (e.g. to contact the sender).
                   const senderId =
                     "senderId" in notificationData
-                      ? (notificationData as any).senderId
+                      ? (notificationData as MessageNotificationContent)
+                          .senderId
+                      : null;
+                  const orderId =
+                    "orderId" in notificationData
+                      ? (notificationData as MessageNotificationContent).orderId
                       : null;
 
                   return (
@@ -109,26 +107,39 @@ export default function NotificationsDropdown() {
                       className="p-4 border-b last:border-none transition-colors bg-blue-50 hover:bg-gray-50"
                     >
                       {notificationType === NotificationType.MESSAGE &&
-                      senderId ? (
-                        <Link href={`/contact?recipientId=${senderId}`}>
-                          <div className="cursor-pointer">
-                            <p className="text-gray-800 font-medium">
-                              {displayText}
-                            </p>
-                            <p className="text-gray-500 text-xs">
-                              {new Date(timestamp).toLocaleString()}
-                            </p>
+                      senderId &&
+                      orderId ? (
+                        <div className="cursor-pointer">
+                          <p className="text-gray-800 font-medium">
+                            {displayText}
+                          </p>
+                          <p className="text-gray-500 text-xs">
+                            {new Date(timestamp).toLocaleString()}
+                          </p>
+                          <div className="flex gap-2 mt-2 flex-col sm:flex-row sm:justify-between sm:items-center">
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 markAsRead(notification.id);
                               }}
-                              className="mt-2 text-xs text-blue-500 hover:underline"
+                              className="mt-2 sm:mt-0 px-2 py-1 text-xs font-semibold text-white bg-purple-500 rounded hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-300 transition-colors duration-200"
                             >
-                              Mark As Read
+                              Mark as Read
+                              <Check className="inline-block ml-1" />
                             </button>
+                            <Link
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                markAsRead(notification.id);
+                              }}
+                              href={`/negotiate?recipientId=${senderId}&orderId=${orderId}`}
+                              className="mt-2 sm:mt-0 px-2 py-1 text-xs font-semibold text-purple-500 border border-purple-500 rounded hover:bg-purple-500 hover:text-white transition-colors duration-200"
+                            >
+                              Negotiate Page{" "}
+                              <ArrowBigRight className="inline-block ml-1" />
+                            </Link>
                           </div>
-                        </Link>
+                        </div>
                       ) : (
                         <div>
                           <p className="text-gray-800 font-medium">

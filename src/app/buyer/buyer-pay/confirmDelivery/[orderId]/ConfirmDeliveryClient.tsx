@@ -3,12 +3,13 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { BuyerOrderState } from "@/interfaces/Order/order";
 import apiClient from "@/utils/apiClient";
+import { CompletedOrder } from "@/interfaces/Order/order";
 
 interface ConfirmDeliveryClientProps {
-  orderInfo: BuyerOrderState["value"];
+  orderInfo: CompletedOrder;
 }
 
 export default function ConfirmDeliveryClient({
@@ -28,10 +29,6 @@ export default function ConfirmDeliveryClient({
       setConfirmationMessage(
         "Thank you for using our services! You will be redirected to the homepage."
       );
-      // Redirect to homepage after a delay
-      setTimeout(() => {
-        router.push("/");
-      }, 3000); // 3 seconds delay
     } catch (error) {
       console.error("Error confirming delivery:", error);
       alert("An error occurred while confirming delivery. Please try again.");
@@ -55,13 +52,13 @@ export default function ConfirmDeliveryClient({
       <div className="mb-6">
         <h2 className="text-xl font-semibold mb-2">{orderInfo.productName}</h2>
         <p className="text-gray-700 mb-4">{orderInfo.description}</p>
-        {orderInfo.images && orderInfo.images.length > 0 && (
-          <img
-            src={orderInfo.images[0]}
-            alt={orderInfo.productName}
-            className="w-full h-64 object-cover rounded-md"
-          />
-        )}
+        <Image
+          src={orderInfo.images[0]}
+          alt={orderInfo.productName}
+          width={500}
+          height={256}
+          className="w-full h-64 object-cover rounded-md"
+        />
       </div>
       <div className="mb-6">
         <h3 className="text-lg font-semibold mb-2">Order Details</h3>

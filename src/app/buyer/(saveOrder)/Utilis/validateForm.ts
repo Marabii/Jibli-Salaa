@@ -7,7 +7,7 @@ export type ValidateFormResponse = {
 };
 
 const validateForm = (buyerOrder: InitialOrder): ValidateFormResponse => {
-  let errors: Errors<InitialOrder> = {};
+  const errors: Errors<InitialOrder> = {};
   const regexProductName = /^[a-zA-Z0-9\s.,'-]{3,100}$/;
   const regexDescription = /^[a-zA-Z0-9\s.,'"-]{10,1000}$/;
   const regexDeliveryInstructions = /^[a-zA-Z0-9\s.,'"-]{10,1000}$/;

@@ -1,6 +1,8 @@
 export enum NotificationType {
   MESSAGE = "MESSAGE",
   ORDER_ACCEPTED = "ORDER_ACCEPTED",
+  ORDER_FINALIZED = "ORDER_FINALIZED",
+  NEGOTIATION_REJECTED = "NEGOTIATION_REJECTED",
 }
 
 export type NotificationContent =
@@ -18,6 +20,7 @@ export interface MessageNotificationContent {
   id: string;
   recipientId: string;
   senderId: string;
+  orderId: string;
   content: string;
   timestamp: Date;
   count?: number;

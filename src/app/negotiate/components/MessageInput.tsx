@@ -53,7 +53,7 @@ export default function MessageInput({ onSendMessage }: MessageInputProps) {
   }, [message]);
 
   return (
-    <div className="flex mt-4 w-full">
+    <div className="flex h-[40px] mt-4 w-full">
       <motion.textarea
         ref={textareaRef}
         className="flex-1 rounded-l-lg px-2 md:px-4 py-2 focus:outline-none bg-gray-200 text-gray-800 placeholder-gray-500 resize-none overflow-hidden"
@@ -67,7 +67,7 @@ export default function MessageInput({ onSendMessage }: MessageInputProps) {
       />
       <motion.button
         onClick={handleSend}
-        className="bg-white text-black flex items-center justify-center rounded-r-lg hover:bg-gray-300 transition-colors
+        className="bg-white cursor-pointer text-black flex items-center justify-center rounded-r-lg hover:bg-gray-300 transition-colors
                    w-10 sm:w-12 md:w-14 h-full"
         whileTap={{ scale: 0.95 }}
         disabled={!message.trim()} // Disable button if message is empty

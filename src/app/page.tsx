@@ -5,16 +5,12 @@ import CallToActionSection from "@/components/HomePage/CallToActionSection";
 import HeroSection from "@/components/HomePage/HeroSection";
 import HowItWorksSection from "@/components/HomePage/HowItWorksSection";
 import Dashboard from "@/components/HomePage/Dashboard";
-import { Suspense } from "react";
-import Tetromino from "@/components/Loading/Tetromino/Tetromino";
 
-export default function HomePage() {
+export default async function HomePage() {
   return (
     <div className="font-sans bg-gray-50 dark:bg-primary text-gray-900 dark:text-white">
       {/* Dashboard Section*/}
-      <Suspense fallback={<></>}>
-        <Dashboard />
-      </Suspense>
+      <Dashboard />
 
       {/* Hero Section */}
       <HeroSection />

@@ -60,8 +60,12 @@ export default async function ManageOrders() {
                       {order.quantity}
                     </p>
                     <p className="text-gray-800">
-                      <span className="font-medium">Value:</span> $
-                      {order.estimatedValue.toFixed(2)}
+                      <span className="font-medium">Value:</span> €
+                      {order.actualValue.toFixed(2)}
+                    </p>
+                    <p className="text-gray-800">
+                      <span className="font-medium">Delivery Fee:</span> €
+                      {order.actualDeliveryFee.toFixed(2)}
                     </p>
                     <p className="text-gray-800 flex items-center">
                       <span className="font-medium mr-2">Status:</span>
@@ -94,19 +98,19 @@ export default async function ManageOrders() {
                   {/* Conditional actions based on orderStatus */}
                   <div className="flex space-x-4">
                     {order.orderStatus === "ORDER_FINALIZED" && (
-                      <Link href={`/buyer/buyer-pay/${order._id}`}>
-                        <a className="flex-1 text-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300">
-                          Proceed to Payment
-                        </a>
+                      <Link
+                        className="flex-1 text-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300"
+                        href={`/buyer/buyer-pay/${order._id}`}
+                      >
+                        Proceed to Payment
                       </Link>
                     )}
                     {order.orderStatus === "ITEM_PAID" && (
                       <Link
+                        className="flex-1 text-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300"
                         href={`/buyer/buyer-pay/confirmDelivery/${order._id}`}
                       >
-                        <a className="flex-1 text-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300">
-                          Confirm Delivery
-                        </a>
+                        Confirm Delivery
                       </Link>
                     )}
                     {/* Additional actions can be added here based on other statuses */}

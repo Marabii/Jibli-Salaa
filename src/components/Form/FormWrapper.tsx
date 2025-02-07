@@ -25,6 +25,7 @@ export default function FormWrapper<T>({
   action,
   redirectTo,
   className,
+  onSuccess,
 }: FormWrapperProps<T>) {
   const router = useRouter();
   const [additionalData, setAdditionalData] = useState<FormData>(
@@ -40,6 +41,13 @@ export default function FormWrapper<T>({
     ActionReturn<T>,
     FormData
   >(action, null);
+
+  //When the action succeeds, call onSuccess.
+  useEffect(() => {
+    if (!pending && actionReturn?.status === "success" && onSuccess) {
+      onSuccess();
+    }
+  }, [pending, actionReturn, onSuccess]);
 
   // Redirect user to another directory upon successful server action
   useEffect(() => {

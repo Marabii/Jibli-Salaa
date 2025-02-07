@@ -100,5 +100,6 @@ export const config = {
     "/buyer/manage-orders",
     "/contact",
     "/negotiate",
+    "/negotiate/validate-negotiations",
   ],
 };

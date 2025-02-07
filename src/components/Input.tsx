@@ -19,6 +19,7 @@ interface InputProps {
   initialValue?: string | number;
   required?: boolean;
   labelBgColor?: string;
+  labelTextColor?: string;
 }
 
 export default function Input({
@@ -35,6 +36,7 @@ export default function Input({
   textareaHeight = "100px",
   required = false,
   labelBgColor = "white",
+  labelTextColor = "black",
   ...props
 }: InputProps) {
   // Function to parse pattern and flags from a regex string
@@ -90,11 +92,11 @@ export default function Input({
       <div ref={inputRef} className="relative mt-5 mb-1 w-full">
         <label
           htmlFor={name}
-          style={{ backgroundColor: labelBgColor }}
+          style={{ backgroundColor: labelBgColor, color: labelTextColor }}
           className={twMerge(
             "absolute left-2 px-1 text-xs -z-10 transition-all duration-300",
             isFocused || (currentValue !== null && currentValue !== "")
-              ? "-top-[0.5rem] z-20 text-black"
+              ? "-top-[0.5rem] z-20"
               : "top-1/2 -translate-y-1/2 text-md text-gray-500",
             error && "text-red-500"
           )}

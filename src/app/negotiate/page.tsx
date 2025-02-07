@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useState, useRef, type JSX, useCallback } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  type JSX,
+} from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import SockJS from "sockjs-client";
@@ -23,7 +29,7 @@ import {
   OrderAcceptedNotificationContent,
 } from "@/interfaces/Websockets/Notification";
 
-// Framer Motion variants for simple fade/slide animations
+// --- Framer Motion Variants ---
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -39,57 +45,57 @@ const itemVariants = {
 
 export default function NegotiatePage(): JSX.Element {
   const searchParams = useSearchParams();
-  const chatRef = useRef<HTMLDivElement>(null);
   const orderId = searchParams.get("orderId") || "";
   const recipientId = searchParams.get("recipientId") || "";
 
-  // Basic error handling if required params are missing
-  if (!recipientId || !orderId) {
+  // Validate required search parameters
+  if (!orderId || !recipientId) {
     throw new Error("Missing required parameters: recipientId or orderId");
   }
 
+  // --- Local State Definitions ---
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [recipientInfo, setRecipientInfo] = useState<UserInfo | null>(null);
-
-  const [connectionEstablished, setConnectionEstablished] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [orderInfo, setOrderInfo] = useState<CompletedOrder | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [connectionEstablished, setConnectionEstablished] = useState(false);
 
+  const chatRef = useRef<HTMLDivElement>(null);
   const stompClientRef = useRef<Client | null>(null);
 
-  // Get notifications from Redux
+  // --- Redux Notifications ---
   const notifications = useSelector(
     (state: RootState) => state.notifications.notifications
   );
 
-  // -- 1. Fetch user info and recipient info
+  // --- Helper: Fetch User & Recipient Info ---
   useEffect(() => {
-    const fetchUserInfo = async () => {
+    async function fetchUserInfos() {
       try {
-        const userInfoResult: ApiResponse<UserInfo> = await apiClient(
+        const userResponse: ApiResponse<UserInfo> = await apiClient(
           "/api/protected/getUserInfo"
         );
-        setUserInfo(userInfoResult.data);
+        setUserInfo(userResponse.data);
 
-        const recipientInfoResult: ApiResponse<UserInfo> = await apiClient(
+        const recipientResponse: ApiResponse<UserInfo> = await apiClient(
           `/api/protected/getUserInfo/${recipientId}`
         );
-        setRecipientInfo(recipientInfoResult.data);
+        setRecipientInfo(recipientResponse.data);
       } catch (error) {
+        console.error("Error fetching user info:", error);
         alert("Something went wrong while fetching users. Please try again.");
-        console.error("fetchUserInfo error:", error);
       }
-    };
-
-    fetchUserInfo();
+    }
+    fetchUserInfos();
   }, [recipientId]);
 
-  // Helper function: Fetch order info
+  // --- Helper: Fetch Order Info ---
   const fetchOrderInfo = useCallback(async () => {
     if (!orderId) return;
     try {
       const response: ApiResponse<CompletedOrder> = await apiClient(
-        `/api/getOrderById/${orderId}`
+        `/api/getOrderById/${orderId}`,
+        { next: { tags: ["fetchOrderInfoTag"] } }
       );
       if (response?.data) {
         setOrderInfo(response.data);
@@ -99,26 +105,27 @@ export default function NegotiatePage(): JSX.Element {
     }
   }, [orderId]);
 
-  // -- 2. Fetch order info initially when orderId changes
+  // Initial fetch and re-fetch on orderId change
   useEffect(() => {
     fetchOrderInfo();
   }, [fetchOrderInfo, orderId]);
 
-  // -- NEW: Refetch order info when an ORDER_ACCEPTED notification is received
+  // --- Refetch Order Info on Notifications ---
   useEffect(() => {
     const orderAcceptedNotification = notifications.find((notif) => {
-      return (
-        notif.notificationType === NotificationType.ORDER_ACCEPTED &&
-        (notif.notificationData as OrderAcceptedNotificationContent).orderId ===
-          orderId
-      );
+      if (notif.notificationType !== NotificationType.MESSAGE) {
+        const notifData =
+          notif.notificationData as OrderAcceptedNotificationContent;
+        return notifData.orderId === orderId;
+      }
+      return false;
     });
     if (orderAcceptedNotification) {
       fetchOrderInfo();
     }
   }, [fetchOrderInfo, notifications, orderId]);
 
-  // -- 3. Initialize and connect WebSocket (SockJS + STOMP)
+  // --- Initialize and Connect WebSocket (SockJS + STOMP) ---
   useEffect(() => {
     if (userInfo && !stompClientRef.current) {
       const socket = new SockJS(`${process.env.NEXT_PUBLIC_SERVERURL}/ws`);
@@ -127,10 +134,9 @@ export default function NegotiatePage(): JSX.Element {
 
       stompClient.connect(
         {},
-        (frame) => {
+        () => {
           setConnectionEstablished(true);
-
-          // Subscribe to incoming messages
+          // Subscribe to the user-specific message queue
           stompClient.subscribe(
             `/user/${userInfo._id}/queue/messages`,
             (message) => {
@@ -138,8 +144,7 @@ export default function NegotiatePage(): JSX.Element {
               setMessages((prev) => [...prev, receivedMessage]);
             }
           );
-
-          // Register user on server side
+          // Register the user on the server side
           stompClient.send(
             "/app/user.addUser",
             {},
@@ -147,12 +152,11 @@ export default function NegotiatePage(): JSX.Element {
           );
         },
         (error) => {
-          console.error("Connection error:", error);
+          console.error("WebSocket connection error:", error);
           alert("Something went wrong connecting to chat. Please try again.");
         }
       );
 
-      // Cleanup on unmount
       return () => {
         if (stompClientRef.current && connectionEstablished) {
           stompClientRef.current.disconnect(() => {
@@ -162,27 +166,26 @@ export default function NegotiatePage(): JSX.Element {
         }
       };
     }
-  }, [connectionEstablished, userInfo]);
+  }, [userInfo, connectionEstablished]);
 
-  // -- 4. Fetch chat history
+  // --- Fetch Chat History ---
   useEffect(() => {
-    const fetchUserChatHistory = async () => {
+    async function fetchChatHistory() {
       try {
         const result: ApiResponse<ChatMessage[]> = await apiClient(
           `/api/protected/getUserChatHistory/${recipientId}`
         );
         setMessages(result.data || []);
       } catch (error) {
-        console.error("Failed to fetch user chat history:", error);
+        console.error("Failed to fetch chat history:", error);
       }
-    };
-
+    }
     if (recipientId) {
-      fetchUserChatHistory();
+      fetchChatHistory();
     }
   }, [recipientId]);
 
-  // Scroll down when a new message is received
+  // --- Auto-scroll Chat on New Message ---
   useEffect(() => {
     if (chatRef.current) {
       chatRef.current.scrollTo({
@@ -192,65 +195,53 @@ export default function NegotiatePage(): JSX.Element {
     }
   }, [messages]);
 
-  // Send message function
-  const sendMessage = (messageContent: string) => {
-    if (!messageContent.trim()) return;
+  // --- Send Message Handler ---
+  const sendMessage = (content: string) => {
+    if (!content.trim() || !connectionEstablished || !userInfo) return;
 
-    if (connectionEstablished && stompClientRef.current) {
-      const chatMessage: Partial<ChatMessage> = {
-        orderId,
-        recipientId,
-        senderId: userInfo?._id,
-        content: messageContent,
-        timestamp: new Date(),
-      };
+    const chatMessage: Partial<ChatMessage> = {
+      orderId,
+      recipientId,
+      senderId: userInfo._id,
+      content,
+      timestamp: new Date(),
+    };
 
-      // Send over STOMP
-      stompClientRef.current.send("/app/chat", {}, JSON.stringify(chatMessage));
-
-      // Immediately add to local state so the user sees it
-      setMessages((prev) => [
-        ...prev,
-        chatMessage as ChatMessage, // cast since we know we have everything
-      ]);
-    }
+    stompClientRef.current?.send("/app/chat", {}, JSON.stringify(chatMessage));
+    setMessages((prev) => [...prev, chatMessage as ChatMessage]);
   };
 
-  // -- 6. Handle traveler acceptance
-  async function handleAcceptOrder(orderId: string) {
+  // --- Traveler Accept Order Handler ---
+  const handleAcceptOrder = async (orderId: string) => {
     try {
       await apiClient(`/api/protected/acceptOrder/${orderId}`, {
         method: "PUT",
       });
-
-      // Re-fetch the order info to update local state
       fetchOrderInfo();
     } catch (error) {
       console.error("Cannot accept order:", error);
       alert("Cannot accept order. Please try again.");
     }
-  }
+  };
 
   return (
     <motion.div
-      className="bg-gray-50 mt-10 text-gray-800 flex flex-col md:flex-row"
+      className="bg-gray-50 mt-10 text-gray-800 flex flex-col xl:flex-row"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
-      {/* Left panel: Chat section */}
+      {/* --- Left Panel: Chat Section --- */}
       <motion.div
-        className="flex-1 flex flex-col p-4 h-fit sticky top-[80px] md:p-6 border-r border-gray-300"
+        className="flex-1 flex flex-col p-4 h-fit sticky xl:top-[80px] md:p-6 border-r border-gray-300"
         variants={itemVariants}
       >
         <h2 className="text-2xl font-bold mb-4">
           Chat with: {recipientInfo?.name}
         </h2>
-
-        {/* Chat messages container */}
         <div
           ref={chatRef}
-          className="flex-1 max-h-[600px] overflow-y-auto grid grid-cols-1 auto-rows-min space-y-2 pb-4"
+          className="flex-1 pr-2 max-h-[600px] overflow-y-auto grid grid-cols-1 auto-rows-min space-y-2 pb-4"
         >
           <AnimatePresence>
             {messages.map((msg, index) => {
@@ -268,14 +259,12 @@ export default function NegotiatePage(): JSX.Element {
             })}
           </AnimatePresence>
         </div>
-
-        {/* Chat input */}
         <MessageInput onSendMessage={sendMessage} />
       </motion.div>
 
-      {/* Right panel: Negotiation & Order Details */}
+      {/* --- Right Panel: Negotiation & Order Details --- */}
       <motion.div
-        className="w-full md:w-1/3 flex flex-col p-4 md:p-6"
+        className="w-full xl:w-1/3 flex flex-col p-4 xl:p-6"
         variants={itemVariants}
       >
         <NegotiationControls
@@ -283,8 +272,8 @@ export default function NegotiatePage(): JSX.Element {
           recipientInfo={recipientInfo}
           orderInfo={orderInfo}
           handleAcceptOrder={handleAcceptOrder}
+          onSuccess={fetchOrderInfo}
         />
-
         {orderInfo && (
           <motion.div
             className="mt-6"

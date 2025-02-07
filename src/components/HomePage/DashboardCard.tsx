@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ORDER_STATUS } from "@/interfaces/Order/ORDER_STATUS";
 import { CompletedOrder } from "@/interfaces/Order/order";
 import { Trip } from "@/interfaces/Traveler/Traveler";
+import Image from "next/image";
 
 type DashboardCardProps = {
   type: "order" | "trip";
@@ -23,10 +24,13 @@ const DashboardCard = ({ type, data }: DashboardCardProps) => {
           <h3 className="text-xl font-semibold mb-2">
             {(data as CompletedOrder).productName}
           </h3>
-          <img
+          <Image
             className="w-full h-48 object-cover mb-4 rounded"
             src={(data as CompletedOrder).images[0]}
             alt={(data as CompletedOrder).productName}
+            width={0}
+            height={192}
+            sizes="100vw"
           />
           {/* Conditional Rendering Based on Order Status */}
           {(data as CompletedOrder).orderStatus === ORDER_STATUS.ITEM_PAID && (
@@ -47,7 +51,7 @@ const DashboardCard = ({ type, data }: DashboardCardProps) => {
           {(data as CompletedOrder).orderStatus === ORDER_STATUS.DELIVERED && (
             <div>
               <p className="mb-2 text-secondary">
-                You've successfully received your product. Share your
+                You&apos;ve successfully received your product. Share your
                 experience!
               </p>
               <Link

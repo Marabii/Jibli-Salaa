@@ -4,16 +4,22 @@ import apiServer from "@/utils/apiServer";
 import DashboardCard from "./DashboardCard";
 import { CompletedOrder } from "@/interfaces/Order/order";
 import { Trip } from "@/interfaces/Traveler/Traveler";
+import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 
 export default async function DashboardHomePage() {
   let orders: CompletedOrder[] = [];
   let trips: Trip[] = [];
 
   try {
-    [orders, trips] = await Promise.all([
+    const [ordersResponse, tripsResponse]: [
+      ApiResponse<CompletedOrder[]>,
+      ApiResponse<Trip[]>
+    ] = await Promise.all([
       apiServer("/api/protected/getOwnOrders"),
       apiServer("/api/protected/getOwnTrips"),
     ]);
+    orders = ordersResponse.data;
+    trips = tripsResponse.data;
   } catch (e) {
     console.log("You are not logged in, dashboard won't show up");
   }

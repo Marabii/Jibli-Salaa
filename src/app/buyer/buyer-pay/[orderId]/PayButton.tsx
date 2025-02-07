@@ -3,19 +3,16 @@
 import { useState, useEffect } from "react";
 import apiClient from "@/utils/apiClient";
 import { useRouter } from "next/navigation";
+import { CompletedOrder } from "@/interfaces/Order/order";
+import { ORDER_STATUS } from "@/interfaces/Order/ORDER_STATUS";
 
-export default function PayButton({ orderId }: { orderId: string }) {
+export default function PayButton({
+  orderInfo,
+}: {
+  orderInfo: CompletedOrder;
+}) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-
-  // useEffect(() => {
-  //   const fetchOrderId = async () => {
-  //     const { orderId } = await params;
-  //     console.log(orderId);
-  //     setOrderId(orderId);
-  //   };
-  //   fetchOrderId();
-  // }, [params]);
 
   useEffect(() => {});
   const handlePay = async () => {
@@ -26,7 +23,7 @@ export default function PayButton({ orderId }: { orderId: string }) {
         {
           method: "POST",
           body: JSON.stringify({
-            orderId: orderId,
+            orderId: orderInfo._id,
             successUrl: `${process.env.NEXT_PUBLIC_CLIENTURL}/buyer/buyer-pay/success`,
             cancelUrl: `${process.env.NEXT_PUBLIC_CLIENTURL}/buyer/buyer-pay/error`,
           }),
@@ -49,17 +46,28 @@ export default function PayButton({ orderId }: { orderId: string }) {
     }
   };
 
-  if (!orderId) return <div>Loading</div>;
+  if (!orderInfo) return <div>Loading</div>;
 
+  const disabled =
+    loading || orderInfo.orderStatus !== ORDER_STATUS.ORDER_FINALIZED;
   return (
-    <button
-      onClick={handlePay}
-      disabled={loading}
-      className={`w-full bg-blue-600 text-white py-3 rounded-lg font-semibold ${
-        loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
-      }`}
-    >
-      {loading ? "Processing..." : "PAY"}
-    </button>
+    <>
+      {orderInfo.orderStatus !== ORDER_STATUS.ORDER_FINALIZED && (
+        <p>
+          Finalize the negotiation terms with the traveler before paying for the
+          product
+        </p>
+      )}
+
+      <button
+        onClick={handlePay}
+        disabled={disabled}
+        className={`w-full bg-blue-600 text-white py-3 rounded-lg font-semibold ${
+          loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
+        }`}
+      >
+        {loading ? "Processing..." : "PAY"}
+      </button>
+    </>
   );
 }

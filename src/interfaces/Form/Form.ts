@@ -8,6 +8,7 @@ export interface FormWrapperProps<T> {
     actionReturn: ActionReturn<T>,
     formData: FormData
   ) => Promise<ActionReturn<T>>;
+  onSuccess?: () => void;
 }
 
 export interface AdditionalDataContextType<T> {

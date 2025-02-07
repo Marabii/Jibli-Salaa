@@ -7,7 +7,7 @@ import { UserInfo } from "@/interfaces/userInfo/userInfo";
 import { ROLE } from "@/interfaces/userInfo/userRole";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import { Trip } from "@/interfaces/Traveler/Traveler";
-import React from "react";
+import { redirect } from "next/navigation";
 
 export default async function SelectTrip() {
   let userInfo: UserInfo;
@@ -66,7 +66,7 @@ export default async function SelectTrip() {
 
   // Check if Trips Exist
   if (!tripsOfTraveler || tripsOfTraveler.length === 0) {
-    throw new Error("No trips found for the traveler.");
+    redirect("/traveler");
   }
 
   return (
@@ -87,7 +87,7 @@ export default async function SelectTrip() {
             >
               <div className="flex items-center space-x-4">
                 <div className="flex w-full items-center justify-between">
-                  <p className="w-fit align-middle">
+                  <p className="w-fit align-middle mr-5">
                     From{" "}
                     <span className="italic font-semibold">
                       {trip.itinerary.from.formatted_address}
