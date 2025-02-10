@@ -6,6 +6,8 @@ import { ROLE } from "@/interfaces/userInfo/userRole";
 import { CompletedOrder } from "@/interfaces/Order/order";
 import Tetromino from "../../../../components/Loading/Tetromino/Tetromino";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
+import ImgsCarousel from "./ImgsCarousel";
+import CollapsibleText from "./CollapsibleText"; // Import the client component
 
 export default async function BuyerPay({
   params,
@@ -50,23 +52,14 @@ export default async function BuyerPay({
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
             <div className="overflow-hidden rounded-xl">
-              <Image
-                src={orderInfo.images[0]}
-                alt={orderInfo.productName}
-                layout="responsive"
-                width={500}
-                height={500}
-                className="transition-transform duration-300 ease-in-out hover:scale-105"
-              />
+              <ImgsCarousel order={orderInfo} />
             </div>
             <div className="flex flex-col justify-center">
               <div>
                 <h3 className="text-xl font-semibold">Product description:</h3>
-                <p className="text-gray-300 leading-relaxed mb-6">
-                  {orderInfo.description}
-                </p>
+                <CollapsibleText text={orderInfo.description} />
               </div>
-              <div className="space-y-4">
+              <div className="space-y-4 mt-3">
                 <h3 className="text-xl font-semibold">
                   Quantity:{" "}
                   <span className="text-lg">{orderInfo.quantity}</span>

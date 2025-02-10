@@ -170,6 +170,15 @@ export default function NegotiationControls({
               The traveler must accept the order before negotiation can begin.
             </p>
           </div>
+        ) : orderInfo.orderStatus === ORDER_STATUS.FUNDS_TRANSFERRED ? (
+          <div className="text-center">
+            <h2 className="text-xl sm:text-2xl font-bold text-yellow-200 mb-2">
+              Funds were transferred to the traveler
+            </h2>
+            <p className="mt-2 sm:mt-3 text-base sm:text-lg">
+              Sign up as a traveler to make some money.
+            </p>
+          </div>
         ) : null}
       </motion.div>
     );

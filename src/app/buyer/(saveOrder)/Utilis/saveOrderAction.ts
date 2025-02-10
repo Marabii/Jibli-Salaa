@@ -24,7 +24,7 @@ export async function saveOrder(
 
   try {
     await handleSubmit(initialOrderDetails);
-    revalidatePath("/");
+    revalidatePath("/buyer/manage-orders");
     return { status: "success", data: initialOrderDetails };
   } catch (error: unknown) {
     if (error instanceof Error) {

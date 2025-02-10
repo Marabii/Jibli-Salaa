@@ -13,6 +13,8 @@ export default function FormMapInput() {
     formatted_address: "",
     lat: null,
     lng: null,
+    countryName: "",
+    countryCode: "",
   });
 
   // On component mount or when additionalData changes, try to restore the saved location
@@ -40,8 +42,6 @@ export default function FormMapInput() {
     formData.append("preferredPickupPlace", JSON.stringify(loc));
     addAdditionalData(formData);
   };
-
-  console.log(selectedLocation);
 
   return (
     <div className="flex flex-col items-center w-full max-w-screen-xl mx-auto p-4">

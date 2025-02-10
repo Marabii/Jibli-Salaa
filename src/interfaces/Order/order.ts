@@ -29,6 +29,7 @@ export interface CompletedOrder {
 export type InitialOrder = Omit<
   CompletedOrder,
   | "buyerId"
+  | "travelerId"
   | "placedAt"
   | "orderStatus"
   | "images"

@@ -1,16 +1,17 @@
 "use client";
 
-import { CompletedOrder } from "@/interfaces/Order/order";
-import { ORDER_STATUS } from "@/interfaces/Order/ORDER_STATUS";
-import { motion } from "framer-motion";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "./ui/carousel";
+} from "@/components/Carousel/carousel";
+import { CompletedOrder } from "@/interfaces/Order/order";
+import { ORDER_STATUS } from "@/interfaces/Order/ORDER_STATUS";
+import { motion } from "framer-motion";
 import Image from "next/image";
+import ImgsCarousel from "./ImgsCarousel";
 
 type OrderDetailsProps = {
   orderInfo: CompletedOrder;
@@ -102,24 +103,7 @@ export default function OrderDetails({ orderInfo }: OrderDetailsProps) {
         {orderInfo.images && orderInfo.images.length > 0 && (
           <div className="mt-4">
             <strong className="block mb-2">Images:</strong>
-            <Carousel className="w-full" opts={{ loop: true }}>
-              <CarouselContent>
-                {orderInfo.images.map((image, index) => (
-                  <CarouselItem key={index}>
-                    <div className="relative w-full h-48 sm:h-64 rounded-lg overflow-hidden shadow-lg">
-                      <Image
-                        src={image}
-                        alt={`Product Image ${index + 1}`}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="bg-white text-gray-800 hover:bg-gray-300 p-2 rounded-full" />
-              <CarouselNext className="bg-white text-gray-800 hover:bg-gray-300 p-2 rounded-full" />
-            </Carousel>
+            <ImgsCarousel order={orderInfo} />
           </div>
         )}
       </div>

@@ -4,7 +4,7 @@ import AboutSection from "@/components/HomePage/AboutSection";
 import CallToActionSection from "@/components/HomePage/CallToActionSection";
 import HeroSection from "@/components/HomePage/HeroSection";
 import HowItWorksSection from "@/components/HomePage/HowItWorksSection";
-import Dashboard from "@/components/HomePage/Dashboard";
+import Dashboard from "@/components/HomePage/DashBoard/Dashboard";
 
 export default async function HomePage() {
   return (

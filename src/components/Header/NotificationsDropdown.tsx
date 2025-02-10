@@ -45,7 +45,7 @@ export default function NotificationsDropdown() {
         className="relative cursor-pointer text-gray-600 hover:text-black"
         onClick={handleToggleDropdown}
       >
-        <FaBell size={24} />
+        <FaBell color="white" size={24} />
         {notifications.length > 0 && (
           <span className="absolute top-0 right-0 -mt-1 -mr-1 bg-green-500 border-2 border-white rounded-full w-3 h-3" />
         )}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import MapForTravelers from "./components/mapForTravelers";
 import { CompletedOrder } from "@/interfaces/Order/order";
 import apiClient from "@/utils/apiClient";
@@ -12,7 +12,15 @@ import type { Route } from "./components/mapForTravelers";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiSearch, FiSmile, FiRefreshCw } from "react-icons/fi";
 import DatePicker from "react-datepicker";
+import type { StylesConfig } from "react-select";
 
+// Define an Option type for react-select
+interface OptionType {
+  value: string;
+  label: string;
+}
+
+// Dynamically import react-select (this remains unchanged)
 const Select = dynamic(() => import("react-select"), { ssr: false });
 
 interface ICountry {
@@ -50,15 +58,64 @@ export default function TravelersPage() {
     destinationLocation: { lat: parseFloat(latEnd), lng: parseFloat(lngEnd) },
   };
 
-  const countryOptions = getCountries().map((country: ICountry) => ({
-    value: country.name,
-    label: country.name,
-  }));
+  // Map countries to options with proper typing
+  const countryOptions: OptionType[] = getCountries().map(
+    (country: ICountry) => ({
+      value: country.name,
+      label: country.name,
+    })
+  );
 
-  const handleCountrySelect = (selectedOptions: any) => {
-    const selectedCountries = selectedOptions.map(
-      (option: any) => option.value
-    );
+  // Create custom styles with explicit types to avoid implicit 'any'
+  const customStyles: StylesConfig<OptionType, true> = {
+    control: (base, state) => ({
+      ...base,
+      minHeight: "48px",
+
+      borderRadius: "0.5rem",
+      borderColor: "#4B5563",
+      boxShadow: "none",
+      "&:hover": {
+        borderColor: "#6B7280",
+      },
+    }),
+    option: (base, state) => ({
+      ...base,
+      color: "#374151",
+
+      backgroundColor:
+        state.isFocused || state.isSelected ? "#F3F4F6" : "white",
+      ":active": {
+        backgroundColor: "#E5E7EB",
+        color: "#1F2937",
+      },
+    }),
+    multiValue: (base, state) => ({
+      ...base,
+      backgroundColor: "#6B21A8",
+      color: "white",
+    }),
+    multiValueLabel: (base, state) => ({
+      ...base,
+      color: "white",
+    }),
+    multiValueRemove: (base, state) => ({
+      ...base,
+      color: "white",
+      ":hover": {
+        backgroundColor: "#4C1D95",
+        color: "white",
+      },
+    }),
+  };
+
+  // Update onChange handler to expect an array of OptionType (or null)
+  const handleCountrySelect = (selectedOptions: OptionType[] | null) => {
+    if (!selectedOptions) {
+      setCountries([]);
+      return;
+    }
+    const selectedCountries = selectedOptions.map((option) => option.value);
     setCountries(selectedCountries);
   };
 
@@ -75,7 +132,7 @@ export default function TravelersPage() {
     }
   };
 
-  // Helper to get orders placed between date range
+  // Helper to get orders placed between a date range
   const fetchByDateRange = async (start: Date, end: Date) => {
     try {
       const startISO = start.toISOString();
@@ -109,7 +166,7 @@ export default function TravelersPage() {
         finalOrders = response.data || [];
       }
 
-      // If date range is specified, intersect with date-range results
+      // If a date range is specified, intersect with the date-range results
       if (startDate && endDate) {
         const byDates = await fetchByDateRange(startDate, endDate);
         const byDatesIds = new Set(byDates.map((o) => o._id));
@@ -174,11 +231,6 @@ export default function TravelersPage() {
       {/* Filter Card */}
       <motion.form
         onSubmit={handleSearch}
-        /* 
-          Convert to a grid for consistent alignment:
-          - 1 column on small screens
-          - 3 columns on medium and above
-        */
         className="bg-white w-full grid grid-cols-1 md:grid-cols-3 gap-6 border border-black rounded-lg mb-8 p-6"
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -196,50 +248,12 @@ export default function TravelersPage() {
             id="Countries"
             options={countryOptions}
             isMulti
-            className="basic-multi-select"
+            className="basic-multi-select z-30"
             classNamePrefix="select"
             placeholder="Select Countries"
             onChange={handleCountrySelect}
-            styles={{
-              control: (baseStyles) => ({
-                ...baseStyles,
-                minHeight: "48px",
-                borderRadius: "0.5rem",
-                borderColor: "#4B5563",
-                boxShadow: "none",
-                "&:hover": {
-                  borderColor: "#6B7280",
-                },
-              }),
-              option: (baseStyles, state) => ({
-                ...baseStyles,
-                color: "#374151",
-                backgroundColor:
-                  state.isFocused || state.isSelected ? "#F3F4F6" : "white",
-                ":active": {
-                  backgroundColor: "#E5E7EB",
-                  color: "#1F2937",
-                },
-              }),
-              multiValue: (baseStyles) => ({
-                ...baseStyles,
-                backgroundColor: "#6B21A8",
-                color: "white",
-              }),
-              multiValueLabel: (baseStyles) => ({
-                ...baseStyles,
-                color: "white",
-              }),
-              multiValueRemove: (baseStyles) => ({
-                ...baseStyles,
-                color: "white",
-                ":hover": {
-                  backgroundColor: "#4C1D95",
-                  color: "white",
-                },
-              }),
-            }}
-            theme={(theme) => ({
+            styles={customStyles}
+            theme={(theme: any) => ({
               ...theme,
               borderRadius: 8,
               colors: {

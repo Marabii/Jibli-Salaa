@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, createContext, useCallback } from "react";
+import { useEffect, useState, createContext, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   ActionReturn,
@@ -52,7 +52,6 @@ export default function FormWrapper<T>({
   // Redirect user to another directory upon successful server action
   useEffect(() => {
     if (!pending && actionReturn?.status === "success" && redirectTo) {
-      console.log("rerouting the user...");
       router.replace(redirectTo);
     }
   }, [pending, actionReturn, redirectTo, router]);
@@ -122,22 +121,33 @@ function mergeFormData(
 ): FormData {
   const mergedFormData = new FormData();
 
-  // Append all entries from initialFormData
-  for (const [key, value] of initialFormData.entries()) {
-    mergedFormData.append(key, value);
-  }
+  if (overwriteExisting) {
+    // 1. Collect all keys from newFormData
+    const newKeys = new Set<string>();
+    for (const [key] of newFormData.entries()) {
+      newKeys.add(key);
+    }
 
-  // Iterate through newFormData
-  for (const [key, value] of newFormData.entries()) {
-    if (overwriteExisting) {
-      // Use 'set' to overwrite existing keys
-      mergedFormData.set(key, value);
-    } else {
-      // Append normally, allowing duplicate keys
+    // 2. Append entries from initialFormData only if the key isn't in newFormData.
+    for (const [key, value] of initialFormData.entries()) {
+      if (!newKeys.has(key)) {
+        mergedFormData.append(key, value);
+      }
+    }
+
+    // 3. Append all entries from newFormData
+    for (const [key, value] of newFormData.entries()) {
+      mergedFormData.append(key, value);
+    }
+  } else {
+    // If not overwriting, just append everything.
+    for (const [key, value] of initialFormData.entries()) {
+      mergedFormData.append(key, value);
+    }
+    for (const [key, value] of newFormData.entries()) {
       mergedFormData.append(key, value);
     }
   }
-
   return mergedFormData;
 }
 

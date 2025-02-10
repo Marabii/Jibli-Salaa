@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import apiClient from "@/utils/apiClient";
 import {
   APIProvider,
   Map,
@@ -11,12 +10,9 @@ import {
   InfoWindow,
 } from "@vis.gl/react-google-maps";
 import { AddressObject } from "@/interfaces/Map/AddressObject";
-import { UserInfo } from "@/interfaces/userInfo/userInfo";
 import Link from "next/link";
 import { PolyLine } from "./Polyline";
 import { CompletedOrder } from "@/interfaces/Order/order";
-import Image from "next/image";
-import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
@@ -209,139 +205,153 @@ function Directions({
 }
 
 /**
- * ShowBuyers displays multiple orders on the map.
- * - Groups orders by identical lat/lng
- * - Sorts each group by highest fee first
- * - Slightly offsets them so they're not 100% stacked
+ * Displays orders on the map.
+ *
+ * - Orders are grouped by location (using exact lat,lng).
+ * - For groups with a single order, a normal marker is shown.
+ * - For groups with multiple orders, a single cluster marker is displayed
+ *   with the count of orders.
+ * - Clicking a cluster marker opens an info window that lists all orders
+ *   (sorted descending by initialDeliveryFee) with beautiful styling.
  */
 function ShowBuyers({ orders }: { orders: CompletedOrder[] }) {
-  // State to keep track of the active marker's info
-  const [activeMarker, setActiveMarker] = useState<{
-    buyerInfo: UserInfo;
-    orderId: string;
+  const [activeGroup, setActiveGroup] = useState<{
+    orders: CompletedOrder[];
+    position: { lat: number; lng: number };
   } | null>(null);
 
-  // Group orders by location (lat/lng). We round or use exact lat/lng
-  // to create a grouping key.
+  // Group orders by location key (using exact lat,lng values)
   const groupedOrders = useMemo(() => {
-    const mapByLocation: Record<string, CompletedOrder[]> = {};
-
-    for (const order of orders) {
+    const groups: Record<string, CompletedOrder[]> = {};
+    orders.forEach((order) => {
       if (
         !order.preferredPickupPlace ||
         order.preferredPickupPlace.lat == null ||
         order.preferredPickupPlace.lng == null
-      ) {
-        continue;
-      }
-      const lat = +order.preferredPickupPlace.lat;
-      const lng = +order.preferredPickupPlace.lng;
-      const key = `${lat.toFixed(5)},${lng.toFixed(5)}`;
-
-      if (!mapByLocation[key]) {
-        mapByLocation[key] = [];
-      }
-      mapByLocation[key].push(order);
-    }
-
-    // Sort each group by highest proposed fee first
-    Object.keys(mapByLocation).forEach((k) => {
-      mapByLocation[k].sort(
+      )
+        return;
+      const lat = order.preferredPickupPlace.lat;
+      const lng = order.preferredPickupPlace.lng;
+      const key = `${lat},${lng}`;
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(order);
+    });
+    // Sort orders in each group by descending initialDeliveryFee
+    Object.keys(groups).forEach((key) => {
+      groups[key].sort(
         (a, b) => (b.initialDeliveryFee || 0) - (a.initialDeliveryFee || 0)
       );
     });
-
-    return mapByLocation;
+    return groups;
   }, [orders]);
 
-  const handleMarkerClick = async (order: CompletedOrder) => {
-    if (!order._id) return;
-    try {
-      const response: ApiResponse<UserInfo> = await apiClient(
-        `/api/protected/getUserInfo/${order.buyerId}`
-      );
-      const userInfo = response.data;
-      setActiveMarker({
-        buyerInfo: userInfo,
-        orderId: order._id,
-      });
-    } catch (error) {
-      console.error("Error fetching buyer info:", error);
-    }
+  // Handler for marker click. For a single order, we simply show its details;
+  // for multiple orders, we open a list.
+  const handleMarkerClick = (
+    ordersGroup: CompletedOrder[],
+    position: { lat: number; lng: number }
+  ) => {
+    setActiveGroup({ orders: ordersGroup, position });
   };
 
   return (
     <>
       {Object.entries(groupedOrders).map(([locationKey, orderGroup]) => {
         if (orderGroup.length === 0) return null;
+        const lat = Number(orderGroup[0].preferredPickupPlace.lat);
+        const lng = Number(orderGroup[0].preferredPickupPlace.lng);
+        const position = { lat, lng };
 
-        const lat = orderGroup[0].preferredPickupPlace.lat as number;
-        const lng = orderGroup[0].preferredPickupPlace.lng as number;
-
-        // For each order in this group, offset markers slightly
-        // so they won't perfectly overlap.
-        return orderGroup.map((order, index) => {
-          const offset = 0.00005 * index; // Adjust for more/less spacing
-          const markerLat = lat + offset;
-          const markerLng = lng + offset;
-
-          return (
-            <div key={order._id}>
-              <AdvancedMarker
-                position={new google.maps.LatLng(markerLat, markerLng)}
-                onClick={() => handleMarkerClick(order)}
-              >
-                <div className="bg-blue-900 p-2 text-white font-bold rounded">
-                  <p>You get: {order.initialDeliveryFee}</p>
-                  <p>Price: {order.estimatedValue}</p>
-                  {/* Add more marker info if needed */}
-                </div>
-              </AdvancedMarker>
-
-              {/* Only show InfoWindow for the active marker */}
-              {activeMarker && activeMarker.orderId === order._id && (
-                <InfoWindow
-                  position={new google.maps.LatLng(markerLat, markerLng)}
-                  onCloseClick={() => setActiveMarker(null)}
-                >
-                  <div className="bg-white shadow-lg rounded-lg p-4">
-                    <div className="flex flex-col items-center space-y-2">
-                      {activeMarker.buyerInfo.profilePicture && (
-                        <Image
-                          src={activeMarker.buyerInfo.profilePicture}
-                          alt="profile picture"
-                          width={100}
-                          height={100}
-                          className="rounded-full border-2 border-gray-300"
-                        />
-                      )}
-                      <p className="text-lg font-semibold">
-                        {activeMarker.buyerInfo.name}
-                      </p>
-                      <p className="text-md text-gray-800">
-                        Product Price: {order.estimatedValue} €
-                      </p>
-                      <p className="text-md text-gray-800">
-                        Proposed delivery fee: {order.initialDeliveryFee} €
-                      </p>
-                      <p className="text-md text-gray-800">
-                        Pickup Location:{" "}
-                        {order.preferredPickupPlace.formatted_address}
-                      </p>
-                      <Link
-                        href={`/negotiate?recipientId=${order.buyerId}&orderId=${order._id}`}
-                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-                      >
-                        Contact
-                      </Link>
-                    </div>
-                  </div>
-                </InfoWindow>
-              )}
-            </div>
-          );
-        });
+        return (
+          <div key={locationKey}>
+            <AdvancedMarker
+              position={position}
+              onClick={() => handleMarkerClick(orderGroup, position)}
+            >
+              <div className="bg-gradient-to-br from-purple-600 to-pink-500 p-2 text-white font-bold text-lg rounded">
+                {orderGroup.length} order{orderGroup.length > 1 ? "s" : ""} here
+              </div>
+            </AdvancedMarker>
+          </div>
+        );
       })}
+
+      {/* InfoWindow for displaying list of orders in a group */}
+      {activeGroup && (
+        <InfoWindow
+          position={
+            new google.maps.LatLng(
+              activeGroup.position.lat,
+              activeGroup.position.lng
+            )
+          }
+          onCloseClick={() => setActiveGroup(null)}
+        >
+          <OrderList activeGroup={activeGroup} />
+        </InfoWindow>
+      )}
     </>
+  );
+}
+
+function OrderList({
+  activeGroup,
+}: {
+  activeGroup: {
+    orders: CompletedOrder[];
+    position: {
+      lat: number;
+      lng: number;
+    };
+  };
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="bg-gradient-to-br from-purple-600 to-pink-500 shadow-2xl rounded-2xl p-6 max-w-sm"
+    >
+      <h2 className="text-2xl font-extrabold text-white mb-4 border-b border-white pb-2">
+        {activeGroup.orders.length} Order
+        {activeGroup.orders.length > 1 && "s"}
+      </h2>
+      <ul className="max-h-60 overflow-y-auto space-y-3">
+        {activeGroup.orders.map((order, index) => (
+          <motion.li
+            key={order._id}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.1, duration: 0.3 }}
+            className="py-3 px-3 rounded-lg hover:bg-white hover:bg-opacity-20 transition-colors"
+          >
+            <div className="flex whitespace-nowrap justify-between items-center gap-2 mb-1">
+              <h2 className="font-semibold text-lg text-white">
+                {order.productName}
+              </h2>
+              <h2 className="text-sm font-bold text-white">
+                You&apos;ll get: {order.initialDeliveryFee} €
+              </h2>
+            </div>
+
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              className="mt-3 flex items-center justify-between"
+            >
+              <span className="text-xs text-white font-bold whitespace-nowrap">
+                Price: {order.estimatedValue} €
+              </span>
+              <Link
+                href={`/negotiate?recipientId=${order.buyerId}&orderId=${order._id}`}
+                className="bg-white text-purple-600 font-bold px-4 py-2 rounded-lg shadow-md hover:bg-opacity-90 transition-colors"
+              >
+                View Details
+              </Link>
+            </motion.div>
+          </motion.li>
+        ))}
+      </ul>
+    </motion.div>
   );
 }

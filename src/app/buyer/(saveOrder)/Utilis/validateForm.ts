@@ -9,8 +9,8 @@ export type ValidateFormResponse = {
 const validateForm = (buyerOrder: InitialOrder): ValidateFormResponse => {
   const errors: Errors<InitialOrder> = {};
   const regexProductName = /^[a-zA-Z0-9\s.,'-]{3,100}$/;
-  const regexDescription = /^[a-zA-Z0-9\s.,'"-]{10,1000}$/;
-  const regexDeliveryInstructions = /^[a-zA-Z0-9\s.,'"-]{10,1000}$/;
+  const regexDescription = /^[\s\S]{10,10000}$/;
+  const regexDeliveryInstructions = /^[\s\S]{10,10000}$/;
 
   // Validate productURL (optional but must be valid if provided)
   if (
@@ -40,7 +40,7 @@ const validateForm = (buyerOrder: InitialOrder): ValidateFormResponse => {
     !regexDescription.test(buyerOrder.description)
   ) {
     errors.description =
-      "Description is required, 10-1000 characters, and may contain letters, numbers, spaces, and . , ' \" -";
+      "Description is required and must be 10-10,000 characters long, allowing any type of character.";
   }
 
   // Validate quantity (must be more than 1)
@@ -50,17 +50,24 @@ const validateForm = (buyerOrder: InitialOrder): ValidateFormResponse => {
 
   // Validate each dimension (must be positive)
   if (buyerOrder.dimensions) {
-    if (buyerOrder.dimensions.lengthInCm <= 0) {
+    if (
+      buyerOrder.dimensions.lengthInCm &&
+      buyerOrder.dimensions.lengthInCm <= 0
+    ) {
       errors["dimensions.lengthInCm"] = "Length must be a positive number.";
     }
-    if (buyerOrder.dimensions.widthInCm <= 0) {
+    if (
+      buyerOrder.dimensions.widthInCm &&
+      buyerOrder.dimensions.widthInCm <= 0
+    ) {
       errors["dimensions.widthInCm"] = "Width must be a positive number.";
     }
-    if (buyerOrder.dimensions.heightInCm <= 0) {
+    if (
+      buyerOrder.dimensions.heightInCm &&
+      buyerOrder.dimensions.heightInCm <= 0
+    ) {
       errors["dimensions.heightInCm"] = "Height must be a positive number.";
     }
-  } else {
-    errors.dimensions = "Dimensions are required.";
   }
 
   // Validate deliveryInstructions (optional but must match regex if provided)
@@ -69,7 +76,7 @@ const validateForm = (buyerOrder: InitialOrder): ValidateFormResponse => {
     !regexDeliveryInstructions.test(buyerOrder.deliveryInstructions)
   ) {
     errors.deliveryInstructions =
-      "Delivery instructions must be 10-1000 characters and may contain letters, numbers, spaces, and . , ' \" -";
+      "Description is required and must be 10-10,000 characters long, allowing any type of character.";
   }
 
   // Validate initialDeliveryFee (must be larger than 5)

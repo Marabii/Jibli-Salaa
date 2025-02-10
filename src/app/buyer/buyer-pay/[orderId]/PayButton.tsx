@@ -62,8 +62,10 @@ export default function PayButton({
       <button
         onClick={handlePay}
         disabled={disabled}
-        className={`w-full bg-blue-600 text-white py-3 rounded-lg font-semibold ${
-          loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
+        className={`w-full transition-all duration-300 bg-black text-white py-5 rounded-lg font-semibold ${
+          loading
+            ? "opacity-50 cursor-not-allowed"
+            : "hover:bg-white hover:text-black"
         }`}
       >
         {loading ? "Processing..." : "PAY"}

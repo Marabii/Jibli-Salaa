@@ -1,9 +1,10 @@
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import { CompletedOrder } from "@/interfaces/Order/order";
-import ImageModalWrapper from "./ImageModal";
-import Image from "next/image";
 import Link from "next/link";
 import apiServer from "@/utils/apiServer";
+import ConfirmDelivery from "./ConfirmDelivery";
+import ImgsCarousel from "./ImgsCarousel";
+import { redirect } from "next/navigation";
 
 export default async function ManageOrders() {
   const response: ApiResponse<CompletedOrder[]> = await apiServer(
@@ -12,40 +13,28 @@ export default async function ManageOrders() {
 
   const orders = response.data;
 
+  if (orders.length === 0) {
+    redirect("/buyer");
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-extrabold text-gray-900 mb-8 text-center">
           Manage Your Orders
         </h1>
-        {orders.length === 0 ? (
-          <div className="flex justify-center items-center h-64">
-            <p className="text-xl text-gray-500">No orders found.</p>
-          </div>
-        ) : (
-          <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {orders.map((order) => (
+        <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          {orders.map((order) => {
+            const productValue = order.actualValue || order.estimatedValue || 0;
+            const deliveryFee =
+              order.actualDeliveryFee || order.initialDeliveryFee || 0;
+            return (
               <div
                 key={order._id}
                 className="bg-white shadow-xl rounded-2xl overflow-hidden hover:shadow-2xl transition-shadow duration-300"
               >
                 {order.images && order.images.length > 0 && (
-                  <div className="relative h-48 w-full">
-                    <ImageModalWrapper
-                      src={order.images[0]}
-                      alt={order.productName}
-                    >
-                      <Image
-                        src={order.images[0]}
-                        alt={order.productName}
-                        sizes="(max-width: 768px) 100vw,
-                        (max-width: 1200px) 50vw,
-                        33vw"
-                        fill
-                        className="transition-transform duration-300 transform hover:scale-105 rounded-t-lg"
-                      />
-                    </ImageModalWrapper>
-                  </div>
+                  <ImgsCarousel order={order} />
                 )}
                 <div className="p-6">
                   <h2 className="text-2xl font-semibold text-gray-800 mb-2">
@@ -61,11 +50,11 @@ export default async function ManageOrders() {
                     </p>
                     <p className="text-gray-800">
                       <span className="font-medium">Value:</span> €
-                      {order.actualValue.toFixed(2)}
+                      {productValue.toFixed(2)}
                     </p>
                     <p className="text-gray-800">
                       <span className="font-medium">Delivery Fee:</span> €
-                      {order.actualDeliveryFee.toFixed(2)}
+                      {deliveryFee.toFixed(2)}
                     </p>
                     <p className="text-gray-800 flex items-center">
                       <span className="font-medium mr-2">Status:</span>
@@ -105,21 +94,15 @@ export default async function ManageOrders() {
                         Proceed to Payment
                       </Link>
                     )}
-                    {order.orderStatus === "ITEM_PAID" && (
-                      <Link
-                        className="flex-1 text-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300"
-                        href={`/buyer/buyer-pay/confirmDelivery/${order._id}`}
-                      >
-                        Confirm Delivery
-                      </Link>
+                    {order.orderStatus === "ITEM_PAID" && order._id && (
+                      <ConfirmDelivery orderId={order._id} />
                     )}
-                    {/* Additional actions can be added here based on other statuses */}
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+            );
+          })}
+        </div>
       </div>
     </div>
   );

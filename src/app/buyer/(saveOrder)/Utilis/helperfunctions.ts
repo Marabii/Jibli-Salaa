@@ -4,21 +4,30 @@ import apiServer from "@/utils/apiServer";
 
 export function getInitialOrderDetails(data: FormData): InitialOrder {
   const result: any = {};
-  //handle the dot notation, some inputs have names like: dimensions.lengthInCm, the code
-  //below will create an object by the name dimensions which a key by the name lengthInCm
-  //and a value of whatever the user put in.
+
+  // Iterate over each key/value pair in the FormData
   data.forEach((value, key) => {
+    // First, handle nested keys (with dot notation)
     if (key.includes(".")) {
-      // Handle dot notation for nested fields
       const keys = key.split(".");
       let current = result;
 
       keys.forEach((k, index) => {
         if (index === keys.length - 1) {
-          // If it's the last key, assign the value
-          current[k] = parseValue(value);
+          // Last segment – assign the parsed value.
+          // If a value already exists, convert it into an array or push into the array.
+          const parsedValue = parseValue(value);
+          if (current.hasOwnProperty(k)) {
+            // If it's not an array, wrap the current value into an array
+            if (!Array.isArray(current[k])) {
+              current[k] = [current[k]];
+            }
+            current[k].push(parsedValue);
+          } else {
+            current[k] = parsedValue;
+          }
         } else {
-          // If it's not the last key, ensure the key exists as an object
+          // Not at the last segment – ensure the nested object exists.
           if (!current[k]) {
             current[k] = {};
           }
@@ -26,12 +35,22 @@ export function getInitialOrderDetails(data: FormData): InitialOrder {
         }
       });
     } else {
-      // Handle top-level keys
-      result[key] = parseValue(value);
+      // Top-level keys.
+      const parsedValue = parseValue(value);
+      if (result.hasOwnProperty(key)) {
+        // If the key already exists, convert it (or push) to an array.
+        if (!Array.isArray(result[key])) {
+          result[key] = [result[key]];
+        }
+        result[key].push(parsedValue);
+      } else {
+        result[key] = parsedValue;
+      }
     }
   });
 
-  // Manually cast and extract fields from result
+  // Destructure the expected properties from the result.
+  // For selectedFiles, always ensure we end up with an array.
   const {
     description,
     estimatedValue,
@@ -55,10 +74,11 @@ export function getInitialOrderDetails(data: FormData): InitialOrder {
     productURL: productURL as string | null,
     quantity: parseInt(quantity, 10),
     preferredPickupPlace: preferredPickupPlace as AddressObject,
-    selectedFiles:
-      typeof selectedFiles === "object"
-        ? [selectedFiles]
-        : (selectedFiles as File[]),
+    selectedFiles: Array.isArray(selectedFiles)
+      ? selectedFiles
+      : selectedFiles
+      ? [selectedFiles]
+      : [],
   };
 }
 

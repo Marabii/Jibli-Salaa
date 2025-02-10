@@ -47,8 +47,8 @@ export default function FormUsualInputs() {
         type="text"
         name="description"
         label="Description"
-        pattern={String(/^[a-zA-Z0-9\s.,'"-]{10,1000}$/)}
-        errorMessage="Description is required, 10-1000 characters, and may contain letters, numbers, spaces, and . , ' \"
+        pattern={String(/^[\s\S]{10,10000}$/)}
+        errorMessage="Description is required, 10-1000 characters"
         isTextarea={true}
         required
       />
@@ -69,43 +69,40 @@ export default function FormUsualInputs() {
       <Input
         className="w-full border-2 border-black p-5"
         type="number"
-        label="Length in cm"
+        label="Length in cm (optional)"
         name="dimensions.lengthInCm"
-        pattern={String(/^[1-9]\d*$/)}
+        pattern={String(/^(?!0*\.?0+$)\d*\.?\d+$/)}
         errorMessage="Length must be a positive number."
-        required
       />
 
       {/* Width in cm */}
       <Input
         className="w-full border-2 border-black p-5"
         type="number"
-        label="Width in cm"
+        label="Width in cm (optional)"
         name="dimensions.widthInCm"
-        pattern={String(/^[1-9]\d*$/)}
+        pattern={String(/^(?!0*\.?0+$)\d*\.?\d+$/)}
         errorMessage="Width must be a positive number."
-        required
       />
 
       {/* Height in cm */}
       <Input
         className="w-full border-2 border-black p-5"
         type="number"
-        label="Height in cm"
+        label="Height in cm (optional)"
         name="dimensions.heightInCm"
-        pattern={String(/^[1-9]\d*$/)}
+        pattern={String(/^(?!0*\.?0+$)\d*\.?\d+$/)}
         errorMessage="Height must be a positive number."
-        required
       />
 
       {/* Special Instructions */}
       <Input
         className="w-full border-2 border-black p-5"
         type="text"
-        label="Special Instructions"
+        label="Special Instructions (optional)"
         name="deliveryInstructions"
-        pattern={String(/^[a-zA-Z0-9\s.,'"-]{10,1000}$/)}
-        errorMessage="Delivery instructions must be 10-1000 characters and may contain letters, numbers, spaces, and . , ' \"
+        pattern={String(/^[\s\S]{0,10000}$/)}
+        errorMessage="Delivery instructions must be less than 10000 characters and may contain letters."
         isTextarea={true}
       />
 

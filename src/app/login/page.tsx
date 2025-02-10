@@ -2,16 +2,14 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import Input from "@/components/Input";
-import usePending from "@/components/Form/usePending";
-import SubmitButton from "@/components/SubmitButton";
 import FormWrapper from "@/components/Form/FormWrapper";
 import { LoginFormInputs, handleLoginAction } from "./Utilis/handleLoginAction";
 import FormErrorHandler from "@/components/Form/FormErrorHandler";
+import FormSubmissionButton from "./components/FormSubmissionButton";
 
 export default function Login() {
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect") || "/";
-  const pending = usePending();
   const googleOAthState = { originPage: "/login", redirectTo: redirectTo };
 
   return (
@@ -59,12 +57,7 @@ export default function Login() {
         />
       </div>
       <div className="flex flex-col gap-3">
-        <SubmitButton
-          className="w-full border-2 border-black bg-black py-4 font-playfair font-bold text-white transition-all duration-300 hover:bg-white hover:text-black"
-          pending={pending}
-          defaultText="Login"
-          pendingText="Processing request..."
-        />
+        <FormSubmissionButton />
         <FormErrorHandler />
         <Link
           href={`https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${

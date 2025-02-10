@@ -224,6 +224,15 @@ export default function NegotiatePage(): JSX.Element {
     }
   };
 
+  if (recipientId === userInfo?._id) {
+    return (
+      <h1>
+        Why on earth would you want to chat with yourself ? Are you that lonely
+        ??
+      </h1>
+    );
+  }
+
   return (
     <motion.div
       className="bg-gray-50 mt-10 text-gray-800 flex flex-col xl:flex-row"
