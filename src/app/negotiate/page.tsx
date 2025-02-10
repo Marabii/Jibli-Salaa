@@ -47,6 +47,7 @@ export default function NegotiatePage(): JSX.Element {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId") || "";
   const recipientId = searchParams.get("recipientId") || "";
+  const IS_PRODUCTION = JSON.parse(process.env.IS_PRODUCTION || "false");
 
   // Validate required search parameters
   if (!orderId || !recipientId) {
@@ -128,7 +129,9 @@ export default function NegotiatePage(): JSX.Element {
   // --- Initialize and Connect WebSocket (SockJS + STOMP) ---
   useEffect(() => {
     if (userInfo && !stompClientRef.current) {
-      const socket = new SockJS(`${process.env.NEXT_PUBLIC_SERVERURL}/ws`);
+      const socket = new SockJS(
+        `${process.env.NEXT_PUBLIC_SERVERURL}/${IS_PRODUCTION ? "wss" : "ws"}`
+      );
       const stompClient = Stomp.over(socket);
       stompClientRef.current = stompClient;
 
@@ -166,7 +169,7 @@ export default function NegotiatePage(): JSX.Element {
         }
       };
     }
-  }, [userInfo, connectionEstablished]);
+  }, [userInfo, connectionEstablished, IS_PRODUCTION]);
 
   // --- Fetch Chat History ---
   useEffect(() => {

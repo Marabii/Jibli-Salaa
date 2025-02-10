@@ -23,7 +23,7 @@ export default function FormUsualInputs() {
         className="w-full border-2 border-black p-5"
         type="number"
         name="estimatedValue"
-        label="Estimated Value:"
+        label="Estimated Value in €:"
         pattern={String(/^(1[1-9]|[2-9][0-9]|[1-9][0-9]{2,})$/)}
         errorMessage="Please enter a number higher than 10."
         initialValue={10}
@@ -110,7 +110,7 @@ export default function FormUsualInputs() {
       <Input
         className="w-full border-2 border-black p-5"
         type="number"
-        label="Declare how much you're willing to pay the traveler"
+        label="Declare how much you're willing to pay the traveler in €"
         name="initialDeliveryFee"
         pattern={String(/^[5-9]\d*$|^\d{2,}$/)}
         errorMessage="Delivery fee must be larger than 5."

@@ -11,7 +11,6 @@ import { useSearchParams } from "next/navigation";
 import type { Route } from "./components/mapForTravelers";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiSearch, FiSmile, FiRefreshCw } from "react-icons/fi";
-import DatePicker from "react-datepicker";
 import type { StylesConfig } from "react-select";
 
 interface OptionType {
@@ -31,8 +30,6 @@ interface ICountry {
 export default function TravelersPage() {
   const [orders, setOrders] = useState<CompletedOrder[]>([]);
   const [countries, setCountries] = useState<string[]>([]);
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const searchParams = useSearchParams();
@@ -131,23 +128,6 @@ export default function TravelersPage() {
     }
   };
 
-  // Helper to get orders placed between a date range
-  const fetchByDateRange = async (start: Date, end: Date) => {
-    try {
-      const startISO = start.toISOString();
-      const endISO = end.toISOString();
-      const response: ApiResponse<CompletedOrder[]> = await apiClient(
-        `/api/protected/placedBetween?startDate=${encodeURIComponent(
-          startISO
-        )}&endDate=${encodeURIComponent(endISO)}`
-      );
-      return response.data || [];
-    } catch (error) {
-      console.error("Error fetching orders by date range:", error);
-      return [];
-    }
-  };
-
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -165,13 +145,6 @@ export default function TravelersPage() {
         finalOrders = response.data || [];
       }
 
-      // If a date range is specified, intersect with the date-range results
-      if (startDate && endDate) {
-        const byDates = await fetchByDateRange(startDate, endDate);
-        const byDatesIds = new Set(byDates.map((o) => o._id));
-        finalOrders = finalOrders.filter((o) => byDatesIds.has(o._id));
-      }
-
       // Sort results by highest proposed fee first
       finalOrders.sort((a, b) => b.initialDeliveryFee - a.initialDeliveryFee);
 
@@ -186,8 +159,6 @@ export default function TravelersPage() {
   const handleReset = async () => {
     setIsLoading(true);
     setCountries([]);
-    setStartDate(null);
-    setEndDate(null);
 
     try {
       const response: ApiResponse<CompletedOrder[]> = await apiClient(
@@ -262,47 +233,6 @@ export default function TravelersPage() {
               },
             })}
           />
-        </div>
-
-        {/* Date Range Picker */}
-        <div className="flex flex-col min-w-[200px]">
-          <label className="mb-2 text-sm font-medium text-gray-700">
-            Placed Between
-          </label>
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-            <DatePicker
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              dateFormat="MMMM d, yyyy h:mm aa"
-              placeholderText="Start Date & Time"
-              className="p-3 border w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-black"
-              customInput={
-                <motion.input
-                  whileFocus={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                />
-              }
-            />
-            <DatePicker
-              selected={endDate}
-              onChange={(date) => setEndDate(date)}
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              dateFormat="MMMM d, yyyy h:mm aa"
-              placeholderText="End Date & Time"
-              className="p-3 border w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-black"
-              customInput={
-                <motion.input
-                  whileFocus={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                />
-              }
-            />
-          </div>
         </div>
 
         {/* Action Buttons */}

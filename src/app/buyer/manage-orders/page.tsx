@@ -5,6 +5,7 @@ import apiServer from "@/utils/apiServer";
 import ConfirmDelivery from "./ConfirmDelivery";
 import ImgsCarousel from "./ImgsCarousel";
 import { redirect } from "next/navigation";
+import ShowConfirmationMessage from "./ShowConfirmationMessage";
 
 export default async function ManageOrders() {
   const response: ApiResponse<CompletedOrder[]> = await apiServer(
@@ -19,6 +20,7 @@ export default async function ManageOrders() {
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8">
+      <ShowConfirmationMessage />
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-extrabold text-gray-900 mb-8 text-center">
           Manage Your Orders

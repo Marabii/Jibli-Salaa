@@ -80,7 +80,7 @@ export default async function SelectTrip() {
         {tripsOfTraveler.length > 1 ? "s" : ""}
       </h2>
       <div>
-        <ul>
+        <ul className="space-y-2">
           {tripsOfTraveler.map((trip) => (
             <li
               key={trip._id}

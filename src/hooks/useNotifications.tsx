@@ -25,6 +25,7 @@ export function useNotifications() {
   const searchParams = useSearchParams();
   const [userId, setUserId] = useState<string | null>(null);
   const [stompClient, setStompClient] = useState<Client | null>(null);
+  const IS_PRODUCTION = JSON.parse(process.env.IS_PRODUCTION || "false");
 
   // Create a ref for the current pathname.
   const pathnameRef = useRef(pathname);
@@ -84,7 +85,9 @@ export function useNotifications() {
   const connectToWebSocket = useCallback(() => {
     if (!userId || stompClient) return;
 
-    const socket = new SockJS(`${process.env.NEXT_PUBLIC_SERVERURL}/ws`);
+    const socket = new SockJS(
+      `${process.env.NEXT_PUBLIC_SERVERURL}/${IS_PRODUCTION ? "wss" : "ws"}`
+    );
     const stomp = Stomp.over(socket);
 
     stomp.connect({}, () => {
@@ -119,7 +122,7 @@ export function useNotifications() {
     });
 
     setStompClient(stomp);
-  }, [userId, stompClient, markAsRead, dispatch]);
+  }, [userId, stompClient, IS_PRODUCTION, markAsRead, dispatch]);
 
   useEffect(() => {
     fetchUserInfo();

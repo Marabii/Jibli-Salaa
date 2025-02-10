@@ -26,7 +26,6 @@ export default function NotificationsDropdown() {
   const notificationsDropdownRef = useRef<HTMLDivElement>(null);
 
   useOutsideClick(notificationsDropdownRef, () => setShowDropdown(false));
-
   const handleToggleDropdown = () => {
     setShowDropdown((prev) => !prev);
   };

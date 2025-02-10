@@ -17,6 +17,7 @@ export default function useOutsideClick<T extends HTMLElement>(
       ) {
         callback();
         setWasClickedInside(false);
+        console.log("clicked outside");
       }
     }
 

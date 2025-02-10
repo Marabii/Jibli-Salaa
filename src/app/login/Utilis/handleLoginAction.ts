@@ -36,7 +36,7 @@ export async function handleLoginAction(
 
   try {
     const loginResponse = await handleLoginSubmit(loginForm);
-    const IS_PRODUCTION = process.env.IS_PRODUCTION === "true";
+    const IS_PRODUCTION = JSON.parse(process.env.IS_PRODUCTION || "false");
 
     // Parse and validate COOKIES_MAX_AGE
     let cookiesMaxAge = parseInt(process.env.COOKIES_MAX_AGE || "3600", 10);

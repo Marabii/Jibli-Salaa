@@ -1,12 +1,14 @@
 // HeaderInteractive.tsx (Client Component)
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import NotificationsDropdown from "./NotificationsDropdown";
 import { ROLE } from "@/interfaces/userInfo/userRole";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { UserInfo } from "@/interfaces/userInfo/userInfo";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface HeaderInteractiveProps {
   userInfo: UserInfo | null;
@@ -18,8 +20,30 @@ export default function HeaderInteractive({
   isUserAuthenticated,
 }: HeaderInteractiveProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const dropdownMenuRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const toggleMobileMenu = () => setMobileMenuOpen((prev) => !prev);
+  const toggleProfileDropdown = () => setShowProfileDropdown((prev) => !prev);
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/login/logout", {
+        method: "POST",
+        credentials: "include", // Ensures cookies are sent with the request
+      });
+
+      if (!response.ok) {
+        console.error("Logout failed:", response.statusText);
+        return;
+      }
+
+      router.refresh();
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
 
   return (
     <>
@@ -86,12 +110,26 @@ export default function HeaderInteractive({
                     </span>
                   </Link>
                 </li>
+                <li>
+                  <Link href="/traveler">
+                    <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
+                      Schedule Trip
+                    </span>
+                  </Link>
+                </li>
               </>
             )}
 
             {/* If user is Buyer */}
             {userInfo?.role === ROLE.BUYER && (
               <>
+                <li>
+                  <Link href="/buyer">
+                    <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
+                      Order
+                    </span>
+                  </Link>
+                </li>
                 <li>
                   <Link href="/buyer/manage-orders">
                     <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
@@ -142,8 +180,8 @@ export default function HeaderInteractive({
           </ul>
         </nav>
 
-        {/* Auth & Notifications Section */}
-        <div className="flex gap-6 items-center">
+        {/* Auth, Notifications, and Profile Section */}
+        <div className="flex gap-6 items-center relative">
           {!isUserAuthenticated && (
             <Link href="/login">
               <span className="text-base text-white hover:text-indigo-400 transition-colors">
@@ -151,7 +189,43 @@ export default function HeaderInteractive({
               </span>
             </Link>
           )}
-          {isUserAuthenticated && <NotificationsDropdown />}
+          {isUserAuthenticated && (
+            <>
+              <NotificationsDropdown />
+              {/* Profile Picture */}
+              {userInfo?.profilePicture && (
+                <div className="relative">
+                  <Image
+                    src={userInfo.profilePicture}
+                    alt="Profile"
+                    width={32}
+                    height={32}
+                    className="rounded-full cursor-pointer"
+                    onClick={toggleProfileDropdown}
+                  />
+                  {showProfileDropdown && (
+                    <div
+                      ref={dropdownMenuRef}
+                      className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-2 z-50"
+                    >
+                      <Link
+                        href={"/login"}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Log in with a different account
+                      </Link>
+                      <button
+                        onClick={handleLogout}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </>
+          )}
         </div>
       </header>
 
@@ -164,8 +238,35 @@ export default function HeaderInteractive({
           </h1>
         </Link>
         <div className="flex items-center gap-4">
-          {/* Show Notifications on mobile */}
           {isUserAuthenticated && <NotificationsDropdown />}
+          {isUserAuthenticated && userInfo?.profilePicture && (
+            <div className="relative">
+              <Image
+                src={userInfo.profilePicture}
+                alt="Profile"
+                className="rounded-full cursor-pointer"
+                onClick={toggleProfileDropdown}
+                width={32}
+                height={32}
+              />
+              {showProfileDropdown && (
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-2 z-50">
+                  <Link
+                    href={"/login"}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Log in with a different account
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
           <button
             onClick={toggleMobileMenu}
             className="text-white focus:outline-none"
@@ -262,10 +363,30 @@ export default function HeaderInteractive({
                       </span>
                     </Link>
                   </li>
+                  <li>
+                    <Link href="/traveler">
+                      <span
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="cursor-pointer hover:text-indigo-400 transition-colors"
+                      >
+                        Schedule tripe
+                      </span>
+                    </Link>
+                  </li>
                 </>
               )}
               {userInfo?.role === ROLE.BUYER && (
                 <>
+                  <li>
+                    <Link href="/buyer">
+                      <span
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="cursor-pointer hover:text-indigo-400 transition-colors"
+                      >
+                        Order
+                      </span>
+                    </Link>
+                  </li>
                   <li>
                     <Link href="/buyer/manage-orders">
                       <span
