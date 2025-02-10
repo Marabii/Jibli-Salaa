@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { UserInfo } from "@/interfaces/userInfo/userInfo";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import OrderDetails from "./components/OrderDetails";

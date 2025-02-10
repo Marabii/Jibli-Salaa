@@ -14,6 +14,7 @@ import usePending from "@/components/Form/usePending";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import FormErrorHandler from "@/components/Form/FormErrorHandler";
+import { StylesConfig } from "react-select";
 // Dynamically import the Select component to prevent hydration issues.
 const Select = dynamic(() => import("react-select"), { ssr: false });
 
@@ -44,6 +45,40 @@ const Register = () => {
     } else {
       setSpokenLanguages([]);
     }
+  };
+
+  const customStyles: StylesConfig<SelectOption, true> = {
+    control: (baseStyles) => ({
+      ...baseStyles,
+      height: "68px",
+      border: "2px solid black",
+    }),
+    option: (baseStyles, state) => ({
+      ...baseStyles,
+      color: state.isFocused || state.isSelected ? "white" : "black", // Ensure text is white when focused/selected
+      backgroundColor: state.isFocused || state.isSelected ? "black" : "white", // Black background on hover or selection
+      ":active": {
+        backgroundColor: "black", // Active option background
+        color: "white", // Active option text
+      },
+    }),
+    multiValue: (baseStyles) => ({
+      ...baseStyles,
+      backgroundColor: "black", // Background for selected options
+      color: "white", // Ensure selected option text is white
+    }),
+    multiValueLabel: (baseStyles) => ({
+      ...baseStyles,
+      color: "white", // Selected option label color
+    }),
+    multiValueRemove: (baseStyles) => ({
+      ...baseStyles,
+      color: "white",
+      ":hover": {
+        backgroundColor: "black",
+        color: "white",
+      },
+    }),
   };
 
   return (
@@ -144,41 +179,8 @@ const Register = () => {
             classNamePrefix="select"
             placeholder="Select Languages"
             onChange={handleLanguageChange}
-            styles={{
-              control: (baseStyles) => ({
-                ...baseStyles,
-                height: "68px",
-                border: "2px solid black",
-              }),
-              option: (baseStyles, state) => ({
-                ...baseStyles,
-                color: state.isFocused || state.isSelected ? "white" : "black", // Ensure text is white when focused/selected
-                backgroundColor:
-                  state.isFocused || state.isSelected ? "black" : "white", // Black background on hover or selection
-                ":active": {
-                  backgroundColor: "black", // Active option background
-                  color: "white", // Active option text
-                },
-              }),
-              multiValue: (baseStyles) => ({
-                ...baseStyles,
-                backgroundColor: "black", // Background for selected options
-                color: "white", // Ensure selected option text is white
-              }),
-              multiValueLabel: (baseStyles) => ({
-                ...baseStyles,
-                color: "white", // Selected option label color
-              }),
-              multiValueRemove: (baseStyles) => ({
-                ...baseStyles,
-                color: "white",
-                ":hover": {
-                  backgroundColor: "black",
-                  color: "white",
-                },
-              }),
-            }}
-            theme={(theme) => ({
+            styles={customStyles}
+            theme={(theme: any) => ({
               ...theme,
               borderRadius: 0, // Custom border radius
               colors: {

@@ -1,4 +1,5 @@
 // app/traveler/select-trip/page.tsx
+export const dynamic = "force-dynamic";
 
 import "server-only";
 import Link from "next/link";

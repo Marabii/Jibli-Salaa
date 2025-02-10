@@ -14,7 +14,6 @@ import { FiSearch, FiSmile, FiRefreshCw } from "react-icons/fi";
 import DatePicker from "react-datepicker";
 import type { StylesConfig } from "react-select";
 
-// Define an Option type for react-select
 interface OptionType {
   value: string;
   label: string;

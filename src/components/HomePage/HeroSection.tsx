@@ -42,7 +42,7 @@ const HeroSection = () => {
         </div>
         {/* Image Illustration */}
         <motion.div
-          className="md:w-1/2 mb-8 md:mb-0 relative h-64 sm:h-80 md:h-96"
+          className="w-full md:w-1/2 mb-8 md:mb-0 relative h-64 sm:h-80 md:h-96"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1, delay: 0.3 }}
