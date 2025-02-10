@@ -40,14 +40,19 @@ const HeroSection = () => {
             </Link>
           </motion.div>
         </div>
-        {/* SVG Illustration */}
+        {/* Image Illustration */}
         <motion.div
-          className="md:w-1/2 mb-8 md:mb-0"
+          className="md:w-1/2 mb-8 md:mb-0 relative h-64 sm:h-80 md:h-96"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1, delay: 0.3 }}
         >
-          <img className="rounded-3xl" src={"/Hero.png"} alt={"hero Image"} />
+          <Image
+            className="rounded-3xl object-cover"
+            fill
+            src={"/Hero.png"}
+            alt="Hero Image"
+          />
         </motion.div>
       </div>
     </section>
