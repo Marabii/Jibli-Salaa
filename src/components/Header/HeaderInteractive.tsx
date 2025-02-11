@@ -31,14 +31,12 @@ export default function HeaderInteractive({
     try {
       const response = await fetch("/login/logout", {
         method: "POST",
-        credentials: "include", // Ensures cookies are sent with the request
+        credentials: "include",
       });
-
       if (!response.ok) {
         console.error("Logout failed:", response.statusText);
         return;
       }
-
       router.refresh();
     } catch (error) {
       console.error("Error logging out:", error);
@@ -59,68 +57,65 @@ export default function HeaderInteractive({
         {/* Navigation */}
         <nav>
           <ul className="flex space-x-6 items-center text-base font-medium">
-            {/* If user has BOTH traveler and buyer roles */}
             {userInfo?.role === ROLE.TRAVELER_AND_BUYER && (
               <>
                 <li>
                   <Link href="/traveler/select-trip">
                     <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                      Select Trip
+                      Trips
                     </span>
                   </Link>
                 </li>
                 <li>
                   <Link href="/traveler/manage-orders">
                     <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                      Manage Orders As Traveler
+                      Traveler Orders
                     </span>
                   </Link>
                 </li>
                 <li>
                   <Link href="/buyer/manage-orders">
                     <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                      Manage Orders As Buyer
+                      Buyer Orders
                     </span>
                   </Link>
                 </li>
               </>
             )}
 
-            {/* If user is Traveler */}
             {userInfo?.role === ROLE.TRAVELER && (
               <>
                 <li>
                   <Link href="/traveler/manage-orders">
                     <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                      Manage Orders
+                      Orders
                     </span>
                   </Link>
                 </li>
                 <li>
                   <Link href="/traveler/select-trip">
                     <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                      Select Trip
+                      Trips
                     </span>
                   </Link>
                 </li>
                 <li>
                   <Link href="/buyer">
                     <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                      Switch to Buyer
+                      Buyer Mode
                     </span>
                   </Link>
                 </li>
                 <li>
                   <Link href="/traveler">
                     <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                      Schedule Trip
+                      Plan Trip
                     </span>
                   </Link>
                 </li>
               </>
             )}
 
-            {/* If user is Buyer */}
             {userInfo?.role === ROLE.BUYER && (
               <>
                 <li>
@@ -133,41 +128,39 @@ export default function HeaderInteractive({
                 <li>
                   <Link href="/buyer/manage-orders">
                     <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                      Manage Orders
+                      Orders
                     </span>
                   </Link>
                 </li>
                 <li>
                   <Link href="/traveler">
                     <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                      Switch to Traveler
+                      Traveler Mode
                     </span>
                   </Link>
                 </li>
               </>
             )}
 
-            {/* If user has neither role or is not logged in */}
             {(!userInfo || userInfo?.role === ROLE.NEITHER) && (
               <>
                 <li>
                   <Link href="/traveler">
                     <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                      Become a Traveler
+                      Join as Traveler
                     </span>
                   </Link>
                 </li>
                 <li>
                   <Link href="/buyer">
                     <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                      Become a Buyer
+                      Join as Buyer
                     </span>
                   </Link>
                 </li>
               </>
             )}
 
-            {/* Contact link (if logged in) */}
             {userInfo && (
               <li>
                 <Link href="/contact">
@@ -192,7 +185,6 @@ export default function HeaderInteractive({
           {isUserAuthenticated && (
             <>
               <NotificationsDropdown />
-              {/* Profile Picture */}
               {userInfo?.profilePicture && (
                 <div className="relative">
                   <Image
@@ -212,7 +204,7 @@ export default function HeaderInteractive({
                         href={"/login"}
                         className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
-                        Log in with a different account
+                        Switch Account
                       </Link>
                       <button
                         onClick={handleLogout}
@@ -231,7 +223,6 @@ export default function HeaderInteractive({
 
       {/* Mobile Header (Top Bar) */}
       <header className="md:hidden sticky top-0 left-0 z-50 bg-gray-800 shadow-md px-4 py-3 flex items-center justify-between">
-        {/* Logo */}
         <Link href="/">
           <h1 className="text-xl font-bold text-white cursor-pointer hover:text-indigo-400 transition-colors">
             Jibli Salaa
@@ -255,7 +246,7 @@ export default function HeaderInteractive({
                     href={"/login"}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
-                    Log in with a different account
+                    Switch Account
                   </Link>
                   <button
                     onClick={handleLogout}
@@ -305,7 +296,7 @@ export default function HeaderInteractive({
                         onClick={() => setMobileMenuOpen(false)}
                         className="cursor-pointer hover:text-indigo-400 transition-colors"
                       >
-                        Select Trip
+                        Trips
                       </span>
                     </Link>
                   </li>
@@ -315,7 +306,7 @@ export default function HeaderInteractive({
                         onClick={() => setMobileMenuOpen(false)}
                         className="cursor-pointer hover:text-indigo-400 transition-colors"
                       >
-                        Manage Orders As Traveler
+                        Traveler Orders
                       </span>
                     </Link>
                   </li>
@@ -325,7 +316,7 @@ export default function HeaderInteractive({
                         onClick={() => setMobileMenuOpen(false)}
                         className="cursor-pointer hover:text-indigo-400 transition-colors"
                       >
-                        Manage Orders As Buyer
+                        Buyer Orders
                       </span>
                     </Link>
                   </li>
@@ -339,7 +330,7 @@ export default function HeaderInteractive({
                         onClick={() => setMobileMenuOpen(false)}
                         className="cursor-pointer hover:text-indigo-400 transition-colors"
                       >
-                        Manage Orders
+                        Orders
                       </span>
                     </Link>
                   </li>
@@ -349,7 +340,7 @@ export default function HeaderInteractive({
                         onClick={() => setMobileMenuOpen(false)}
                         className="cursor-pointer hover:text-indigo-400 transition-colors"
                       >
-                        Select Trip
+                        Trips
                       </span>
                     </Link>
                   </li>
@@ -359,7 +350,7 @@ export default function HeaderInteractive({
                         onClick={() => setMobileMenuOpen(false)}
                         className="cursor-pointer hover:text-indigo-400 transition-colors"
                       >
-                        Switch to Buyer
+                        Buyer Mode
                       </span>
                     </Link>
                   </li>
@@ -369,7 +360,7 @@ export default function HeaderInteractive({
                         onClick={() => setMobileMenuOpen(false)}
                         className="cursor-pointer hover:text-indigo-400 transition-colors"
                       >
-                        Schedule tripe
+                        Plan Trip
                       </span>
                     </Link>
                   </li>
@@ -393,7 +384,7 @@ export default function HeaderInteractive({
                         onClick={() => setMobileMenuOpen(false)}
                         className="cursor-pointer hover:text-indigo-400 transition-colors"
                       >
-                        Manage Orders
+                        Orders
                       </span>
                     </Link>
                   </li>
@@ -403,7 +394,7 @@ export default function HeaderInteractive({
                         onClick={() => setMobileMenuOpen(false)}
                         className="cursor-pointer hover:text-indigo-400 transition-colors"
                       >
-                        Switch to Traveler
+                        Traveler Mode
                       </span>
                     </Link>
                   </li>
@@ -417,7 +408,7 @@ export default function HeaderInteractive({
                         onClick={() => setMobileMenuOpen(false)}
                         className="cursor-pointer hover:text-indigo-400 transition-colors"
                       >
-                        Become a Traveler
+                        Join Traveler
                       </span>
                     </Link>
                   </li>
@@ -427,7 +418,7 @@ export default function HeaderInteractive({
                         onClick={() => setMobileMenuOpen(false)}
                         className="cursor-pointer hover:text-indigo-400 transition-colors"
                       >
-                        Become a Buyer
+                        Join Buyer
                       </span>
                     </Link>
                   </li>
@@ -447,7 +438,6 @@ export default function HeaderInteractive({
               )}
             </ul>
           </nav>
-          {/* Auth & Notifications Section at Bottom */}
           <div className="mt-10">
             {!isUserAuthenticated ? (
               <Link href="/login">
