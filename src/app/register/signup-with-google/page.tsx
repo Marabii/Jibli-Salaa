@@ -83,11 +83,6 @@ export default function FinishSigningUp() {
       JSON.stringify(googleOAuthState)
     )}`;
 
-    await fetch("/login/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-
     // Redirect to the OAuth URL
     window.location.href = oauthUrl;
   };

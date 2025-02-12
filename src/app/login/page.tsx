@@ -19,11 +19,6 @@ export default function Login() {
       JSON.stringify(googleOAthState)
     )}`;
 
-    await fetch("/login/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-
     window.location.href = oauthURL;
   };
 

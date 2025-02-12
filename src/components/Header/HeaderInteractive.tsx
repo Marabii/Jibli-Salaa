@@ -37,6 +37,8 @@ export default function HeaderInteractive({
         console.error("Logout failed:", response.statusText);
         return;
       }
+      setMobileMenuOpen(false);
+      setShowProfileDropdown(false);
       router.refresh();
     } catch (error) {
       console.error("Error logging out:", error);
@@ -200,12 +202,6 @@ export default function HeaderInteractive({
                       ref={dropdownMenuRef}
                       className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-2 z-50"
                     >
-                      <Link
-                        href={"/login"}
-                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      >
-                        Switch Account
-                      </Link>
                       <button
                         onClick={handleLogout}
                         className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
