@@ -55,6 +55,7 @@ export async function handleLoginAction(
       httpOnly: true,
       secure: IS_PRODUCTION,
       sameSite: sameSiteValue,
+      domain: IS_PRODUCTION ? ".jeebware.com" : undefined,
       path: "/",
       maxAge: cookiesMaxAge,
     });
