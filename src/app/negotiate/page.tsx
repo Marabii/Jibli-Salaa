@@ -149,27 +149,14 @@ export default function NegotiatePage(): JSX.Element {
               setMessages((prev) => [...prev, receivedMessage]);
             }
           );
-          // Register the user on the server side
-          stompClient.send(
-            "/app/user.addUser",
-            {},
-            JSON.stringify({ userId: userInfo._id })
-          );
         },
         (error) => {
           console.error("WebSocket connection error:", error);
-          alert("Something went wrong connecting to chat. Please try again.");
+          alert(
+            "Something went wrong connecting to chat. Please refresh the page."
+          );
         }
       );
-
-      return () => {
-        if (stompClientRef.current && connectionEstablished) {
-          stompClientRef.current.disconnect(() => {
-            console.log("Disconnected");
-          });
-          stompClientRef.current = null;
-        }
-      };
     }
   }, [userInfo, connectionEstablished, IS_PRODUCTION]);
 

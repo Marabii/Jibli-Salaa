@@ -204,13 +204,11 @@ const Register = () => {
             className="w-full border-2 border-black bg-black py-4 font-playfair font-bold text-white transition-all duration-300 hover:bg-white hover:text-black"
             pending={pending}
           />
-          <Link href="/register/signup-with-google">
-            <button
-              className="w-full border-2 border-black bg-black py-4 font-playfair font-bold text-white transition-all duration-300 hover:bg-white hover:text-black"
-              type="submit"
-            >
-              Sign Up With Google
-            </button>
+          <Link
+            className="w-full border-2 border-black bg-black py-4 font-playfair font-bold text-white transition-all duration-300 hover:bg-white hover:text-black"
+            href="/register/signup-with-google"
+          >
+            Sign Up With Google
           </Link>
         </div>
         <p className="mt-5 w-full text-start text-gray-800">

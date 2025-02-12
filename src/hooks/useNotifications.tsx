@@ -126,9 +126,17 @@ export function useNotifications() {
           }
         }
       );
+      // Register the user on the server side
+      stomp.send("/app/user.addUser", {}, JSON.stringify({ userId: userId }));
     });
 
     setStompClient(stomp);
+
+    return () => {
+      stomp.disconnect(() => {
+        console.log("Disconnected");
+      });
+    };
   }, [userId, stompClient, IS_PRODUCTION, markAsRead, dispatch]);
 
   useEffect(() => {

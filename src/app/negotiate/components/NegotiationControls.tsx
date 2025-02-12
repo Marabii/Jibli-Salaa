@@ -27,13 +27,8 @@ export default function NegotiationControls({
   if (!userInfo || !recipientInfo || !orderInfo) return null;
 
   // Determine which panel to show based on user role and order status
-  const isTraveler =
-    userInfo.role === ROLE.TRAVELER ||
-    userInfo.role === ROLE.TRAVELER_AND_BUYER;
-  const isBuyer =
-    userInfo.role === ROLE.BUYER ||
-    (userInfo.role === ROLE.TRAVELER_AND_BUYER &&
-      userInfo._id === orderInfo.buyerId);
+  const isBuyer = userInfo._id === orderInfo.buyerId;
+  const isTraveler = !isBuyer;
 
   const showTravelerPanel =
     isTraveler &&

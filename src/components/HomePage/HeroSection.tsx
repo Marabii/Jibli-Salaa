@@ -11,7 +11,7 @@ const HeroSection = () => {
         {/* Text Content */}
         <div className="md:w-1/2">
           <motion.h1
-            className="text-5xl font-bold mb-4"
+            className="text-5xl font-bold mb-4 text-balance"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, delay: 0.3 }}
