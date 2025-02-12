@@ -72,7 +72,7 @@ export default function FinishSigningUp() {
   };
 
   // Function to initiate Google OAuth
-  const initiateGoogleOAuth = () => {
+  const initiateGoogleOAuth = async () => {
     if (!isFormValid) {
       return;
     }
@@ -82,6 +82,11 @@ export default function FinishSigningUp() {
     }/google/callback&response_type=code&client_id=1028629889843-gjkff6ielpualsk4cu1700vbp08ggacj.apps.googleusercontent.com&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&access_type=offline&state=${encodeURIComponent(
       JSON.stringify(googleOAuthState)
     )}`;
+
+    await fetch("/login/logout", {
+      method: "POST",
+      credentials: "include",
+    });
 
     // Redirect to the OAuth URL
     window.location.href = oauthUrl;
