@@ -47,7 +47,9 @@ export default function NegotiatePage(): JSX.Element {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId") || "";
   const recipientId = searchParams.get("recipientId") || "";
-  const IS_PRODUCTION = JSON.parse(process.env.IS_PRODUCTION || "false");
+  const IS_PRODUCTION = JSON.parse(
+    process.env.NEXT_PUBLIC_IS_PRODUCTION || "false"
+  );
 
   // Validate required search parameters
   if (!orderId || !recipientId) {
