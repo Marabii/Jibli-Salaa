@@ -146,7 +146,7 @@ export default function FinishSigningUp() {
               ? "hover:bg-white hover:text-black cursor-pointer"
               : "cursor-not-allowed"
           }`}
-          type="button"
+          type="submit"
           onClick={initiateGoogleOAuth}
           disabled={!isFormValid}
         >

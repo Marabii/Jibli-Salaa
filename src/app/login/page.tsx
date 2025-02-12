@@ -12,16 +12,6 @@ export default function Login() {
   const redirectTo = searchParams.get("redirect") || "/";
   const googleOAthState = { originPage: "/login", redirectTo: redirectTo };
 
-  const initiateGoogleOAuth = async () => {
-    const oauthURL = `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${
-      process.env.NEXT_PUBLIC_SERVERURL
-    }/google/callback&response_type=code&client_id=1028629889843-gjkff6ielpualsk4cu1700vbp08ggacj.apps.googleusercontent.com&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&access_type=offline&&state=${encodeURI(
-      JSON.stringify(googleOAthState)
-    )}`;
-
-    window.location.href = oauthURL;
-  };
-
   return (
     <FormWrapper<LoginFormInputs>
       action={handleLoginAction}
@@ -69,12 +59,16 @@ export default function Login() {
       <div className="flex flex-col gap-3">
         <FormSubmissionButton />
         <FormErrorHandler />
-        <button
+        <Link
+          href={`https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${
+            process.env.NEXT_PUBLIC_SERVERURL
+          }/google/callback&response_type=code&client_id=1028629889843-gjkff6ielpualsk4cu1700vbp08ggacj.apps.googleusercontent.com&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&access_type=offline&&state=${encodeURI(
+            JSON.stringify(googleOAthState)
+          )}`}
           className="w-full border-2 border-black bg-black py-4 font-playfair font-bold text-white transition-all duration-300 hover:bg-white hover:text-black"
-          onClick={initiateGoogleOAuth}
         >
           Sign In With Google
-        </button>
+        </Link>
       </div>
       <p className="mt-5 w-full text-start text-gray-800">
         Don&apos;t Have An Account?{" "}
