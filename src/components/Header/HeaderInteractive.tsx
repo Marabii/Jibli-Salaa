@@ -30,6 +30,7 @@ export default function HeaderInteractive({
   const toggleProfileDropdown = () => setShowProfileDropdown((prev) => !prev);
 
   const handleLogout = async () => {
+    console.log("handleLogout is clicked");
     try {
       const response = await fetch("/login/logout", {
         method: "POST",
@@ -204,7 +205,10 @@ export default function HeaderInteractive({
                       className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-2 z-50"
                     >
                       <button
-                        onClick={handleLogout}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleLogout();
+                        }}
                         className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
                         Logout
@@ -238,9 +242,15 @@ export default function HeaderInteractive({
                 height={32}
               />
               {showProfileDropdown && (
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-2 z-50">
+                <div
+                  ref={dropdownMenuRef} // attach the ref here too
+                  className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-2 z-50"
+                >
                   <button
-                    onClick={handleLogout}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleLogout();
+                    }}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     Logout
