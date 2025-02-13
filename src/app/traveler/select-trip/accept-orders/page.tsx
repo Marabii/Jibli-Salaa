@@ -1,25 +1,30 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import MapForTravelers from "./components/mapForTravelers";
+import dynamic from "next/dynamic";
+import { useSearchParams } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { FiSearch, FiSmile, FiRefreshCw } from "react-icons/fi";
+import { getCountries } from "country-state-picker";
+import type { StylesConfig, ActionMeta, MultiValue } from "react-select";
+import type { GroupBase, Props as SelectProps } from "react-select";
+
+import MapForTravelers, { Route } from "./components/mapForTravelers";
 import { CompletedOrder } from "@/interfaces/Order/order";
 import apiClient from "@/utils/apiClient";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
-import dynamic from "next/dynamic";
-import { getCountries } from "country-state-picker";
-import { useSearchParams } from "next/navigation";
-import type { Route } from "./components/mapForTravelers";
-import { motion, AnimatePresence } from "framer-motion";
-import { FiSearch, FiSmile, FiRefreshCw } from "react-icons/fi";
-import type { StylesConfig } from "react-select";
 
-interface OptionType {
+// Dynamically import react-select
+const Select = dynamic(() => import("react-select"), {
+  ssr: false,
+}) as React.ComponentType<
+  SelectProps<CountryOption, true, GroupBase<CountryOption>>
+>;
+
+interface CountryOption {
   value: string;
   label: string;
 }
-
-// Dynamically import react-select (this remains unchanged)
-const Select = dynamic(() => import("react-select"), { ssr: false });
 
 interface ICountry {
   name: string;
@@ -54,20 +59,18 @@ export default function TravelersPage() {
     destinationLocation: { lat: parseFloat(latEnd), lng: parseFloat(lngEnd) },
   };
 
-  // Map countries to options with proper typing
-  const countryOptions: OptionType[] = getCountries().map(
+  // Map countries to options
+  const countryOptions: CountryOption[] = getCountries().map(
     (country: ICountry) => ({
-      value: country.name,
+      value: country.code.toUpperCase(),
       label: country.name,
     })
   );
 
-  // Create custom styles with explicit types to avoid implicit 'any'
-  const customStyles: StylesConfig<OptionType, true> = {
+  const customStyles: StylesConfig<CountryOption, true> = {
     control: (base, state) => ({
       ...base,
       minHeight: "48px",
-
       borderRadius: "0.5rem",
       borderColor: "#4B5563",
       boxShadow: "none",
@@ -78,7 +81,6 @@ export default function TravelersPage() {
     option: (base, state) => ({
       ...base,
       color: "#374151",
-
       backgroundColor:
         state.isFocused || state.isSelected ? "#F3F4F6" : "white",
       ":active": {
@@ -105,12 +107,15 @@ export default function TravelersPage() {
     }),
   };
 
-  // Update onChange handler to expect an array of OptionType (or null)
-  const handleCountrySelect = (selectedOptions: OptionType[] | null) => {
-    if (!selectedOptions) {
+  const handleCountrySelect = (
+    selectedOptions: MultiValue<CountryOption>,
+    actionMeta: ActionMeta<CountryOption>
+  ) => {
+    if (!selectedOptions || selectedOptions.length === 0) {
       setCountries([]);
       return;
     }
+
     const selectedCountries = selectedOptions.map((option) => option.value);
     setCountries(selectedCountries);
   };
@@ -119,7 +124,7 @@ export default function TravelersPage() {
   const fetchByCountries = async (countriesParam: string[]) => {
     try {
       const response: ApiResponse<CompletedOrder[]> = await apiClient(
-        `/api/protected/getOrders?countries_params=${countriesParam.join(",")}`
+        `/api/protected/getOrders?countries_params=${countriesParam.join(" ")}`
       );
       return response.data || [];
     } catch (error) {
@@ -184,7 +189,7 @@ export default function TravelersPage() {
 
   return (
     <motion.div
-      className="min-h-screen p-4 md:p-6 max-w-7xl my-16 rounded-xl bg-white mx-auto shadow-lg"
+      className="min-h-screen p-1 sm:p-2 md:p-6 w-full max-w-screen-xl my-16 rounded-xl bg-white mx-auto shadow-lg"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
@@ -201,7 +206,7 @@ export default function TravelersPage() {
       {/* Filter Card */}
       <motion.form
         onSubmit={handleSearch}
-        className="bg-white w-full grid grid-cols-1 md:grid-cols-3 gap-6 border border-black rounded-lg mb-8 p-6"
+        className="bg-white w-full grid grid-cols-1 md:grid-cols-2 gap-6 border border-black rounded-lg mb-8 p-6"
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.6, delay: 0.2 }}
@@ -223,7 +228,7 @@ export default function TravelersPage() {
             placeholder="Select Countries"
             onChange={handleCountrySelect}
             styles={customStyles}
-            theme={(theme: any) => ({
+            theme={(theme) => ({
               ...theme,
               borderRadius: 8,
               colors: {
@@ -236,11 +241,11 @@ export default function TravelersPage() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-end gap-4 min-w-[200px]">
+        <div className="flex flex-col sm:items-end sm:justify-end gap-4 min-w-[200px]">
           {/* Search Button */}
           <button
             type="submit"
-            className="w-full sm:w-auto flex items-center justify-center px-4 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full sm:w-[113px] flex items-center justify-center px-4 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
             {isLoading ? (
               <svg
@@ -275,7 +280,7 @@ export default function TravelersPage() {
             onClick={handleReset}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="w-full sm:w-auto flex items-center justify-center px-4 py-2 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-gray-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            className="w-full sm:w-[113px] flex items-center justify-center px-4 py-2 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-gray-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
           >
             <FiRefreshCw className="mr-2" />
             Reset

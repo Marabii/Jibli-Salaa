@@ -15,11 +15,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowBigRight, Check } from "lucide-react";
 import useOutsideClick from "@/hooks/useOutsideClick";
 
-/**
- * NotificationsDropdown
- * - On small screens (< md): renders a full-screen modal from the top.
- * - On md+ screens: standard dropdown (aligned right).
- */
 export default function NotificationsDropdown() {
   const { markAsRead } = useNotifications();
   const notifications = useSelector(
@@ -31,8 +26,6 @@ export default function NotificationsDropdown() {
 
   // Only use the outsideClick hook on md+ screens (the overlay on small screens handles clicks).
   useOutsideClick(dropdownRef, () => {
-    // If the screen is large enough, close on outside click
-    // but let the overlay handle it on small screens
     if (window.innerWidth >= 768) {
       setShowDropdown(false);
     }
@@ -83,26 +76,7 @@ export default function NotificationsDropdown() {
               animate="visible"
               exit="exit"
               transition={{ duration: 0.3 }}
-              className={`
-                z-50 
-                fixed md:absolute
-                top-0 md:top-auto
-                left-0 md:left-auto
-                right-0 md:right-0
-
-                /* Full-screen modal on small screens */
-                w-full md:w-80 
-                h-full md:h-auto
-
-                /* If you want a bit of spacing on large screens */
-                md:mt-2
-
-                overflow-y-auto 
-                bg-white 
-                border border-gray-200 
-                shadow-2xl 
-                rounded-none md:rounded-lg
-              `}
+              className={`z-50 fixed md:absolute top-0 md:top-auto left-0 md:left-auto right-0 md:right-0 w-full md:w-80 h-full md:h-auto md:mt-2 overflow-y-auto bg-white border border-gray-200 shadow-2xl rounded-none md:rounded-lg`}
             >
               {/* Top bar (header) */}
               <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white md:rounded-t-lg">
@@ -168,6 +142,7 @@ export default function NotificationsDropdown() {
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
+                                  setShowDropdown(false);
                                   markAsRead(notification.id);
                                 }}
                                 className="mt-2 sm:mt-0 px-2 py-1 text-xs font-semibold text-white bg-purple-500 rounded hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-300 transition-colors duration-200"
@@ -200,7 +175,10 @@ export default function NotificationsDropdown() {
                             </p>
 
                             <button
-                              onClick={() => markAsRead(notification.id)}
+                              onClick={() => {
+                                markAsRead(notification.id);
+                                setShowDropdown(false);
+                              }}
                               className="mt-2 text-xs text-blue-500 hover:underline"
                             >
                               Mark As Read

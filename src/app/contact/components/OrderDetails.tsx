@@ -41,8 +41,10 @@ export default async function OrderDetails({ orderId }: { orderId: string }) {
           <span className="text-gray-400 font-medium">Quantity:</span>{" "}
           <span className="text-white">{orderDetails.quantity}</span>
         </div>
-        <span className="text-gray-400 font-medium">Delivery Fee:</span>{" "}
-        <span className="text-white">${orderDetails.initialDeliveryFee}</span>
+        <div>
+          <span className="text-gray-400 font-medium">Delivery Fee:</span>{" "}
+          <span className="text-white">${orderDetails.initialDeliveryFee}</span>
+        </div>
       </div>
     </div>
   );

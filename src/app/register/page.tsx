@@ -14,9 +14,14 @@ import usePending from "@/components/Form/usePending";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import FormErrorHandler from "@/components/Form/FormErrorHandler";
-import { StylesConfig } from "react-select";
+import { GroupBase, StylesConfig, Props as SelectProps } from "react-select";
+
 // Dynamically import the Select component to prevent hydration issues.
-const Select = dynamic(() => import("react-select"), { ssr: false });
+const Select = dynamic(() => import("react-select"), {
+  ssr: false,
+}) as React.ComponentType<
+  SelectProps<SelectOption, true, GroupBase<SelectOption>>
+>;
 
 interface SelectOption {
   value: string;

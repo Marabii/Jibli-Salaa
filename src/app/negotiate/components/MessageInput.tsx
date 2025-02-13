@@ -1,20 +1,18 @@
 "use client";
 
-import React, {
-  useState,
-  KeyboardEvent,
-  ChangeEvent,
-  useRef,
-  useEffect,
-} from "react";
+import { useState, KeyboardEvent, ChangeEvent, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Send } from "lucide-react"; // Importing the Send icon from lucide-react
+import { Send } from "lucide-react";
 
 type MessageInputProps = {
   onSendMessage: (msg: string) => void;
+  disabled?: boolean;
 };
 
-export default function MessageInput({ onSendMessage }: MessageInputProps) {
+export default function MessageInput({
+  onSendMessage,
+  disabled = false,
+}: MessageInputProps) {
   const [message, setMessage] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -35,19 +33,18 @@ export default function MessageInput({ onSendMessage }: MessageInputProps) {
     setMessage(e.target.value);
   };
 
-  // Auto-resize the textarea whenever the message changes, with a max height limit
+  // Auto-resize logic
   useEffect(() => {
     const textarea = textareaRef.current;
     if (textarea) {
-      textarea.style.height = "auto"; // Reset height
-      const maxHeight = 100; // Adjust max height as needed (in pixels)
-
+      textarea.style.height = "auto";
+      const maxHeight = 100; // Adjust max height as needed
       if (textarea.scrollHeight > maxHeight) {
         textarea.style.height = `${maxHeight}px`;
-        textarea.style.overflowY = "auto"; // Enable scrolling when max height is reached
+        textarea.style.overflowY = "auto";
       } else {
         textarea.style.height = `${textarea.scrollHeight}px`;
-        textarea.style.overflowY = "hidden"; // Hide scrollbar when below max height
+        textarea.style.overflowY = "hidden";
       }
     }
   }, [message]);
@@ -63,18 +60,18 @@ export default function MessageInput({ onSendMessage }: MessageInputProps) {
         onKeyDown={handleKeyDown}
         whileFocus={{ scale: 1.02 }}
         transition={{ duration: 0.1 }}
-        rows={1} // Start with one row
+        rows={1}
+        disabled={disabled} // <-- DISABLE TEXTAREA
       />
       <motion.button
         onClick={handleSend}
         className="bg-white cursor-pointer text-black flex items-center justify-center rounded-r-lg hover:bg-gray-300 transition-colors
                    w-10 sm:w-12 md:w-14 h-full"
         whileTap={{ scale: 0.95 }}
-        disabled={!message.trim()} // Disable button if message is empty
-        aria-label="Send Message" // Accessibility: Provide an accessible label
+        disabled={disabled || !message.trim()} // <-- DISABLE BUTTON
+        aria-label="Send Message"
       >
-        <Send className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7" />{" "}
-        {/* Responsive Icon Sizes */}
+        <Send className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7" />
       </motion.button>
     </div>
   );

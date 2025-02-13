@@ -4,6 +4,7 @@ import Header from "@/components/Header/Header";
 import { ReactNode } from "react";
 import Footer from "@/components/Footer";
 import ReduxProvider from "@/store/ReduxProvider";
+import ToastWrapper from "../components/ToastWrapper";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -26,11 +27,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <ReduxProvider>
       <html lang="en">
         <body className={`${poppins.className} bg-gray-50`}>
-          <Header />
-          <div className="min-h-screen w-full flex flex-col justify-between">
-            <>{children}</>
-            <Footer />
-          </div>
+          <ToastWrapper>
+            <Header />
+            <div className="min-h-screen w-full flex flex-col justify-between">
+              <>{children}</>
+              <Footer />
+            </div>
+          </ToastWrapper>
         </body>
       </html>
     </ReduxProvider>

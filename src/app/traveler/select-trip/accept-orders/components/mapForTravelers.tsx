@@ -269,7 +269,7 @@ function ShowBuyers({ orders }: { orders: CompletedOrder[] }) {
               onClick={() => handleMarkerClick(orderGroup, position)}
             >
               <div className="bg-gradient-to-br from-purple-600 to-pink-500 p-2 text-white font-bold text-lg rounded">
-                {orderGroup.length} order{orderGroup.length > 1 ? "s" : ""} here
+                {orderGroup.length} order{orderGroup.length > 1 ? "s" : ""}
               </div>
             </AdvancedMarker>
           </div>
@@ -325,7 +325,7 @@ function OrderList({
             transition={{ delay: index * 0.1, duration: 0.3 }}
             className="py-3 px-3 rounded-lg hover:bg-white hover:bg-opacity-20 transition-colors"
           >
-            <div className="flex whitespace-nowrap justify-between items-center gap-2 mb-1">
+            <div className="flex flex-col md:flex-row whitespace-nowrap justify-between items-center gap-2 mb-1">
               <h2 className="font-semibold text-lg text-white">
                 {order.productName}
               </h2>
@@ -337,11 +337,11 @@ function OrderList({
             <motion.div
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 300 }}
-              className="mt-3 flex items-center justify-between"
+              className="mt-3 flex flex-col gap-2 md:flex-row items-center justify-between"
             >
-              <span className="text-xs text-white font-bold whitespace-nowrap">
+              <h2 className="text-sm text-white font-bold whitespace-nowrap">
                 Price: {order.estimatedValue} €
-              </span>
+              </h2>
               <Link
                 href={`/negotiate?recipientId=${order.buyerId}&orderId=${order._id}`}
                 className="bg-white text-purple-600 font-bold px-4 py-2 rounded-lg shadow-md hover:bg-opacity-90 transition-colors"

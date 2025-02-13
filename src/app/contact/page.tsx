@@ -43,13 +43,14 @@ export default async function Contact() {
         <h1 className="text-5xl font-extrabold text-center mb-12 animate-slideIn">
           Your Contacts
         </h1>
-        <ul className="flex flex-wrap justify-center gap-8">
-          {userInfo.contacts.map((contact) => (
-            <li
-              key={contact.contactId}
-              className="bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 animate-fadeInUp"
-            >
-              <div className="flex flex-col h-full">
+        {/* Scrollable container */}
+        <div className="max-h-[80vh] overflow-y-auto">
+          <ul className="flex flex-wrap justify-center gap-8">
+            {userInfo.contacts.map((contact) => (
+              <li
+                key={contact.contactId}
+                className="bg-gray-800 max-w-[625px] w-full p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 animate-fadeInUp flex flex-col justify-between"
+              >
                 <h2 className="text-2xl font-bold text-white mb-3">
                   {contact.contactName}
                 </h2>
@@ -64,7 +65,7 @@ export default async function Contact() {
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="size-6 mr-3"
+                    className="h-6 w-6 mr-3"
                   >
                     <path
                       strokeLinecap="round"
@@ -75,10 +76,10 @@ export default async function Contact() {
                   Speak to{" "}
                   <span className="ml-1 font-bold">{contact.contactName}</span>
                 </Link>
-              </div>
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );

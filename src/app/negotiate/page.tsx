@@ -1,19 +1,14 @@
 "use client";
 
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  useCallback,
-  type JSX,
-} from "react";
+import { useEffect, useState, useRef, useCallback, type JSX } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import SockJS from "sockjs-client";
 import Stomp, { Client } from "stompjs";
 import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
+import { toast } from "react-toastify";
 
+import { RootState } from "@/store/store";
 import apiClient from "@/utils/apiClient";
 import { UserInfo } from "@/interfaces/userInfo/userInfo";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
@@ -63,6 +58,15 @@ export default function NegotiatePage(): JSX.Element {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [connectionEstablished, setConnectionEstablished] = useState(false);
 
+  // States for critical error handling
+  const [criticalError, setCriticalError] = useState<string | null>(null);
+  // refreshInterval is in milliseconds; initially set to 5000ms (5 seconds)
+  const [refreshInterval, setRefreshInterval] = useState(5000);
+  // This state holds the countdown (in seconds) until refresh.
+  const [secondsLeft, setSecondsLeft] = useState<number>(
+    Math.ceil(refreshInterval / 1000)
+  );
+
   const chatRef = useRef<HTMLDivElement>(null);
   const stompClientRef = useRef<Client | null>(null);
 
@@ -70,6 +74,47 @@ export default function NegotiatePage(): JSX.Element {
   const notifications = useSelector(
     (state: RootState) => state.notifications.notifications
   );
+
+  // --- Toast & Refresh Handler ---
+  useEffect(() => {
+    if (criticalError) {
+      // Show the critical error toast (won't auto-close)
+      toast.error(criticalError, {
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+        toastId: "critical-error",
+      });
+
+      // Set a timeout to reload the page after refreshInterval milliseconds.
+      const reloadTimer = setTimeout(() => {
+        window.location.reload();
+        // If the page state were to be maintained across refreshes,
+        // you could double the interval:
+        setRefreshInterval((prev) => prev * 2);
+      }, refreshInterval);
+
+      return () => clearTimeout(reloadTimer);
+    }
+  }, [criticalError, refreshInterval]);
+
+  // --- Countdown Timer for Refresh ---
+  useEffect(() => {
+    if (criticalError) {
+      // Reset the countdown based on refreshInterval
+      setSecondsLeft(Math.ceil(refreshInterval / 1000));
+      const countdownTimer = setInterval(() => {
+        setSecondsLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(countdownTimer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(countdownTimer);
+    }
+  }, [criticalError, refreshInterval]);
 
   // --- Helper: Fetch User & Recipient Info ---
   useEffect(() => {
@@ -86,7 +131,9 @@ export default function NegotiatePage(): JSX.Element {
         setRecipientInfo(recipientResponse.data);
       } catch (error) {
         console.error("Error fetching user info:", error);
-        alert("Something went wrong while fetching users. Please try again.");
+        setCriticalError(
+          "Failed to fetch user information. Please try again later."
+        );
       }
     }
     fetchUserInfos();
@@ -105,6 +152,9 @@ export default function NegotiatePage(): JSX.Element {
       }
     } catch (error) {
       console.error("Failed to fetch order info:", error);
+      setCriticalError(
+        "Failed to fetch order details. Please try again later."
+      );
     }
   }, [orderId]);
 
@@ -152,8 +202,8 @@ export default function NegotiatePage(): JSX.Element {
         },
         (error) => {
           console.error("WebSocket connection error:", error);
-          alert(
-            "Something went wrong connecting to chat. Please refresh the page."
+          setCriticalError(
+            "Critical error connecting to chat. Please wait, the page will refresh automatically."
           );
         }
       );
@@ -170,6 +220,9 @@ export default function NegotiatePage(): JSX.Element {
         setMessages(result.data || []);
       } catch (error) {
         console.error("Failed to fetch chat history:", error);
+        setCriticalError(
+          "Failed to fetch chat history. Please try again later."
+        );
       }
     }
     if (recipientId) {
@@ -189,7 +242,8 @@ export default function NegotiatePage(): JSX.Element {
 
   // --- Send Message Handler ---
   const sendMessage = (content: string) => {
-    if (!content.trim() || !connectionEstablished || !userInfo) return;
+    if (criticalError || !content.trim() || !connectionEstablished || !userInfo)
+      return;
 
     const chatMessage: Partial<ChatMessage> = {
       orderId,
@@ -212,79 +266,103 @@ export default function NegotiatePage(): JSX.Element {
       fetchOrderInfo();
     } catch (error) {
       console.error("Cannot accept order:", error);
-      alert("Cannot accept order. Please try again.");
+      setCriticalError(
+        "Cannot accept order at this time. Please try again later."
+      );
     }
   };
 
+  // Avoid self-chat
   if (recipientId === userInfo?._id) {
     return (
-      <h1>
-        Why on earth would you want to chat with yourself ? Are you that lonely
-        ??
-      </h1>
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-4">
+        <h1 className="text-2xl font-semibold mb-4">
+          It looks like you&apos;re trying to chat with yourself.
+        </h1>
+        <p className="mb-6">Please go back and select a valid chat partner.</p>
+        <button
+          onClick={() => window.history.back()}
+          className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+        >
+          Go Back
+        </button>
+      </div>
     );
   }
 
   return (
-    <motion.div
-      className="bg-gray-50 mt-10 text-gray-800 flex flex-col xl:flex-row"
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-    >
-      {/* --- Left Panel: Chat Section --- */}
-      <motion.div
-        className="flex-1 flex flex-col p-4 h-fit sticky xl:top-[80px] md:p-6 border-r border-gray-300"
-        variants={itemVariants}
-      >
-        <h2 className="text-2xl font-bold mb-4">
-          Chat with: {recipientInfo?.name}
-        </h2>
-        <div
-          ref={chatRef}
-          className="flex-1 pr-2 max-h-[600px] overflow-y-auto grid grid-cols-1 auto-rows-min space-y-2 pb-4"
-        >
-          <AnimatePresence>
-            {messages.map((msg, index) => {
-              const isSender = msg.senderId === userInfo?._id;
-              return (
-                <motion.div
-                  key={msg.id || index}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                >
-                  <MessageBubble message={msg} isSender={isSender} />
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
+    <>
+      {/* When a critical error occurs, display a fixed banner with a countdown */}
+      {criticalError && (
+        <div className="w-full bg-red-600 text-white p-2 text-center fixed top-0 left-0 z-50">
+          {`Critical error: ${criticalError} - Refreshing page in ${secondsLeft} seconds...`}
         </div>
-        <MessageInput onSendMessage={sendMessage} />
-      </motion.div>
-
-      {/* --- Right Panel: Negotiation & Order Details --- */}
+      )}
+      {/* Adding top padding so the fixed banner does not cover content */}
       <motion.div
-        className="w-full xl:w-1/3 flex flex-col p-4 xl:p-6"
-        variants={itemVariants}
+        className="bg-gray-50 mt-10 pt-12 text-gray-800 flex flex-col xl:flex-row"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
       >
-        <NegotiationControls
-          userInfo={userInfo}
-          recipientInfo={recipientInfo}
-          orderInfo={orderInfo}
-          handleAcceptOrder={handleAcceptOrder}
-          onSuccess={fetchOrderInfo}
-        />
-        {orderInfo && (
-          <motion.div
-            className="mt-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+        {/* --- Left Panel: Chat Section --- */}
+        <motion.div
+          className="flex-1 flex flex-col p-4 h-fit sticky xl:top-[80px] md:p-6 border-r border-gray-300"
+          variants={itemVariants}
+        >
+          <h2 className="text-2xl font-bold mb-4">
+            Chat with: {recipientInfo?.name}
+          </h2>
+          <div
+            ref={chatRef}
+            className="flex-1 pr-2 max-h-[600px] min-h-24 overflow-y-auto grid grid-cols-1 auto-rows-min space-y-2 pb-4"
           >
-            <OrderDetails orderInfo={orderInfo} />
-          </motion.div>
-        )}
+            <AnimatePresence>
+              {messages.map((msg, index) => {
+                const isSender = msg.senderId === userInfo?._id;
+                return (
+                  <motion.div
+                    key={msg.id || index}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                  >
+                    <MessageBubble message={msg} isSender={isSender} />
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </div>
+          {/* Disable MessageInput if a critical error has occurred */}
+          <MessageInput
+            onSendMessage={sendMessage}
+            disabled={!!criticalError}
+          />
+        </motion.div>
+
+        {/* --- Right Panel: Negotiation & Order Details --- */}
+        <motion.div
+          className="w-full xl:w-1/3 flex flex-col p-4 xl:p-6"
+          variants={itemVariants}
+        >
+          <NegotiationControls
+            userInfo={userInfo}
+            recipientInfo={recipientInfo}
+            orderInfo={orderInfo}
+            handleAcceptOrder={handleAcceptOrder}
+            onSuccess={fetchOrderInfo}
+          />
+          {orderInfo && (
+            <motion.div
+              className="mt-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <OrderDetails orderInfo={orderInfo} />
+            </motion.div>
+          )}
+        </motion.div>
       </motion.div>
-    </motion.div>
+    </>
   );
 }

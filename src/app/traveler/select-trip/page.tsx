@@ -70,8 +70,12 @@ export default async function SelectTrip() {
     redirect("/traveler");
   }
 
+  // Helper function to truncate addresses if they are too long
+  const truncateAddress = (address: string, maxLength: number = 50): string =>
+    address.length > maxLength ? address.slice(0, maxLength) + "..." : address;
+
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+    <div className="container max-w-screen-lg mx-auto px-4 sm:px-6 lg:px-8 mt-10">
       <h1 className="text-2xl sm:text-3xl md:text-4xl text-center font-bold mb-8 text-black">
         Select a Trip
       </h1>
@@ -86,19 +90,19 @@ export default async function SelectTrip() {
               key={trip._id}
               className="border border-black p-4 sm:p-6 rounded-3xl hover:shadow-lg transition flex flex-col"
             >
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
+              <div className="flex flex-col md:flex-row items-center md:justify-between space-y-2 md:space-y-0">
                 <p className="text-sm sm:text-base">
                   From{" "}
                   <span className="italic font-semibold">
-                    {trip.itinerary.from.formatted_address}
+                    {truncateAddress(trip.itinerary.from.formatted_address, 50)}
                   </span>{" "}
                   to{" "}
                   <span className="italic font-semibold">
-                    {trip.itinerary.to.formatted_address}
+                    {truncateAddress(trip.itinerary.to.formatted_address, 50)}
                   </span>
                 </p>
                 <Link
-                  className="inline-flex text-center w-[177px] font-semibold items-center bg-purple-500 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-lg hover:bg-purple-600 transition"
+                  className="text-center w-[180px] font-semibold items-center bg-purple-500 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-lg hover:bg-purple-600 transition"
                   href={`/traveler/select-trip/accept-orders?latStart=${trip.itinerary.from.lat}&lngStart=${trip.itinerary.from.lng}&latEnd=${trip.itinerary.to.lat}&lngEnd=${trip.itinerary.to.lng}`}
                 >
                   Select this trip
