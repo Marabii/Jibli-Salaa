@@ -71,50 +71,48 @@ export default async function SelectTrip() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl mt-10 p-5">
-      <h1 className="text-4xl text-center font-bold mb-8 text-black">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+      <h1 className="text-2xl sm:text-3xl md:text-4xl text-center font-bold mb-8 text-black">
         Select a Trip
       </h1>
-      <h2 className="font-semibold mb-3">
+      <h2 className="font-semibold mb-3 text-base sm:text-lg">
         You are scheduled for {tripsOfTraveler.length} trip
         {tripsOfTraveler.length > 1 ? "s" : ""}
       </h2>
       <div>
-        <ul className="space-y-2">
+        <ul className="space-y-4">
           {tripsOfTraveler.map((trip) => (
             <li
               key={trip._id}
-              className="border-2 border-black p-6 rounded-3xl hover:shadow-2xl transition flex flex-col w-full h-full"
+              className="border border-black p-4 sm:p-6 rounded-3xl hover:shadow-lg transition flex flex-col"
             >
-              <div className="flex items-center space-x-4">
-                <div className="flex w-full items-center justify-between">
-                  <p className="w-fit align-middle mr-5">
-                    From{" "}
-                    <span className="italic font-semibold">
-                      {trip.itinerary.from.formatted_address}
-                    </span>{" "}
-                    to{" "}
-                    <span className="italic font-semibold">
-                      {trip.itinerary.to.formatted_address}
-                    </span>
-                  </p>
-                  <Link
-                    className="inline-flex font-semibold items-center bg-purple-500 text-white px-6 py-3 rounded-full text-lg hover:bg-purple-600 transition"
-                    href={`/traveler/select-trip/accept-orders?latStart=${trip.itinerary.from.lat}&lngStart=${trip.itinerary.from.lng}&latEnd=${trip.itinerary.to.lat}&lngEnd=${trip.itinerary.to.lng}`}
-                  >
-                    Select this trip
-                  </Link>
-                </div>
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
+                <p className="text-sm sm:text-base">
+                  From{" "}
+                  <span className="italic font-semibold">
+                    {trip.itinerary.from.formatted_address}
+                  </span>{" "}
+                  to{" "}
+                  <span className="italic font-semibold">
+                    {trip.itinerary.to.formatted_address}
+                  </span>
+                </p>
+                <Link
+                  className="inline-flex text-center w-[177px] font-semibold items-center bg-purple-500 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-lg hover:bg-purple-600 transition"
+                  href={`/traveler/select-trip/accept-orders?latStart=${trip.itinerary.from.lat}&lngStart=${trip.itinerary.from.lng}&latEnd=${trip.itinerary.to.lat}&lngEnd=${trip.itinerary.to.lng}`}
+                >
+                  Select this trip
+                </Link>
               </div>
             </li>
           ))}
         </ul>
       </div>
       {tripsOfTraveler.length === 0 && (
-        <div className="text-center">
-          <p>You haven&apos;t registered any trips yet.</p>
+        <div className="text-center mt-6">
+          <p className="mb-4">You haven&apos;t registered any trips yet.</p>
           <Link
-            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-300"
+            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-300 inline-block"
             href={"/traveler"}
           >
             Register a trip

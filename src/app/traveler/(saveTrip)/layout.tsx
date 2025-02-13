@@ -15,7 +15,7 @@ interface Metadata {
 export const metadata: Metadata = {
   title: "traveler",
   description:
-    "This is the traveler page of the Jiblii Salaa where travelers specify the start and end locations of their trip as well as other information to include them in the algorithm",
+    "This is the traveler page of the Jeebware where travelers specify the start and end locations of their trip as well as other information to include them in the algorithm",
 };
 
 export default function TravelerTripLayout() {

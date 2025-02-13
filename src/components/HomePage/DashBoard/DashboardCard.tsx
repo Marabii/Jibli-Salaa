@@ -28,20 +28,6 @@ const DashboardCard = ({ type, data }: DashboardCardProps) => {
             (data as CompletedOrder)._id && (
               <ConfirmDelivery orderId={(data as CompletedOrder)._id!} />
             )}
-          {(data as CompletedOrder).orderStatus === ORDER_STATUS.DELIVERED && (
-            <div className="bg-gray-900 p-4 rounded-md">
-              <p className="text-white mb-3">
-                You&apos;ve successfully received your product. Share your
-                experience!
-              </p>
-              <Link
-                href="mailto:jibli.salaa@gmail.com"
-                className="inline-block bg-white text-black px-5 py-2 rounded hover:bg-gray-200 transition-colors duration-200"
-              >
-                Send Email
-              </Link>
-            </div>
-          )}
         </>
       ) : (
         <>

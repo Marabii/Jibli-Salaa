@@ -15,7 +15,7 @@ interface Metadata {
 export const metadata: Metadata = {
   title: "Buyer Page",
   description:
-    "This is the buyers page designed to help users place orders in the Jiblii Salaa website. Travelers can then accept those orders and hand deliver them to their destinations.",
+    "This is the buyers page designed to help users place orders in the JeebWare website. Travelers can then accept those orders and hand deliver them to their destinations.",
 };
 
 export default function BuyerLayout() {

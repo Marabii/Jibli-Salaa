@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
 
 export const metadata = {
-  title: "Create Account - Jibli",
-  description: "Registering page for the website Jibli",
+  title: "Create Account - Jeebware",
+  description: "Signing up page for the website Jeebware",
 };
 
 export default function RegisterLayout({ children }: { children: ReactNode }) {

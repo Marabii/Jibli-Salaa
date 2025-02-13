@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
 
 export const metadata = {
-  title: "Login - Jibli",
-  description: "Login page for the website Jibli",
+  title: "Login - Jeebware",
+  description: "Login page for the website Jeebware",
 };
 
 export default function LoginLayout({ children }: { children: ReactNode }) {

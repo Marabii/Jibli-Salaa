@@ -16,8 +16,9 @@ interface Metadata {
 }
 
 export const metadata: Metadata = {
-  title: "Jiblii Salaa",
-  description: "This is the home page of the Jiblii Salaa web application",
+  title: "JeebWare",
+  description:
+    "Welcome to JeebWare, the ultimate platform that connects savvy travelers with buyers seeking affordable or hard-to-find products across borders. JeebWare empowers travelers to earn money while on the move by delivering requested items, offering a faster and more cost-effective alternative to traditional shipping services.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

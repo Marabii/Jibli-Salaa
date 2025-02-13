@@ -6,7 +6,7 @@ import Image from "next/image";
 
 const HeroSection = () => {
   return (
-    <section className="bg-black text-white py-32">
+    <section className="bg-black text-white py-6 md:py-24 xl:py-32">
       <div className="container mx-auto px-4 flex flex-col-reverse md:flex-row items-center">
         {/* Text Content */}
         <div className="md:w-1/2">
@@ -24,8 +24,8 @@ const HeroSection = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, delay: 0.3 }}
           >
-            Jibli is a platform that connects buyers with travelers for seamless
-            delivery of products, both locally and internationally.
+            Jeebware is a platform that connects buyers with travelers for
+            seamless delivery of products, both locally and internationally.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 50 }}

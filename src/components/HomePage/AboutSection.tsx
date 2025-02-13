@@ -28,7 +28,9 @@ const AboutSection = () => {
   return (
     <section className="py-20 bg-gray-100">
       <div className="container mx-auto px-4">
-        <h2 className="text-4xl font-bold mb-8 text-black">Why Use Jibli ?</h2>
+        <h2 className="text-4xl font-bold mb-8 text-black">
+          Why Use Jeebware ?
+        </h2>
         <div className="flex flex-wrap -mx-4">
           {features.map((feature, index) => (
             <motion.div

@@ -46,7 +46,6 @@ const apiServer = async (
     );
 
     const responseData: ApiResponse<unknown> = await response.json();
-
     if (!response.ok) {
       const errorMessage = responseData?.message || "An unknown error occurred";
       const errorsArray = responseData?.errors || [];

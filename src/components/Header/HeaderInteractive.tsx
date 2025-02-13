@@ -9,6 +9,7 @@ import { FaBars, FaTimes } from "react-icons/fa";
 import { UserInfo } from "@/interfaces/userInfo/userInfo";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import useOutsideClick from "@/hooks/useOutsideClick";
 
 interface HeaderInteractiveProps {
   userInfo: UserInfo | null;
@@ -22,6 +23,7 @@ export default function HeaderInteractive({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const dropdownMenuRef = useRef<HTMLDivElement>(null);
+  useOutsideClick(dropdownMenuRef, () => setShowProfileDropdown(false));
   const router = useRouter();
 
   const toggleMobileMenu = () => setMobileMenuOpen((prev) => !prev);
@@ -52,7 +54,7 @@ export default function HeaderInteractive({
         {/* Logo / Brand */}
         <Link href="/">
           <h1 className="text-2xl font-bold text-white cursor-pointer hover:text-indigo-400 transition-colors">
-            Jibli Salaa
+            Jeebware
           </h1>
         </Link>
 
@@ -221,10 +223,10 @@ export default function HeaderInteractive({
       <header className="md:hidden sticky top-0 left-0 z-50 bg-gray-800 shadow-md px-4 py-3 flex items-center justify-between">
         <Link href="/">
           <h1 className="text-xl font-bold text-white cursor-pointer hover:text-indigo-400 transition-colors">
-            Jibli Salaa
+            Jeebware
           </h1>
         </Link>
-        <div className="flex items-center gap-4">
+        <div className="flex relative items-center gap-4">
           {isUserAuthenticated && <NotificationsDropdown />}
           {isUserAuthenticated && userInfo?.profilePicture && (
             <div className="relative">
@@ -238,12 +240,6 @@ export default function HeaderInteractive({
               />
               {showProfileDropdown && (
                 <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-2 z-50">
-                  <Link
-                    href={"/login"}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Switch Account
-                  </Link>
                   <button
                     onClick={handleLogout}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -272,7 +268,7 @@ export default function HeaderInteractive({
                 className="text-2xl font-bold cursor-pointer hover:text-indigo-400 transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Jibli Salaa
+                Jeebware
               </h1>
             </Link>
             <button
@@ -435,7 +431,7 @@ export default function HeaderInteractive({
             </ul>
           </nav>
           <div className="mt-10">
-            {!isUserAuthenticated ? (
+            {!isUserAuthenticated && (
               <Link href="/login">
                 <span
                   onClick={() => setMobileMenuOpen(false)}
@@ -444,13 +440,6 @@ export default function HeaderInteractive({
                   Log In
                 </span>
               </Link>
-            ) : (
-              <div className="flex items-center gap-4">
-                <NotificationsDropdown />
-                <span className="text-lg">
-                  Welcome, {userInfo?.name || "User"}
-                </span>
-              </div>
             )}
           </div>
         </div>

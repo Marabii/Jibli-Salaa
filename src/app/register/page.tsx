@@ -84,7 +84,7 @@ const Register = () => {
   return (
     <>
       <p className="py-5 text-lg text-gray-400">
-        Create an account and start using Jibli Salaa
+        Create an account and start using Jeebware
       </p>
       <FormWrapper<RegisterFormInputs>
         className="w-full max-w-[550px] space-y-5 px-5"
