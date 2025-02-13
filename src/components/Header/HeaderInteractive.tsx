@@ -39,8 +39,7 @@ export default function HeaderInteractive({
         console.error("Logout failed:", response.statusText);
         return;
       }
-      setMobileMenuOpen(false);
-      setShowProfileDropdown(false);
+
       router.refresh();
     } catch (error) {
       console.error("Error logging out:", error);
