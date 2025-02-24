@@ -17,35 +17,35 @@ export default function FinishSigningUp() {
   );
   const [userRole, setUserRole] = useState<"buyer" | "traveler">("buyer");
 
-  // Choose currency list based on user role
+  // 1. Pick which currency array to use (payin vs. payout) based on role.
+  //    Each entry (e.g. "mad") is a valid ISO 4217 currency code.
   const currencies =
     userRole === "traveler"
-      ? stripeConnectPayoutCurrencies
-      : stripeConnectPayinCurrencies;
+      ? stripeConnectPayoutCurrencies // e.g. ["aud", "bgn", "cad", ...]
+      : stripeConnectPayinCurrencies; // e.g. ["usd", "aed", "afn", ...]
 
-  const currencyOptions = currencies.map((currency) => {
-    const countryCode = currencyToCountry[currency];
+  // 2. Build currencyOptions: user sees "MAD 🇲🇦" but we store "mad" as value.
+  const currencyOptions = currencies.map((currencyCode) => {
+    const countryCode = currencyToCountry[currencyCode]; // e.g. "MA" for "mad"
     const flagEmoji = countryCode
       ? emojiFlags.countryCode(countryCode)?.emoji || ""
       : "";
     return {
-      label: `${currency.toUpperCase()} ${flagEmoji}`,
-      value: currency,
+      label: `${currencyCode.toUpperCase()} ${flagEmoji}`, // "MAD 🇲🇦"
+      value: currencyCode, // "mad"
     };
   });
 
-  // Generate options for the country select element using emoji-flags
+  // 3. Build countryOptions: user sees "🇲🇦 Morocco" but we store "MA"
+  //    because that is an ISO 3166-1 alpha-2 country code.
   const countryOptions = emojiFlags.data
-    .filter(
-      (country: { name: string; emoji: string; code: string }) =>
-        country.name.toUpperCase() !== "ISRAEL"
-    )
-    .map((country: { name: string; emoji: string; code: string }) => ({
-      label: `${country.emoji} ${country.name}`,
-      value: country.code,
+    .filter((country) => country.name.toUpperCase() !== "ISRAEL")
+    .map((country) => ({
+      label: `${country.emoji} ${country.name}`, // e.g. "🇲🇦 Morocco"
+      value: country.code, // e.g. "MA"
     }));
 
-  // Determine if the form is valid
+  // 4. Form validation
   const isFormValid =
     phoneNumber &&
     phoneNumber.trim() !== "" &&
@@ -54,17 +54,16 @@ export default function FinishSigningUp() {
     userCountry &&
     userCountry.trim() !== "";
 
-  // Construct the OAuth state with phoneNumber and other details
+  // 5. Prepare the OAuth state that will be sent to your backend.
   const googleOAuthState = {
     originPage: "/register",
     redirectTo: "/",
-    userBankCurrency,
-    phoneNumber,
-    userCountry,
-    userRole,
+    userBankCurrency, // e.g. "mad"
+    phoneNumber, // e.g. "+212612345678"
+    userCountry, // e.g. "MA"
   };
 
-  // Function to initiate Google OAuth
+  // 6. Initiate Google OAuth
   const initiateGoogleOAuth = async () => {
     if (!isFormValid) return;
 
@@ -100,12 +99,12 @@ export default function FinishSigningUp() {
             onChange={setPhoneNumber}
             numberInputProps={{ className: "bg-gray-50 focus:outline-none" }}
             className="w-full border-2 border-black p-5"
-            defaultCountry="MA"
+            defaultCountry="MA" // +212
           />
           <input type="hidden" name="phoneNumber" value={phoneNumber || ""} />
         </div>
 
-        {/* Country Select */}
+        {/* Country Select (ISO 3166) */}
         <div>
           <label
             className="mb-2 block text-lg font-semibold text-gray-700"
@@ -165,13 +164,13 @@ export default function FinishSigningUp() {
           </div>
         </div>
 
-        {/* Currency Select */}
+        {/* Currency Select (ISO 4217) */}
         <div>
           <label
             className="mb-2 block text-lg font-semibold text-gray-700"
             htmlFor="userBankCurrency"
           >
-            User Bank Currency
+            Bank Currency
           </label>
           <select
             name="userBankCurrency"
