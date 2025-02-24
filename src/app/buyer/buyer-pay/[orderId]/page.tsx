@@ -1,13 +1,13 @@
 import apiServer from "@/utils/apiServer";
-import Image from "next/image";
 import PayButton from "./PayButton";
-import { UserInfo } from "@/interfaces/userInfo/userInfo";
+import { ExchangeRate, UserInfo } from "@/interfaces/userInfo/userInfo";
 import { ROLE } from "@/interfaces/userInfo/userRole";
 import { CompletedOrder } from "@/interfaces/Order/order";
 import Tetromino from "../../../../components/Loading/Tetromino/Tetromino";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import ImgsCarousel from "./ImgsCarousel";
 import CollapsibleText from "./CollapsibleText"; // Import the client component
+import { format } from "currency-formatter";
 
 export default async function BuyerPay({
   params,
@@ -20,12 +20,23 @@ export default async function BuyerPay({
   );
   const orderInfo = orderInfoResponse.data;
 
-  const userInfoResponse: ApiResponse<UserInfo> = await apiServer(
+  const buyerInfoResponse: ApiResponse<UserInfo> = await apiServer(
     "/api/protected/getUserInfo"
   );
-  const userInfo = userInfoResponse.data;
+  const buyerInfo = buyerInfoResponse.data;
 
-  if (!userInfo) {
+  const travelerInfoResponse: ApiResponse<UserInfo> = await apiServer(
+    `/api/protected/getUserInfo/${orderInfo.buyerId}`
+  );
+  const traveler = travelerInfoResponse.data;
+
+  const exchangeRateResponse: ApiResponse<ExchangeRate> = await apiServer(
+    `/api/exchange-rate?target=${buyerInfo.userBankCurrency}&source=${traveler.userBankCurrency}`
+  );
+
+  const exchangeRate = exchangeRateResponse.data;
+
+  if (!buyerInfo) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <Tetromino />
@@ -34,8 +45,8 @@ export default async function BuyerPay({
   }
 
   if (
-    userInfo?.role !== ROLE.BUYER &&
-    userInfo?.role !== ROLE.TRAVELER_AND_BUYER
+    buyerInfo?.role !== ROLE.BUYER &&
+    buyerInfo?.role !== ROLE.TRAVELER_AND_BUYER
   ) {
     throw new Error("You aren't a buyer, you can't access this page");
   }
@@ -67,13 +78,29 @@ export default async function BuyerPay({
                 <h3 className="text-xl font-semibold">
                   Value:{" "}
                   <span className="text-lg">
-                    €{orderInfo.actualValue.toFixed(2)}
+                    {format(
+                      Number(
+                        (orderInfo.actualValue * exchangeRate.rate).toFixed(2)
+                      ),
+                      {
+                        code: exchangeRate.target,
+                      }
+                    )}
                   </span>
                 </h3>
                 <h3 className="text-xl font-semibold">
                   Delivery Fee:{" "}
                   <span className="text-lg">
-                    €{orderInfo.actualDeliveryFee.toFixed(2)}
+                    {format(
+                      Number(
+                        (
+                          orderInfo.actualDeliveryFee * exchangeRate.rate
+                        ).toFixed(2)
+                      ),
+                      {
+                        code: exchangeRate.target,
+                      }
+                    )}
                   </span>
                 </h3>
               </div>

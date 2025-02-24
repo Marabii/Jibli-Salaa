@@ -88,8 +88,6 @@ export const config = {
   matcher: [
     "/traveler",
     "/traveler/manage-orders",
-    "/traveler/receive-payment",
-    "/traveler/receive-payment/:orderId",
     "/traveler/select-trip",
     "/traveler/select-trip/accept-orders",
     "/buyer",

@@ -56,8 +56,7 @@ export const validateForm = ({
   const errors: Errors<LoginFormInputs> = {};
 
   const emailRegexGrp = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-  const passwordRegexGrp =
-    /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).{8,}$/;
+  const passwordRegexGrp = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
 
   // Validate email
   if (!email) {
@@ -71,7 +70,7 @@ export const validateForm = ({
     errors.password = "Password is missing";
   } else if (!passwordRegexGrp.test(password)) {
     errors.password =
-      "Password must be at least 8 characters long, and include one uppercase letter, one lowercase letter, one digit, and one special character.";
+      "Password must be at least 8 characters long, and include one uppercase letter, one lowercase letter, one digit.";
   }
 
   const isError = Object.keys(errors).length > 0;

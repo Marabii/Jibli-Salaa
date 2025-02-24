@@ -32,7 +32,9 @@ export default function TravelerTripLayout() {
         </section>
         <TripDates />
         <FormSubmissionButton />
-        <FormErrorHandler />
+        <section className="max-w-screen-xl mx-auto">
+          <FormErrorHandler />
+        </section>
       </FormWrapper>
     </>
   );

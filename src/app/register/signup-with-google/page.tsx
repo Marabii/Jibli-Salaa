@@ -1,81 +1,72 @@
 "use client";
 
-import { LanguageOption } from "../Utilis/handleRegisterAction";
-import Input from "@/components/Input";
-import { useState, ChangeEvent } from "react";
-import ISO6391 from "iso-639-1";
-import dynamic from "next/dynamic";
-
-// Dynamically import the Select component to prevent hydration issues.
-const Select = dynamic(() => import("react-select"), { ssr: false });
-
-interface SelectOption {
-  value: string;
-  label: string;
-}
+import { useState } from "react";
+import PhoneInput from "react-phone-number-input";
+import {
+  stripeConnectPayinCurrencies,
+  stripeConnectPayoutCurrencies,
+  currencyToCountry,
+} from "@/utils/constants";
+import emojiFlags from "emoji-flags";
 
 export default function FinishSigningUp() {
-  const [spokenLanguages, setSpokenLanguages] = useState<LanguageOption[]>([]);
-  const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [phoneNumber, setPhoneNumber] = useState<string | undefined>("");
+  const [userCountry, setUserCountry] = useState<string | undefined>("");
+  const [userBankCurrency, setUserBankCurrency] = useState<string | undefined>(
+    ""
+  );
+  const [userRole, setUserRole] = useState<"buyer" | "traveler">("buyer");
 
-  const languageOptions = ISO6391.getAllCodes().map((code) => ({
-    value: code,
-    label: ISO6391.getName(code),
-  }));
+  // Choose currency list based on user role
+  const currencies =
+    userRole === "traveler"
+      ? stripeConnectPayoutCurrencies
+      : stripeConnectPayinCurrencies;
 
-  const handleLanguageChange = (newValue: unknown) => {
-    const selectedOptions = newValue as SelectOption[] | null;
-    if (selectedOptions) {
-      const mappedLanguages: LanguageOption[] = selectedOptions.map(
-        (option) => ({
-          languageCode: option.value,
-          languageName: option.label,
-        })
-      );
-      setSpokenLanguages(mappedLanguages);
-    } else {
-      setSpokenLanguages([]);
-    }
-  };
+  const currencyOptions = currencies.map((currency) => {
+    const countryCode = currencyToCountry[currency];
+    const flagEmoji = countryCode
+      ? emojiFlags.countryCode(countryCode)?.emoji || ""
+      : "";
+    return {
+      label: `${currency.toUpperCase()} ${flagEmoji}`,
+      value: currency,
+    };
+  });
 
-  // Handler for phone number changes
-  const handlePhoneChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const value = event.target.value;
-    setPhoneNumber(value);
-
-    // Validate phone number: 10 to 15 digits
-    const phoneRegex = /^[0-9]{10,15}$/;
-    if (value.trim() === "") {
-      setPhoneError("Phone number is required.");
-    } else if (!phoneRegex.test(value)) {
-      setPhoneError("Invalid phone number. It should be 10 to 15 digits.");
-    } else {
-      setPhoneError(null);
-    }
-  };
+  // Generate options for the country select element using emoji-flags
+  const countryOptions = emojiFlags.data
+    .filter(
+      (country: { name: string; emoji: string; code: string }) =>
+        country.name.toUpperCase() !== "ISRAEL"
+    )
+    .map((country: { name: string; emoji: string; code: string }) => ({
+      label: `${country.emoji} ${country.name}`,
+      value: country.code,
+    }));
 
   // Determine if the form is valid
   const isFormValid =
+    phoneNumber &&
     phoneNumber.trim() !== "" &&
-    phoneError === null &&
-    spokenLanguages.length > 0;
+    userBankCurrency &&
+    userBankCurrency.trim() !== "" &&
+    userCountry &&
+    userCountry.trim() !== "";
 
-  // Construct the OAuth state with phoneNumber
+  // Construct the OAuth state with phoneNumber and other details
   const googleOAuthState = {
     originPage: "/register",
     redirectTo: "/",
-    spokenLanguages,
+    userBankCurrency,
     phoneNumber,
+    userCountry,
+    userRole,
   };
 
   // Function to initiate Google OAuth
   const initiateGoogleOAuth = async () => {
-    if (!isFormValid) {
-      return;
-    }
+    if (!isFormValid) return;
 
     const oauthUrl = `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${
       process.env.NEXT_PUBLIC_SERVERURL
@@ -83,61 +74,121 @@ export default function FinishSigningUp() {
       JSON.stringify(googleOAuthState)
     )}`;
 
-    // Redirect to the OAuth URL
     window.location.href = oauthUrl;
   };
 
   return (
     <>
-      <h1 className="py-5 text-lg text-gray-400">
-        Please specify first the following details about you
+      <h1 className="mb-8 text-2xl font-bold text-gray-800">
+        Please specify your details
       </h1>
       <form
         className="w-full max-w-[550px] space-y-5 px-5"
         onSubmit={(e) => e.preventDefault()}
       >
+        {/* Phone Number */}
         <div>
           <label
-            className="mb-2 block font-playfair text-lg font-bold"
+            className="mb-2 block text-lg font-semibold text-gray-700"
             htmlFor="phoneNumber"
           >
             Phone Number
           </label>
-          <Input
-            className="w-full border-2 border-black p-5"
-            type="tel"
-            name="phoneNumber"
-            label="Enter Your Phone Number"
-            labelBgColor="rgb(249 250 251)"
-            required
-            pattern="/^[0-9]{10,15}$/"
-            errorMessage="Invalid phone number"
+          <PhoneInput
+            placeholder="Enter your phone number"
             value={phoneNumber}
-            onChange={handlePhoneChange}
+            onChange={setPhoneNumber}
+            numberInputProps={{ className: "bg-gray-50 focus:outline-none" }}
+            className="w-full border-2 border-black p-5"
+            defaultCountry="MA"
           />
-          {phoneError && <p className="text-sm text-red-500">{phoneError}</p>}
+          <input type="hidden" name="phoneNumber" value={phoneNumber || ""} />
         </div>
+
+        {/* Country Select */}
         <div>
           <label
-            htmlFor="languages"
-            className="mb-2 block font-playfair text-lg font-bold"
+            className="mb-2 block text-lg font-semibold text-gray-700"
+            htmlFor="userCountry"
           >
-            Languages You Speak
+            Country
           </label>
-          <Select
-            id="languages"
-            options={languageOptions}
-            isMulti
-            className="basic-multi-select"
-            classNamePrefix="select"
-            placeholder="Select Languages"
-            onChange={handleLanguageChange}
-          />
-          {spokenLanguages.length === 0 && (
-            <p className="text-sm text-red-500">
-              Please select at least one language.
-            </p>
-          )}
+          <select
+            name="userCountry"
+            className="w-full border border-gray-300 p-3 focus:outline-none"
+            required
+            defaultValue=""
+            onChange={(e) => setUserCountry(e.target.value)}
+          >
+            <option value="" disabled>
+              Select your country
+            </option>
+            {countryOptions.map((country) => (
+              <option key={country.value} value={country.value}>
+                {country.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Role Selection */}
+        <div>
+          <label className="block text-lg font-semibold text-gray-700 mb-2">
+            How do you plan to use Jeebware?
+          </label>
+          <div className="flex justify-between space-x-6">
+            <label className="flex items-center space-x-2 cursor-pointer">
+              <input
+                type="radio"
+                name="userRole"
+                value="buyer"
+                checked={userRole === "buyer"}
+                onChange={() => setUserRole("buyer")}
+                className="form-radio text-blue-500"
+              />
+              <span className="text-gray-600">Buy Products</span>
+            </label>
+            <label className="flex items-center space-x-2 cursor-pointer">
+              <input
+                type="radio"
+                name="userRole"
+                value="traveler"
+                checked={userRole === "traveler"}
+                onChange={() => setUserRole("traveler")}
+                className="form-radio text-blue-500"
+              />
+              <span className="text-gray-600">
+                Be a Traveler{" "}
+                <span className="text-xs">(Earn extra income)</span>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        {/* Currency Select */}
+        <div>
+          <label
+            className="mb-2 block text-lg font-semibold text-gray-700"
+            htmlFor="userBankCurrency"
+          >
+            User Bank Currency
+          </label>
+          <select
+            name="userBankCurrency"
+            className="w-full border border-gray-300 p-3 focus:outline-none"
+            required
+            defaultValue=""
+            onChange={(e) => setUserBankCurrency(e.target.value)}
+          >
+            <option value="" disabled>
+              Select a currency
+            </option>
+            {currencyOptions.map((currency) => (
+              <option key={currency.value} value={currency.value}>
+                {currency.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         <button

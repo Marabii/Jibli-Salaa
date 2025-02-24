@@ -46,9 +46,8 @@ export const getRegisterForm = (formData: FormData): RegisterFormInputs => {
     email: formData.get("email")?.toString() || "",
     password: formData.get("password")?.toString() || "",
     phoneNumber: formData.get("phoneNumber")?.toString() || "",
-    spokenLanguages: JSON.parse(
-      formData.get("spokenLanguages")?.toString() || "{}"
-    ),
+    userBankCurrency: formData.get("userBankCurrency")?.toString() || "",
+    userCountry: formData.get("userCountry")?.toString() || "",
   };
 };
 
@@ -62,15 +61,17 @@ export const validateForm = ({
   email,
   password,
   phoneNumber,
-  spokenLanguages,
+  userBankCurrency,
+  userCountry,
 }: RegisterFormInputs): ValidateFormResponse => {
   const errors: Errors<RegisterFormInputs> = {};
 
   const emailRegexGrp = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-  const passwordRegexGrp =
-    /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).{8,}$/;
-  const nameRegexGrp = /^[\p{L} ]+$/u; // Corrected regex
-  const phoneRegexGrp = /^[0-9]{10,15}$/;
+  const passwordRegexGrp = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+  const nameRegexGrp = /^[\p{L} ]+$/u;
+  // E.164 format: starts with a '+' followed by 1 to 15 digits,
+  // where the first digit (after '+') cannot be 0.
+  const phoneRegexGrp = /^\+[1-9]\d{1,14}$/;
 
   // Validate name
   if (!name) {
@@ -91,20 +92,23 @@ export const validateForm = ({
     errors.password = "Password is missing";
   } else if (!passwordRegexGrp.test(password)) {
     errors.password =
-      "Password must be at least 8 characters long, and include one uppercase letter, one lowercase letter, one digit, and one special character.";
+      "Password must be at least 8 characters long, and include one uppercase letter, one lowercase letter, and one digit.";
   }
 
-  // Validate phoneNumber
+  // Validate phoneNumber (E.164 format)
   if (!phoneNumber) {
     errors.phoneNumber = "Phone number is missing";
   } else if (!phoneRegexGrp.test(phoneNumber)) {
     errors.phoneNumber =
-      "Phone number must be between 10 and 15 digits and contain only numbers";
+      "Phone number must be in E.164 format (e.g. +1234567890)";
   }
 
-  // Validate spokenLanguages
-  if (!spokenLanguages || spokenLanguages.length === 0) {
-    errors.spokenLanguages = "Please select at least 1 language that you speak";
+  if (!userBankCurrency) {
+    errors.userBankCurrency = "your bank's currency is required";
+  }
+
+  if (!userCountry) {
+    errors.userBankCurrency = "your country of residence is required";
   }
 
   const isError = Object.keys(errors).length > 0;

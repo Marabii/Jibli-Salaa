@@ -10,11 +10,6 @@ import {
   ValidateFormResponse,
 } from "./helperFunctions";
 
-export interface LanguageOption {
-  languageCode: string;
-  languageName: string;
-}
-
 export interface RegisterResponse {
   token: string;
 }
@@ -24,7 +19,8 @@ export interface RegisterFormInputs {
   email: string;
   password: string;
   phoneNumber: string;
-  spokenLanguages: LanguageOption[];
+  userBankCurrency: string;
+  userCountry: string;
 }
 
 export async function handleRegisterAction(

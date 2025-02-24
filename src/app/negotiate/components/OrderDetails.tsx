@@ -1,34 +1,58 @@
 "use client";
 
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/Carousel/carousel";
+import React, { useEffect, useState } from "react";
 import { CompletedOrder } from "@/interfaces/Order/order";
 import { ORDER_STATUS } from "@/interfaces/Order/ORDER_STATUS";
-import { motion } from "framer-motion";
-import Image from "next/image";
 import ImgsCarousel from "./ImgsCarousel";
+import { ExchangeRate, UserInfo } from "@/interfaces/userInfo/userInfo";
+import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
+import apiClient from "@/utils/apiClient";
+import { format } from "currency-formatter";
 
 type OrderDetailsProps = {
   orderInfo: CompletedOrder;
 };
 
 export default function OrderDetails({ orderInfo }: OrderDetailsProps) {
+  const [exchangeRate, setExchangeRate] = useState<ExchangeRate | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const userInfoResponse: ApiResponse<UserInfo> = await apiClient(
+          "/api/protected/getUserInfo"
+        );
+
+        const buyerInfoResponse: ApiResponse<UserInfo> = await apiClient(
+          `/api/protected/getUserInfo/${orderInfo.buyerId}`
+        );
+
+        const exchangeRateResponse: ApiResponse<ExchangeRate> = await apiClient(
+          `/api/exchange-rate?target=${userInfoResponse.data.userBankCurrency}&source=${buyerInfoResponse.data.userBankCurrency}`
+        );
+
+        setExchangeRate(exchangeRateResponse.data);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [orderInfo]);
+
+  if (loading || !exchangeRate) {
+    return <div>Loading...</div>;
+  }
+
   const productValue = orderInfo.actualValue || orderInfo.estimatedValue || 0;
   const deliveryFee =
     orderInfo.actualDeliveryFee || orderInfo.initialDeliveryFee || 0;
 
   return (
-    <motion.div
-      className="bg-gradient-to-br from-gray-800 to-gray-900 p-4 md:p-6 rounded-3xl shadow-2xl text-white"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.6 }}
-    >
+    <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-4 md:p-6 rounded-3xl shadow-2xl text-white">
       <h1 className="text-2xl sm:text-3xl font-extrabold mb-4 sm:mb-6 text-center border-b border-gray-600 pb-2">
         Order Details
       </h1>
@@ -52,18 +76,16 @@ export default function OrderDetails({ orderInfo }: OrderDetailsProps) {
         {productValue > 0 && (
           <p>
             <span className="font-bold">Product Price:</span>{" "}
-            {productValue.toLocaleString("en-US", {
-              style: "currency",
-              currency: "EUR",
+            {format(Number((productValue * exchangeRate.rate).toFixed(2)), {
+              code: exchangeRate.target,
             })}
           </p>
         )}
         {deliveryFee > 0 && (
           <p>
             <span className="font-bold">Delivery Fee:</span>{" "}
-            {deliveryFee.toLocaleString("en-US", {
-              style: "currency",
-              currency: "EUR",
+            {format(Number((deliveryFee * exchangeRate.rate).toFixed(2)), {
+              code: exchangeRate.target,
             })}
           </p>
         )}
@@ -107,6 +129,6 @@ export default function OrderDetails({ orderInfo }: OrderDetailsProps) {
           </div>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }

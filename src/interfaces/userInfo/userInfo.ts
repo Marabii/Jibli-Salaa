@@ -1,10 +1,8 @@
-import { Language } from "./Language";
 import { ROLE } from "./userRole";
 
 export interface UserInfo {
   createdAt: Date;
   phoneNumber: string;
-  spokenLanguages: Language[];
   name: string;
   email: string;
   isAuthenticatedByGoogle: boolean;
@@ -12,10 +10,17 @@ export interface UserInfo {
   _id: string;
   role: ROLE;
   contacts: Contact[];
+  userBankCurrency: string;
 }
 
 export interface Contact {
   contactId: string;
   orderId: string;
   contactName: string;
+}
+
+export interface ExchangeRate {
+  source: string;
+  target: string;
+  rate: number;
 }

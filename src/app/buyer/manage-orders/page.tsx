@@ -6,6 +6,8 @@ import ConfirmDelivery from "./ConfirmDelivery";
 import ImgsCarousel from "./ImgsCarousel";
 import { redirect } from "next/navigation";
 import ShowConfirmationMessage from "./ShowConfirmationMessage";
+import { UserInfo } from "@/interfaces/userInfo/userInfo";
+import { format } from "currency-formatter";
 
 export default async function ManageOrders() {
   const response: ApiResponse<CompletedOrder[]> = await apiServer(
@@ -13,6 +15,11 @@ export default async function ManageOrders() {
   );
 
   const orders = response.data;
+
+  const userInfoResponse: ApiResponse<UserInfo> = await apiServer(
+    "/api/protected/getUserInfo"
+  );
+  const userInfo = userInfoResponse.data;
 
   if (orders.length === 0) {
     redirect("/buyer");
@@ -51,12 +58,14 @@ export default async function ManageOrders() {
                       {order.quantity}
                     </p>
                     <p className="text-gray-800">
-                      <span className="font-medium">Value:</span> €
-                      {productValue.toFixed(2)}
+                      <span className="font-medium">Value: </span>
+                      {format(productValue, {
+                        code: userInfo.userBankCurrency,
+                      })}
                     </p>
                     <p className="text-gray-800">
-                      <span className="font-medium">Delivery Fee:</span> €
-                      {deliveryFee.toFixed(2)}
+                      <span className="font-medium">Delivery Fee: </span>
+                      {format(deliveryFee, { code: userInfo.userBankCurrency })}
                     </p>
                     <p className="text-gray-800 flex items-center">
                       <span className="font-medium mr-2">Status:</span>
@@ -64,7 +73,7 @@ export default async function ManageOrders() {
                         className={`px-2 py-1 text-xs font-semibold rounded ${
                           order.orderStatus === "ORDER_FINALIZED"
                             ? "bg-blue-100 text-blue-800"
-                            : order.orderStatus === "ITEM_PAID"
+                            : order.orderStatus === "PRICE_FROZEN"
                             ? "bg-green-100 text-green-800"
                             : "bg-gray-100 text-gray-800"
                         }`}
@@ -96,7 +105,7 @@ export default async function ManageOrders() {
                         Proceed to Payment
                       </Link>
                     )}
-                    {order.orderStatus === "ITEM_PAID" && order._id && (
+                    {order.orderStatus === "PRICE_FROZEN" && order._id && (
                       <ConfirmDelivery orderId={order._id} />
                     )}
                   </div>

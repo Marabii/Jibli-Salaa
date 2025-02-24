@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { UserInfo } from "@/interfaces/userInfo/userInfo";
+import { ExchangeRate, UserInfo } from "@/interfaces/userInfo/userInfo";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import apiClient from "@/utils/apiClient";
 import { CompletedOrder } from "@/interfaces/Order/order";
@@ -9,6 +9,7 @@ import { ORDER_STATUS } from "@/interfaces/Order/ORDER_STATUS";
 import { useSearchParams } from "next/navigation";
 import Tetromino from "@/components/Loading/Tetromino/Tetromino";
 import { useRouter } from "next/navigation";
+import { format } from "currency-formatter";
 
 // A simple inline spinner for button actions.
 const Spinner: React.FC = () => (
@@ -38,6 +39,7 @@ const ValidateNegotiations: React.FC = () => {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [exchangeRate, setExchangeRate] = useState<ExchangeRate | null>(null);
   const [orderInfo, setOrderInfo] = useState<CompletedOrder | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [actionLoading, setActionLoading] = useState<
@@ -72,6 +74,22 @@ const ValidateNegotiations: React.FC = () => {
     }
     fetchData();
   }, [orderId]);
+
+  useEffect(() => {
+    const fetchExchangeRate = async () => {
+      const buyerInfoResponse = (await apiClient(
+        `/api/protected/getUserInfo/${orderInfo?.buyerId}`
+      )) as ApiResponse<UserInfo>;
+
+      const exchangeRateResponse: ApiResponse<ExchangeRate> = await apiClient(
+        `/api/exchange-rate?target=${userInfo?.userBankCurrency}&source=${buyerInfoResponse.data.userBankCurrency}`
+      );
+
+      setExchangeRate(exchangeRateResponse.data);
+    };
+
+    if (orderInfo) fetchExchangeRate();
+  }, [orderInfo, userInfo?.userBankCurrency]);
 
   // Use the Tetromino spinner for initial page loading.
   if (loading) return <Tetromino />;
@@ -130,20 +148,40 @@ const ValidateNegotiations: React.FC = () => {
           </h2>
         </div>
         <div className="px-6 py-8">
-          <div className="mb-6">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-gray-700 font-medium">Product Value:</span>
-              <span className="text-gray-900 font-semibold">
-                €{orderInfo.actualValue}
-              </span>
+          {exchangeRate && (
+            <div className="mb-6">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-gray-700 font-medium">
+                  Product Value:
+                </span>
+                <span className="text-gray-900 font-semibold">
+                  {format(
+                    Number(
+                      (orderInfo.actualValue * exchangeRate.rate).toFixed(2)
+                    ),
+                    {
+                      code: exchangeRate.target,
+                    }
+                  )}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-700 font-medium">Delivery Fee:</span>
+                <span className="text-gray-900 font-semibold">
+                  {format(
+                    Number(
+                      (orderInfo.actualDeliveryFee * exchangeRate.rate).toFixed(
+                        2
+                      )
+                    ),
+                    {
+                      code: exchangeRate.target,
+                    }
+                  )}
+                </span>
+              </div>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-700 font-medium">Delivery Fee:</span>
-              <span className="text-gray-900 font-semibold">
-                €{orderInfo.actualDeliveryFee}
-              </span>
-            </div>
-          </div>
+          )}
 
           {successMessage && (
             <div className="mb-4 p-3 rounded bg-green-100 border border-green-400 text-green-700 text-center">

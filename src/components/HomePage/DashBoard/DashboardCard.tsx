@@ -24,7 +24,7 @@ const DashboardCard = ({ type, data }: DashboardCardProps) => {
           </h3>
           <ImgsCarousel order={data as CompletedOrder} />
           {/* Conditional Rendering Based on Order Status */}
-          {(data as CompletedOrder).orderStatus === ORDER_STATUS.ITEM_PAID &&
+          {(data as CompletedOrder).orderStatus === ORDER_STATUS.PRICE_FROZEN &&
             (data as CompletedOrder)._id && (
               <ConfirmDelivery orderId={(data as CompletedOrder)._id!} />
             )}

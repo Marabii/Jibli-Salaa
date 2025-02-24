@@ -50,10 +50,8 @@ export default function Login() {
           label="Enter Your Password"
           labelBgColor="rgb(249 250 251)"
           required
-          pattern={String(
-            /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).{8,}$/
-          )}
-          errorMessage="Password must be at least 8 characters long, and include one uppercase letter, one lowercase letter, one digit, and one special character."
+          pattern={String(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$/)}
+          errorMessage="Password must be at least 8 characters long, and include one uppercase letter, one lowercase letter, and one digit."
         />
       </div>
       <div className="flex flex-col gap-3">

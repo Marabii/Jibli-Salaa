@@ -22,7 +22,7 @@ export default function BuyerLayout() {
   return (
     <>
       <FormWrapper<InitialOrder>
-        className="relative z-0 m-auto max-w-screen-2xl p-6 bg-white rounded-lg shadow-md"
+        className="relative z-0 my-5 mx-auto max-w-screen-2xl p-6 bg-white rounded-lg shadow-md"
         action={saveOrder}
         redirectTo="/buyer/manage-orders"
       >

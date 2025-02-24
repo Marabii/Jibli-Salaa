@@ -7,7 +7,6 @@ import NegotiationForm from "./NegotiationForm/NegotiationForm";
 import { CompletedOrder } from "@/interfaces/Order/order";
 import { ORDER_STATUS } from "@/interfaces/Order/ORDER_STATUS";
 import { UserInfo } from "@/interfaces/userInfo/userInfo";
-import { ROLE } from "@/interfaces/userInfo/userRole";
 
 type NegotiationControlsProps = {
   userInfo: UserInfo | null;
@@ -35,7 +34,7 @@ export default function NegotiationControls({
     (orderInfo.orderStatus === ORDER_STATUS.NEGOTIATION_PENDING ||
       orderInfo.orderStatus === ORDER_STATUS.ORDER_FINALIZED ||
       orderInfo.orderStatus === ORDER_STATUS.PENDING ||
-      orderInfo.orderStatus === ORDER_STATUS.ITEM_PAID);
+      orderInfo.orderStatus === ORDER_STATUS.PRICE_FROZEN);
 
   const showBuyerPanel = isBuyer;
 
@@ -76,7 +75,7 @@ export default function NegotiationControls({
             </p>
           </div>
         )}
-        {orderInfo.orderStatus === ORDER_STATUS.ITEM_PAID && (
+        {orderInfo.orderStatus === ORDER_STATUS.PRICE_FROZEN && (
           <div className="mb-4 sm:mb-6">
             <h2 className="text-2xl sm:text-3xl font-extrabold">
               The buyer has paid for the product!

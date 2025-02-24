@@ -19,7 +19,7 @@ export default function PayButton({
     setLoading(true);
     try {
       const response = await apiClient(
-        "/api/protected/v1/stripe/create-payment",
+        "/api/protected/payment/create-payment",
         {
           method: "POST",
           body: JSON.stringify({

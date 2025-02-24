@@ -15,6 +15,10 @@ import { PolyLine } from "./Polyline";
 import { CompletedOrder } from "@/interfaces/Order/order";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { ExchangeRate, UserInfo } from "@/interfaces/userInfo/userInfo";
+import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
+import apiClient from "@/utils/apiClient";
+import { format } from "currency-formatter";
 
 export type Route = {
   departureLocation: Omit<
@@ -54,6 +58,14 @@ export default function MapForTravelers({
     },
   ];
 
+  const mapStyle = [
+    {
+      featureType: "all",
+      elementType: "labels.icon",
+      stylers: [{ visibility: "off" }],
+    },
+  ];
+
   // Toggle function
   const toggleRouteData = () => {
     setShowRouteData((prev) => !prev);
@@ -85,6 +97,9 @@ export default function MapForTravelers({
               mapId={process.env.NEXT_PUBLIC_GoogleMaps_MAPID}
               fullscreenControl={false}
               mapTypeControl={false}
+              clickableIcons={false}
+              styles={mapStyle}
+              disableDefaultUI={false}
             >
               {routeFound ? (
                 showRouteData && (
@@ -136,7 +151,13 @@ function Directions({
   useEffect(() => {
     if (!map || !routesLibrary) return;
     setDirectionsService(new routesLibrary.DirectionsService());
-    setDirectionsRenderer(new routesLibrary.DirectionsRenderer({ map }));
+    setDirectionsRenderer(
+      new routesLibrary.DirectionsRenderer({
+        map,
+        suppressMarkers: true,
+        suppressInfoWindows: true,
+      })
+    );
   }, [routesLibrary, map]);
 
   useEffect(() => {
@@ -266,9 +287,15 @@ function ShowBuyers({ orders }: { orders: CompletedOrder[] }) {
           <div key={locationKey}>
             <AdvancedMarker
               position={position}
-              onClick={() => handleMarkerClick(orderGroup, position)}
+              title={""}
+              onClick={(event) => {
+                if (event.domEvent) {
+                  event.domEvent.stopPropagation();
+                }
+                handleMarkerClick(orderGroup, position);
+              }}
             >
-              <div className="bg-gradient-to-br from-purple-600 to-pink-500 p-2 text-white font-bold text-lg rounded">
+              <div className="bg-gradient-to-br z-50 from-purple-600 to-pink-500 p-2 text-white font-bold text-lg rounded">
                 {orderGroup.length} order{orderGroup.length > 1 ? "s" : ""}
               </div>
             </AdvancedMarker>
@@ -299,12 +326,69 @@ function OrderList({
 }: {
   activeGroup: {
     orders: CompletedOrder[];
-    position: {
-      lat: number;
-      lng: number;
-    };
+    position: { lat: number; lng: number };
   };
 }) {
+  const [exchangeRates, setExchangeRates] = useState<
+    Record<string, ExchangeRate>
+  >({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchExchangeRates() {
+      const newRates: Record<string, ExchangeRate> = {};
+      // Assuming you have one traveler data for all orders
+      const travelerDataResponse: ApiResponse<UserInfo> = await apiClient(
+        "/api/protected/getUserInfo"
+      );
+
+      for (const order of activeGroup.orders) {
+        const buyerDataResponse: ApiResponse<UserInfo> = await apiClient(
+          `/api/protected/getUserInfo/${order.buyerId}`
+        );
+        const exchangeRateResponse: ApiResponse<ExchangeRate> = await apiClient(
+          `/api/exchange-rate?target=${travelerDataResponse.data.userBankCurrency}&source=${buyerDataResponse.data.userBankCurrency}`
+        );
+        newRates[order._id!] = exchangeRateResponse.data;
+      }
+      setExchangeRates(newRates);
+      setLoading(false);
+    }
+
+    fetchExchangeRates();
+  }, [activeGroup.orders]);
+
+  if (loading)
+    return (
+      <motion.svg
+        className="animate-spin -ml-1 mr-3 h-16 w-16 text-purple-600"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        initial={{ rotate: 0 }}
+        animate={{ rotate: 360 }}
+        transition={{
+          repeat: Infinity,
+          duration: 1,
+          ease: "linear",
+        }}
+      >
+        <circle
+          className="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="4"
+        ></circle>
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8v8H4z"
+        ></path>
+      </motion.svg>
+    );
+
   return (
     <motion.div
       initial={{ opacity: 0, y: -20 }}
@@ -313,44 +397,57 @@ function OrderList({
       className="bg-gradient-to-br from-purple-600 to-pink-500 shadow-2xl rounded-2xl p-6 max-w-sm"
     >
       <h2 className="text-2xl font-extrabold text-white mb-4 border-b border-white pb-2">
-        {activeGroup.orders.length} Order
-        {activeGroup.orders.length > 1 && "s"}
+        {activeGroup.orders.length} Order{activeGroup.orders.length > 1 && "s"}
       </h2>
       <ul className="max-h-60 overflow-y-auto space-y-3">
-        {activeGroup.orders.map((order, index) => (
-          <motion.li
-            key={order._id}
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1, duration: 0.3 }}
-            className="py-3 px-3 rounded-lg hover:bg-white hover:bg-opacity-20 transition-colors"
-          >
-            <div className="flex flex-col md:flex-row whitespace-nowrap justify-between items-center gap-2 mb-1">
-              <h2 className="font-semibold text-lg text-white">
-                {order.productName}
-              </h2>
-              <h2 className="text-sm font-bold text-white">
-                You&apos;ll get: {order.initialDeliveryFee} €
-              </h2>
-            </div>
-
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 300 }}
-              className="mt-3 flex flex-col gap-2 md:flex-row items-center justify-between"
+        {activeGroup.orders.map((order, index) => {
+          const exchangeRate = exchangeRates[order._id!];
+          return (
+            <motion.li
+              key={order._id}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.1, duration: 0.3 }}
+              className="py-3 px-3 rounded-lg hover:bg-white hover:bg-opacity-20 transition-colors"
             >
-              <h2 className="text-sm text-white font-bold whitespace-nowrap">
-                Price: {order.estimatedValue} €
-              </h2>
-              <Link
-                href={`/negotiate?recipientId=${order.buyerId}&orderId=${order._id}`}
-                className="bg-white text-purple-600 font-bold px-4 py-2 rounded-lg shadow-md hover:bg-opacity-90 transition-colors"
+              <div className="flex flex-col md:flex-row whitespace-nowrap justify-between items-center gap-2 mb-1">
+                <h2 className="font-semibold text-lg text-white">
+                  {order.productName}
+                </h2>
+                <h2 className="text-sm font-bold text-white">
+                  You&apos;ll get:{" "}
+                  {format(
+                    Number(
+                      (order.initialDeliveryFee * exchangeRate.rate).toFixed(2)
+                    ),
+                    { code: exchangeRate.target }
+                  )}
+                </h2>
+              </div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="mt-3 flex flex-col gap-2 md:flex-row items-center justify-between"
               >
-                View Details
-              </Link>
-            </motion.div>
-          </motion.li>
-        ))}
+                <h2 className="text-sm text-white font-bold whitespace-nowrap">
+                  Price:{" "}
+                  {format(
+                    Number(
+                      (order.estimatedValue * exchangeRate.rate).toFixed(2)
+                    ),
+                    { code: exchangeRate.target }
+                  )}
+                </h2>
+                <Link
+                  href={`/negotiate?recipientId=${order.buyerId}&orderId=${order._id}`}
+                  className="bg-white text-purple-600 font-bold px-4 py-2 rounded-lg shadow-md hover:bg-opacity-90 transition-colors"
+                >
+                  View Details
+                </Link>
+              </motion.div>
+            </motion.li>
+          );
+        })}
       </ul>
     </motion.div>
   );

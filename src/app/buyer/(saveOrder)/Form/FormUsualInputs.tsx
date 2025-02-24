@@ -1,7 +1,18 @@
 import "server-only";
 import Input from "@/components/Input";
+import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
+import { UserInfo } from "@/interfaces/userInfo/userInfo";
+import apiServer from "@/utils/apiServer";
+import { findCurrency } from "currency-formatter";
 
-export default function FormUsualInputs() {
+export default async function FormUsualInputs() {
+  const userInfoResponse: ApiResponse<UserInfo> = await apiServer(
+    "/api/protected/getUserInfo"
+  );
+  const userInfo = userInfoResponse.data;
+
+  const currencyDetails = findCurrency(userInfo.userBankCurrency);
+
   return (
     <div className="z-10">
       <h2 className="text-2xl font-semibold text-gray-700 mb-4">
@@ -23,7 +34,7 @@ export default function FormUsualInputs() {
         className="w-full border-2 border-black p-5"
         type="number"
         name="estimatedValue"
-        label="Estimated Value in €:"
+        label={`Estimated Value in ${currencyDetails?.code} (${currencyDetails?.symbol}):`}
         pattern={String(/^(1[1-9]|[2-9][0-9]|[1-9][0-9]{2,})$/)}
         errorMessage="Please enter a number higher than 10."
         initialValue={10}
@@ -110,7 +121,7 @@ export default function FormUsualInputs() {
       <Input
         className="w-full border-2 border-black p-5"
         type="number"
-        label="Declare how much you're willing to pay the traveler in €"
+        label={`Declare how much you're willing to pay the traveler in ${currencyDetails?.code} (${currencyDetails?.symbol})`}
         name="initialDeliveryFee"
         pattern={String(/^[5-9]\d*$|^\d{2,}$/)}
         errorMessage="Delivery fee must be larger than 5."

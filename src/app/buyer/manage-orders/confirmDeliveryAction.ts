@@ -6,9 +6,13 @@ import apiServer from "@/utils/apiServer";
 
 export async function confirmDeliveryAction(orderId: string) {
   try {
-    await apiServer(`/api/protected/confirmDelivery/${orderId}`, {
-      method: "PUT",
-    });
+    const result = await apiServer(
+      `/api/protected/confirmDelivery/${orderId}`,
+      {
+        method: "PUT",
+      }
+    );
+
     revalidatePath("/buyer/manage-orders");
   } catch (error) {
     console.error(error);
