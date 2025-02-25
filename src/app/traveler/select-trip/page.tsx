@@ -56,10 +56,7 @@ export default async function SelectTrip() {
   }
 
   // Validate User Role
-  if (
-    userInfo.role !== ROLE.TRAVELER &&
-    userInfo.role !== ROLE.TRAVELER_AND_BUYER
-  ) {
+  if (userInfo.role !== ROLE.TRAVELER) {
     throw new Error(
       "You are not a traveler. Please sign in as a traveler to access this page."
     );

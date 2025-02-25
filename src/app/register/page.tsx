@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import FormWrapper from "@/components/Form/FormWrapper";
 import Input from "@/components/Input";
 import {
@@ -10,52 +7,12 @@ import {
 import Link from "next/link";
 import FormErrorHandler from "@/components/Form/FormErrorHandler";
 import "react-phone-number-input/style.css";
-import PhoneInput from "react-phone-number-input";
-import {
-  stripeConnectPayinCurrencies,
-  stripeConnectPayoutCurrencies,
-  currencyToCountry,
-} from "@/utils/constants";
-import emojiFlags from "emoji-flags";
-import SubmitButtonRegister from "./SubmitButtonRegister";
+import SubmitButtonRegister from "./Components/SubmitButtonRegister";
+import CountrySelector from "./Components/CountrySelector";
+import RoleAndCurrencySelectors from "./Components/RoleAndCurrencySelectors";
+import PhoneNumberInput from "./Components/PhoneNumberInput";
 
 const Register = () => {
-  const [phoneNumber, setPhoneNumber] = useState<string | undefined>("");
-  const [userCountry, setUserCountry] = useState<string | undefined>("");
-  const [userBankCurrency, setUserBankCurrency] = useState<string | undefined>(
-    ""
-  );
-  const [userRole, setUserRole] = useState<"buyer" | "traveler">("buyer");
-
-  // Determine the list of currencies based on user role.
-  const currencies =
-    userRole === "traveler"
-      ? stripeConnectPayoutCurrencies
-      : stripeConnectPayinCurrencies;
-
-  // Generate options for the currency select element
-  const currencyOptions = currencies.map((currency) => {
-    const countryCode = currencyToCountry[currency];
-    const flagEmoji = countryCode
-      ? emojiFlags.countryCode(countryCode)?.emoji || ""
-      : "";
-    return {
-      label: `${currency.toUpperCase()} ${flagEmoji}`,
-      value: currency.toUpperCase(),
-    };
-  });
-
-  // Generate options for the country select element using emoji-flags
-  const countryOptions = emojiFlags.data
-    .filter(
-      (country: { name: string; emoji: string; code: string }) =>
-        country.name.toUpperCase() !== "ISRAEL"
-    )
-    .map((country: { name: string; emoji: string; code: string }) => ({
-      label: `${country.emoji} ${country.name}`,
-      value: country.code,
-    }));
-
   return (
     <>
       <p className="py-5 text-lg text-gray-400">
@@ -127,113 +84,19 @@ const Register = () => {
         </div>
 
         {/* Phone Number */}
-        <div>
-          <label
-            className="mb-2 block font-playfair text-lg font-bold"
-            htmlFor="phoneNumber"
-          >
-            Phone Number
-          </label>
-          <PhoneInput
-            placeholder="Enter your phone number"
-            value={phoneNumber}
-            onChange={setPhoneNumber}
-            numberInputProps={{ className: "bg-gray-50 focus:outline-none" }}
-            className="w-full border-2 border-black p-5"
-            defaultCountry="MA"
-          />
-          {/* Hidden field to actually submit phoneNumber */}
-          <input type="hidden" name="phoneNumber" value={phoneNumber || ""} />
-        </div>
+        <PhoneNumberInput />
 
         {/* Country Select */}
-        <div>
-          <label
-            className="mb-2 block font-playfair text-lg font-bold"
-            htmlFor="userCountry"
-          >
-            What country do you live in?
-          </label>
-          <select
-            name="userCountry"
-            className="w-full border-2 border-black p-5"
-            required
-            value={userCountry}
-            onChange={(e) => setUserCountry(e.target.value)}
-          >
-            <option value="" disabled>
-              Select your country
-            </option>
-            {countryOptions.map((country) => (
-              <option key={country.value} value={country.value}>
-                {country.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <CountrySelector />
 
-        {/* Role Selection */}
-        <div>
-          <label className="block text-lg font-semibold text-gray-700 mb-2">
-            How do you plan to use Jeebware?
-          </label>
-          <div className="flex w-full justify-between space-x-8">
-            <label className="flex items-center space-x-2 cursor-pointer">
-              <input
-                type="radio"
-                name="userRole"
-                value="buyer"
-                checked={userRole === "buyer"}
-                onChange={() => setUserRole("buyer")}
-                className="form-radio text-blue-500"
-              />
-              <span className="text-gray-600">Buy Products</span>
-            </label>
-            <label className="flex items-center space-x-2 cursor-pointer">
-              <input
-                type="radio"
-                name="userRole"
-                value="traveler"
-                checked={userRole === "traveler"}
-                onChange={() => setUserRole("traveler")}
-                className="form-radio text-blue-500"
-              />
-              <span className="text-gray-600">
-                Be a Traveler <em className="text-xs">(Earn extra income)</em>
-              </span>
-            </label>
-          </div>
-        </div>
+        {/* Role and Currency Selectors */}
+        <RoleAndCurrencySelectors />
 
-        {/* Currency Select */}
-        <div>
-          <label
-            className="mb-2 block font-playfair text-lg font-bold"
-            htmlFor="userBankCurrency"
-          >
-            What currency does your bank support?
-          </label>
-          <select
-            name="userBankCurrency"
-            className="w-full border-2 border-black p-5"
-            required
-            value={userBankCurrency}
-            onChange={(e) => setUserBankCurrency(e.target.value)}
-          >
-            <option value="" disabled>
-              Select a currency
-            </option>
-            {currencyOptions.map((currency) => (
-              <option key={currency.value} value={currency.value}>
-                {currency.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
+        {/* Error handler */}
         <FormErrorHandler />
 
         <SubmitButtonRegister />
+
         <p className="mt-5 w-full text-start text-gray-800">
           Already Have An Account?
           <Link

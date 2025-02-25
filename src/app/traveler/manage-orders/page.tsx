@@ -37,10 +37,7 @@ export default async function ManageOrders() {
     "/api/protected/getUserInfo"
   );
   const userInfo = userInfoResponse.data;
-  if (
-    userInfo.role !== ROLE.TRAVELER &&
-    userInfo.role !== ROLE.TRAVELER_AND_BUYER
-  ) {
+  if (userInfo.role !== ROLE.TRAVELER) {
     throw new Error("Access Denied: You are not authorized to view this page.");
   }
 

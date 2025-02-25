@@ -55,32 +55,6 @@ export default function DesktopHeader({
       {/* Navigation */}
       <nav>
         <ul className="flex space-x-6 items-center text-base font-medium">
-          {userInfo?.role === ROLE.TRAVELER_AND_BUYER && (
-            <>
-              <li>
-                <Link href="/traveler/select-trip">
-                  <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                    Trips
-                  </span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/traveler/manage-orders">
-                  <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                    Traveler Orders
-                  </span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/buyer/manage-orders">
-                  <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                    Buyer Orders
-                  </span>
-                </Link>
-              </li>
-            </>
-          )}
-
           {userInfo?.role === ROLE.TRAVELER && (
             <>
               <li>
@@ -94,13 +68,6 @@ export default function DesktopHeader({
                 <Link href="/traveler/select-trip">
                   <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
                     Trips
-                  </span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/buyer">
-                  <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                    Buyer Mode
                   </span>
                 </Link>
               </li>
@@ -127,32 +94,6 @@ export default function DesktopHeader({
                 <Link href="/buyer/manage-orders">
                   <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
                     Orders
-                  </span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/traveler">
-                  <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                    Traveler Mode
-                  </span>
-                </Link>
-              </li>
-            </>
-          )}
-
-          {(!userInfo || userInfo?.role === ROLE.NEITHER) && (
-            <>
-              <li>
-                <Link href="/traveler">
-                  <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                    Join as Traveler
-                  </span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/buyer">
-                  <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                    Join as Buyer
                   </span>
                 </Link>
               </li>
@@ -195,8 +136,7 @@ export default function DesktopHeader({
               />
               {showProfileDropdown && (
                 <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-2 z-50">
-                  {(userInfo?.role === ROLE.TRAVELER ||
-                    userInfo?.role === ROLE.TRAVELER_AND_BUYER) && (
+                  {userInfo?.role === ROLE.TRAVELER && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation();

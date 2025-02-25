@@ -39,12 +39,6 @@ export async function middleware(request: NextRequest) {
 
     // Check if the requested path is either /traveler or /buyer
     const pathname = request.nextUrl.pathname;
-    const isRoleFreeRoute = pathname === "/traveler" || pathname === "/buyer";
-
-    if (isRoleFreeRoute) {
-      // Allow access without a role check
-      return NextResponse.next();
-    }
 
     // Fetch user info to get the role
     const userInfoResponse: ApiResponse<UserInfo> = await apiServer(
@@ -61,11 +55,7 @@ export async function middleware(request: NextRequest) {
     }
 
     // Check if the user has the required role
-    if (
-      requiredRole &&
-      userInfo.role !== requiredRole &&
-      userInfo.role !== ROLE.TRAVELER_AND_BUYER
-    ) {
+    if (requiredRole && userInfo.role !== requiredRole) {
       // Redirect to home page if the user lacks the required role
       return Response.redirect(new URL("/", request.nextUrl.origin), 302);
     }

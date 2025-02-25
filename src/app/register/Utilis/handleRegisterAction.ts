@@ -21,6 +21,7 @@ export interface RegisterFormInputs {
   phoneNumber: string;
   userBankCurrency: string;
   userCountry: string;
+  role: string;
 }
 
 export async function handleRegisterAction(

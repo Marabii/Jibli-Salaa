@@ -58,9 +58,9 @@ export default function FinishSigningUp() {
   const googleOAuthState = {
     originPage: "/register",
     redirectTo: "/",
-    userBankCurrency, // e.g. "mad"
-    phoneNumber, // e.g. "+212612345678"
-    userCountry, // e.g. "MA"
+    userBankCurrency,
+    phoneNumber,
+    userCountry,
   };
 
   // 6. Initiate Google OAuth

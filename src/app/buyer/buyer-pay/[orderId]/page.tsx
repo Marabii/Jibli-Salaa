@@ -44,10 +44,7 @@ export default async function BuyerPay({
     );
   }
 
-  if (
-    buyerInfo?.role !== ROLE.BUYER &&
-    buyerInfo?.role !== ROLE.TRAVELER_AND_BUYER
-  ) {
+  if (buyerInfo?.role !== ROLE.BUYER) {
     throw new Error("You aren't a buyer, you can't access this page");
   }
 

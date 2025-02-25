@@ -71,8 +71,7 @@ export default function MobileHeader({
               />
               {showProfileDropdown && (
                 <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-2 z-50">
-                  {(userInfo?.role === ROLE.TRAVELER ||
-                    userInfo?.role === ROLE.TRAVELER_AND_BUYER) && (
+                  {userInfo?.role === ROLE.TRAVELER && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -127,41 +126,6 @@ export default function MobileHeader({
           </div>
           <nav>
             <ul className="flex flex-col space-y-6 text-lg font-medium">
-              {userInfo?.role === ROLE.TRAVELER_AND_BUYER && (
-                <>
-                  <li>
-                    <Link href="/traveler/select-trip">
-                      <span
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="cursor-pointer hover:text-indigo-400 transition-colors"
-                      >
-                        Trips
-                      </span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/traveler/manage-orders">
-                      <span
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="cursor-pointer hover:text-indigo-400 transition-colors"
-                      >
-                        Traveler Orders
-                      </span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/buyer/manage-orders">
-                      <span
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="cursor-pointer hover:text-indigo-400 transition-colors"
-                      >
-                        Buyer Orders
-                      </span>
-                    </Link>
-                  </li>
-                </>
-              )}
-
               {userInfo?.role === ROLE.TRAVELER && (
                 <>
                   <li>
@@ -181,16 +145,6 @@ export default function MobileHeader({
                         className="cursor-pointer hover:text-indigo-400 transition-colors"
                       >
                         Trips
-                      </span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/buyer">
-                      <span
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="cursor-pointer hover:text-indigo-400 transition-colors"
-                      >
-                        Buyer Mode
                       </span>
                     </Link>
                   </li>
@@ -226,41 +180,6 @@ export default function MobileHeader({
                         className="cursor-pointer hover:text-indigo-400 transition-colors"
                       >
                         Orders
-                      </span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/traveler">
-                      <span
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="cursor-pointer hover:text-indigo-400 transition-colors"
-                      >
-                        Traveler Mode
-                      </span>
-                    </Link>
-                  </li>
-                </>
-              )}
-
-              {(!userInfo || userInfo?.role === ROLE.NEITHER) && (
-                <>
-                  <li>
-                    <Link href="/traveler">
-                      <span
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="cursor-pointer hover:text-indigo-400 transition-colors"
-                      >
-                        Join Traveler
-                      </span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/buyer">
-                      <span
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="cursor-pointer hover:text-indigo-400 transition-colors"
-                      >
-                        Join Buyer
                       </span>
                     </Link>
                   </li>

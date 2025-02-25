@@ -48,6 +48,7 @@ export const getRegisterForm = (formData: FormData): RegisterFormInputs => {
     phoneNumber: formData.get("phoneNumber")?.toString() || "",
     userBankCurrency: formData.get("userBankCurrency")?.toString() || "",
     userCountry: formData.get("userCountry")?.toString() || "",
+    role: formData.get("role")?.toString().toUpperCase() || "",
   };
 };
 
@@ -63,6 +64,7 @@ export const validateForm = ({
   phoneNumber,
   userBankCurrency,
   userCountry,
+  role,
 }: RegisterFormInputs): ValidateFormResponse => {
   const errors: Errors<RegisterFormInputs> = {};
 
@@ -109,6 +111,10 @@ export const validateForm = ({
 
   if (!userCountry) {
     errors.userBankCurrency = "your country of residence is required";
+  }
+
+  if (!role) {
+    errors.role = "Please select how do you plan on using jeebware";
   }
 
   const isError = Object.keys(errors).length > 0;
