@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import { CompletedOrder } from "@/interfaces/Order/order";
 import MapForTravelers from "./components/mapForTravelers";
