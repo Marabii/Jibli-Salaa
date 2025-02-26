@@ -37,6 +37,7 @@ export type InitialOrder = Omit<
   | "actualValue"
   | "actualDeliveryFee"
   | "_id"
+  | "currency"
 > & {
   selectedFiles: File[];
 };
