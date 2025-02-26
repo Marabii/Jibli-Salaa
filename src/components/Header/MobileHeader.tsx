@@ -19,6 +19,10 @@ interface MobileHeaderProps {
   handleLogout: () => void;
 }
 
+interface CreateAccountLinkResponse {
+  url: string;
+}
+
 export default function MobileHeader({
   userInfo,
   isUserAuthenticated,
@@ -32,6 +36,22 @@ export default function MobileHeader({
 
   const checkBalance = async () => {
     try {
+      const isOnboardingComplete: ApiResponse<boolean> = await apiClient(
+        "/api/protected/payment/is-onboarding-complete"
+      );
+
+      if (!isOnboardingComplete.data) {
+        toast.info("Taking you to Stripe page, Please wait..");
+        await apiClient("/api/protected/payment/account", { method: "POST" });
+        const createAccountLinkResult: ApiResponse<CreateAccountLinkResponse> =
+          await apiClient("/api/protected/payment/account_link", {
+            method: "POST",
+            body: JSON.stringify({ prevUrl: window.location.href }),
+          });
+        window.location.href = createAccountLinkResult.data.url;
+        return;
+      }
+
       const result: ApiResponse<string> = await apiClient(
         "/api/protected/payment/hosted-payout-link"
       );
