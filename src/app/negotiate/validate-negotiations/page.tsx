@@ -77,12 +77,8 @@ const ValidateNegotiations: React.FC = () => {
 
   useEffect(() => {
     const fetchExchangeRate = async () => {
-      const buyerInfoResponse = (await apiClient(
-        `/api/protected/getUserInfo/${orderInfo?.buyerId}`
-      )) as ApiResponse<UserInfo>;
-
       const exchangeRateResponse: ApiResponse<ExchangeRate> = await apiClient(
-        `/api/exchange-rate?target=${userInfo?.userBankCurrency}&source=${buyerInfoResponse.data.userBankCurrency}`
+        `/api/exchange-rate?target=${userInfo?.userBankCurrency}&source=${orderInfo?.currency}`
       );
 
       setExchangeRate(exchangeRateResponse.data);

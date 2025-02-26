@@ -376,13 +376,9 @@ function OrderList({
         const newRates: Record<string, ExchangeRate> = {};
         // Loop only over buyer data -> fetch exchange rate
         for (const order of activeGroup.orders) {
-          const buyerDataResponse: ApiResponse<UserInfo> = await apiClient(
-            `/api/protected/getUserInfo/${order.buyerId}`
-          );
-
           const exchangeRateResponse: ApiResponse<ExchangeRate> =
             await apiClient(
-              `/api/exchange-rate?target=${travelerCurrency}&source=${buyerDataResponse.data.userBankCurrency}`
+              `/api/exchange-rate?target=${travelerCurrency}&source=${order.currency}`
             );
 
           newRates[order._id!] = exchangeRateResponse.data;

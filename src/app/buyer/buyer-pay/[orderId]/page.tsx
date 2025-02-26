@@ -1,13 +1,14 @@
 import apiServer from "@/utils/apiServer";
 import PayButton from "./PayButton";
-import { ExchangeRate, UserInfo } from "@/interfaces/userInfo/userInfo";
+import { UserInfo } from "@/interfaces/userInfo/userInfo";
 import { ROLE } from "@/interfaces/userInfo/userRole";
 import { CompletedOrder } from "@/interfaces/Order/order";
 import Tetromino from "../../../../components/Loading/Tetromino/Tetromino";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import ImgsCarousel from "./ImgsCarousel";
-import CollapsibleText from "./CollapsibleText"; // Import the client component
+import CollapsibleText from "./CollapsibleText";
 import { format } from "currency-formatter";
+import { ORDER_STATUS } from "../../../../interfaces/Order/ORDER_STATUS";
 
 export default async function BuyerPay({
   params,
@@ -25,17 +26,6 @@ export default async function BuyerPay({
   );
   const buyerInfo = buyerInfoResponse.data;
 
-  const travelerInfoResponse: ApiResponse<UserInfo> = await apiServer(
-    `/api/protected/getUserInfo/${orderInfo.buyerId}`
-  );
-  const traveler = travelerInfoResponse.data;
-
-  const exchangeRateResponse: ApiResponse<ExchangeRate> = await apiServer(
-    `/api/exchange-rate?target=${buyerInfo.userBankCurrency}&source=${traveler.userBankCurrency}`
-  );
-
-  const exchangeRate = exchangeRateResponse.data;
-
   if (!buyerInfo) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
@@ -46,6 +36,10 @@ export default async function BuyerPay({
 
   if (buyerInfo?.role !== ROLE.BUYER) {
     throw new Error("You aren't a buyer, you can't access this page");
+  }
+
+  if (orderInfo?.orderStatus !== ORDER_STATUS.ORDER_FINALIZED) {
+    throw new Error("The order isn't finalized yet, you can't pay for it");
   }
 
   return (
@@ -75,29 +69,17 @@ export default async function BuyerPay({
                 <h3 className="text-xl font-semibold">
                   Value:{" "}
                   <span className="text-lg">
-                    {format(
-                      Number(
-                        (orderInfo.actualValue * exchangeRate.rate).toFixed(2)
-                      ),
-                      {
-                        code: exchangeRate.target,
-                      }
-                    )}
+                    {format(Number(orderInfo.actualValue), {
+                      code: orderInfo.currency,
+                    })}
                   </span>
                 </h3>
                 <h3 className="text-xl font-semibold">
                   Delivery Fee:{" "}
                   <span className="text-lg">
-                    {format(
-                      Number(
-                        (
-                          orderInfo.actualDeliveryFee * exchangeRate.rate
-                        ).toFixed(2)
-                      ),
-                      {
-                        code: exchangeRate.target,
-                      }
-                    )}
+                    {format(Number(orderInfo.actualDeliveryFee), {
+                      code: orderInfo.currency,
+                    })}
                   </span>
                 </h3>
               </div>
@@ -105,12 +87,14 @@ export default async function BuyerPay({
           </div>
         </div>
         <div className="bg-gray-800 border border-gray-700 shadow-lg rounded-xl p-8 mt-8">
-          <div className="mb-6">
-            <h3 className="text-2xl font-semibold mb-2">
-              Delivery Instructions:
-            </h3>
-            <p className="text-gray-300">{orderInfo.deliveryInstructions}</p>
-          </div>
+          {orderInfo.deliveryInstructions && (
+            <div className="mb-6">
+              <h3 className="text-2xl font-semibold mb-2">
+                Delivery Instructions:
+              </h3>
+              <p className="text-gray-300">{orderInfo.deliveryInstructions}</p>
+            </div>
+          )}
           <div className="mb-6">
             <h3 className="text-2xl font-semibold mb-2">
               Preferred Pickup Place:

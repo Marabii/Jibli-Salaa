@@ -6,7 +6,6 @@ import ConfirmDelivery from "./ConfirmDelivery";
 import ImgsCarousel from "./ImgsCarousel";
 import { redirect } from "next/navigation";
 import ShowConfirmationMessage from "./ShowConfirmationMessage";
-import { UserInfo } from "@/interfaces/userInfo/userInfo";
 import { format } from "currency-formatter";
 
 export default async function ManageOrders() {
@@ -15,11 +14,6 @@ export default async function ManageOrders() {
   );
 
   const orders = response.data;
-
-  const userInfoResponse: ApiResponse<UserInfo> = await apiServer(
-    "/api/protected/getUserInfo"
-  );
-  const userInfo = userInfoResponse.data;
 
   if (orders.length === 0) {
     redirect("/buyer");
@@ -60,12 +54,12 @@ export default async function ManageOrders() {
                     <p className="text-gray-800">
                       <span className="font-medium">Value: </span>
                       {format(productValue, {
-                        code: userInfo.userBankCurrency,
+                        code: order.currency,
                       })}
                     </p>
                     <p className="text-gray-800">
                       <span className="font-medium">Delivery Fee: </span>
-                      {format(deliveryFee, { code: userInfo.userBankCurrency })}
+                      {format(deliveryFee, { code: order.currency })}
                     </p>
                     <p className="text-gray-800 flex items-center">
                       <span className="font-medium mr-2">Status:</span>

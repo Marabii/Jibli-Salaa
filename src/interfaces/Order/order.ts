@@ -24,6 +24,7 @@ export interface CompletedOrder {
   preferredPickupPlace: AddressObject;
   orderStatus: ORDER_STATUS;
   _id: string | null;
+  currency: string;
 }
 
 export type InitialOrder = Omit<

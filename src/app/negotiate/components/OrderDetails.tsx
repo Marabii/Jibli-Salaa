@@ -8,6 +8,7 @@ import { ExchangeRate, UserInfo } from "@/interfaces/userInfo/userInfo";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import apiClient from "@/utils/apiClient";
 import { format } from "currency-formatter";
+import LoadingSpinner from "./LoadingSpinner";
 
 type OrderDetailsProps = {
   orderInfo: CompletedOrder;
@@ -24,12 +25,8 @@ export default function OrderDetails({ orderInfo }: OrderDetailsProps) {
           "/api/protected/getUserInfo"
         );
 
-        const buyerInfoResponse: ApiResponse<UserInfo> = await apiClient(
-          `/api/protected/getUserInfo/${orderInfo.buyerId}`
-        );
-
         const exchangeRateResponse: ApiResponse<ExchangeRate> = await apiClient(
-          `/api/exchange-rate?target=${userInfoResponse.data.userBankCurrency}&source=${buyerInfoResponse.data.userBankCurrency}`
+          `/api/exchange-rate?target=${userInfoResponse.data.userBankCurrency}&source=${orderInfo.currency}`
         );
 
         setExchangeRate(exchangeRateResponse.data);
@@ -44,7 +41,7 @@ export default function OrderDetails({ orderInfo }: OrderDetailsProps) {
   }, [orderInfo]);
 
   if (loading || !exchangeRate) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   const productValue = orderInfo.actualValue || orderInfo.estimatedValue || 0;
