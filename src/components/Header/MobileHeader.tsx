@@ -201,7 +201,7 @@ export default function MobileHeader({
             </ul>
           </nav>
 
-          <div className="mt-10">
+          <div className="sm:mt-10">
             {!isUserAuthenticated && (
               <Link href="/login">
                 <span

@@ -18,11 +18,11 @@ export default async function OrdersMap() {
         <h2 className="text-4xl sm:text-5xl font-extrabold mb-8 text-center text-gray-900 dark:text-white">
           Have a look at all current online orders
         </h2>
+      </div>
 
-        <div className="mt-10">
-          {/* Pass the fetched orders to the client component */}
-          <MapForTravelers orders={orders} />
-        </div>
+      <div className="mt-10">
+        {/* Pass the fetched orders to the client component */}
+        <MapForTravelers orders={orders} />
       </div>
     </section>
   );

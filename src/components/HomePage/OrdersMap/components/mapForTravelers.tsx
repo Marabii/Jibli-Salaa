@@ -26,7 +26,7 @@ export default function MapForTravelers({
   const [currency, setCurrency] = useState("USD");
 
   return (
-    <div className="px-2 sm:px-4">
+    <div className="px-1">
       {/* Currency Selector */}
       <div className="mb-6">
         <CurrencySelector setCurrency={setCurrency} />
@@ -116,17 +116,16 @@ function ShowBuyers({
           <div key={locationKey}>
             <AdvancedMarker
               position={position}
-              title=""
+              title={""}
               onClick={(event) => {
-                // stopPropagation so we don't accidentally trigger map events
-                event.domEvent?.stopPropagation();
+                if (event.domEvent) {
+                  event.domEvent.stopPropagation();
+                }
                 handleMarkerClick(orderGroup, position);
               }}
             >
-              {/* Custom Marker Design */}
-              <div className="flex items-center justify-center bg-gradient-to-br from-green-500 to-blue-600 text-white font-semibold text-sm sm:text-base px-3 py-2 rounded-full shadow-md border-2 border-white hover:scale-110 transform transition-transform">
-                {orderGroup.length} order
-                {orderGroup.length > 1 ? "s" : ""}
+              <div className="bg-gradient-to-br z-50 from-purple-600 to-pink-500 p-2 text-white font-bold text-lg rounded">
+                {orderGroup.length} order{orderGroup.length > 1 ? "s" : ""}
               </div>
             </AdvancedMarker>
           </div>
@@ -206,16 +205,20 @@ function OrderList({
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="bg-gradient-to-br from-purple-600 to-pink-500 shadow-2xl rounded-2xl p-6"
+      className="bg-gradient-to-br from-purple-600 to-pink-500 shadow-2xl rounded-2xl p-6 
+             max-w-full sm:max-w-md" // <— Removed max-w-sm or made it responsive
     >
       <h2 className="text-2xl font-extrabold text-white mb-4 border-b border-white pb-2">
         {activeGroup.orders.length} Order{activeGroup.orders.length > 1 && "s"}
       </h2>
-      <ul className="max-h-60 overflow-y-auto space-y-3">
+
+      <ul
+        // Adjust or remove forced height
+        className="overflow-y-auto max-h-80 space-y-3"
+      >
         {activeGroup.orders.map((order, index) => {
           const exchangeRate = exchangeRates[order._id!];
 
-          // If rate data is missing or still loading for this order:
           if (!exchangeRate) {
             return (
               <li key={order._id}>
@@ -232,7 +235,10 @@ function OrderList({
               transition={{ delay: index * 0.1, duration: 0.3 }}
               className="py-3 px-3 rounded-lg hover:bg-white hover:bg-opacity-20 transition-colors"
             >
-              <div className="flex flex-col md:flex-row whitespace-nowrap justify-between items-center gap-2 mb-1">
+              <div
+                className="flex flex-col md:flex-row whitespace-normal 
+                       justify-between items-start md:items-center gap-2 mb-1"
+              >
                 <h2 className="font-semibold text-lg text-white">
                   {order.productName}
                 </h2>
@@ -250,9 +256,9 @@ function OrderList({
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 300 }}
-                className="mt-3 flex flex-col gap-2 md:flex-row items-center justify-between"
+                className="mt-3 flex flex-col gap-2 md:flex-row items-start md:items-center justify-between"
               >
-                <h2 className="text-sm text-white font-bold whitespace-nowrap">
+                <h2 className="text-sm text-white font-bold">
                   Price:{" "}
                   {format(
                     Number(
@@ -261,6 +267,14 @@ function OrderList({
                     { code: exchangeRate.target }
                   )}
                 </h2>
+
+                <Link
+                  href={`/negotiate?recipientId=${order.buyerId}&orderId=${order._id}`}
+                  className="bg-white text-purple-600 font-bold px-4 py-2 rounded-lg 
+                         shadow-md hover:bg-opacity-90 transition-colors"
+                >
+                  View Details
+                </Link>
               </motion.div>
             </motion.li>
           );
