@@ -7,7 +7,6 @@ import {
   AdvancedMarker,
   InfoWindow,
 } from "@vis.gl/react-google-maps";
-import Link from "next/link";
 import { CompletedOrder } from "@/interfaces/Order/order";
 import { motion } from "framer-motion";
 import { ExchangeRate } from "@/interfaces/userInfo/userInfo";
@@ -23,17 +22,17 @@ export default function MapForTravelers({
   orders: CompletedOrder[];
 }) {
   const defaultCenter = { lat: 0, lng: 0 };
-  const [currency, setCurrency] = useState("USD");
+  const [currency, setCurrency] = useState("MAD");
 
   return (
-    <div className="px-1">
+    <div className="px-2">
       {/* Currency Selector */}
-      <div className="mb-6">
+      <div className="mb-6 flex justify-center">
         <CurrencySelector setCurrency={setCurrency} />
       </div>
 
       {/* Map Container */}
-      <div className="relative w-full h-[500px] sm:h-[600px] rounded-xl overflow-hidden shadow-2xl border border-gray-200 dark:border-gray-700">
+      <div className="relative w-full mx-auto max-w-screen-xl h-[500px] sm:h-[600px] rounded-xl overflow-hidden shadow-2xl border border-gray-200 dark:border-gray-700">
         <APIProvider apiKey={process.env.NEXT_PUBLIC_GoogleMaps_API ?? ""}>
           <Map
             defaultZoom={3.5}
@@ -135,6 +134,8 @@ function ShowBuyers({
       {/* InfoWindow for displaying list of orders in a group */}
       {activeGroup && currency && (
         <InfoWindow
+          maxWidth={1000}
+          minWidth={300}
           position={
             new google.maps.LatLng(
               activeGroup.position.lat,
@@ -205,8 +206,7 @@ function OrderList({
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="bg-gradient-to-br from-purple-600 to-pink-500 shadow-2xl rounded-2xl p-6 
-             max-w-full sm:max-w-md" // <— Removed max-w-sm or made it responsive
+      className="bg-gradient-to-br from-purple-600 to-pink-500 shadow-2xl rounded-2xl p-6 max-w-full sm:max-w-md"
     >
       <h2 className="text-2xl font-extrabold text-white mb-4 border-b border-white pb-2">
         {activeGroup.orders.length} Order{activeGroup.orders.length > 1 && "s"}

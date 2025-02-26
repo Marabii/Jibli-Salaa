@@ -35,7 +35,7 @@ export default function CurrencySelector({
   });
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 max-w-md">
       <label
         className="block font-semibold text-lg text-gray-700 dark:text-gray-200"
         htmlFor="currency"
@@ -45,7 +45,7 @@ export default function CurrencySelector({
       <Select
         name="currency"
         onValueChange={(selected) => setCurrency(selected)}
-        defaultValue="USD"
+        defaultValue="MAD"
       >
         <SelectTrigger className="rounded-lg h-[50px] w-full border-2 border-gray-300 p-3 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
           <SelectValue placeholder="Select your currency" />
