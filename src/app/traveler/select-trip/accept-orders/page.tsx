@@ -124,7 +124,7 @@ export default function TravelersPage() {
   const fetchByCountries = async (countriesParam: string[]) => {
     try {
       const response: ApiResponse<CompletedOrder[]> = await apiClient(
-        `/api/protected/getOrders?countries_params=${countriesParam.join(" ")}`
+        `/api/getOrders?countries_params=${countriesParam.join(" ")}`
       );
       return response.data || [];
     } catch (error) {
@@ -167,7 +167,7 @@ export default function TravelersPage() {
 
     try {
       const response: ApiResponse<CompletedOrder[]> = await apiClient(
-        `/api/protected/getOrders`
+        `/api/getOrders`
       );
       const allOrders = response.data || [];
       allOrders.sort((a, b) => b.initialDeliveryFee - a.initialDeliveryFee);
