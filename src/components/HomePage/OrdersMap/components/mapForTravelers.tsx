@@ -267,14 +267,6 @@ function OrderList({
                     { code: exchangeRate.target }
                   )}
                 </h2>
-
-                <Link
-                  href={`/negotiate?recipientId=${order.buyerId}&orderId=${order._id}`}
-                  className="bg-white text-purple-600 font-bold px-4 py-2 rounded-lg 
-                         shadow-md hover:bg-opacity-90 transition-colors"
-                >
-                  View Details
-                </Link>
               </motion.div>
             </motion.li>
           );
