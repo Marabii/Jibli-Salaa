@@ -19,6 +19,7 @@ import { ExchangeRate, UserInfo } from "@/interfaces/userInfo/userInfo";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import apiClient from "@/utils/apiClient";
 import { format } from "currency-formatter";
+import LoadingSpinner from "./LoadingSpinner";
 
 export type Route = {
   departureLocation: Omit<
@@ -121,6 +122,7 @@ export default function MapForTravelers({
               ) : (
                 <PolyLine path={path} />
               )}
+              {/* Show all buyer orders on the map */}
               <ShowBuyers orders={orders} />
             </Map>
           )}
@@ -150,6 +152,7 @@ function Directions({
 
   useEffect(() => {
     if (!map || !routesLibrary) return;
+
     setDirectionsService(new routesLibrary.DirectionsService());
     setDirectionsRenderer(
       new routesLibrary.DirectionsRenderer({
@@ -229,17 +232,40 @@ function Directions({
  * Displays orders on the map.
  *
  * - Orders are grouped by location (using exact lat,lng).
- * - For groups with a single order, a normal marker is shown.
- * - For groups with multiple orders, a single cluster marker is displayed
- *   with the count of orders.
- * - Clicking a cluster marker opens an info window that lists all orders
- *   (sorted descending by initialDeliveryFee) with beautiful styling.
+ * - For groups with multiple orders, a single marker shows a count.
+ * - Clicking the marker opens an InfoWindow listing all orders in that location.
  */
 function ShowBuyers({ orders }: { orders: CompletedOrder[] }) {
   const [activeGroup, setActiveGroup] = useState<{
     orders: CompletedOrder[];
     position: { lat: number; lng: number };
   } | null>(null);
+
+  // Traveler's currency, fetched only once
+  const [travelerCurrency, setTravelerCurrency] = useState<string | null>(null);
+  const [loadingTraveler, setLoadingTraveler] = useState<boolean>(true);
+
+  // Fetch traveler data one time
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        const travelerDataResponse: ApiResponse<UserInfo> = await apiClient(
+          "/api/protected/getUserInfo"
+        );
+        if (isMounted) {
+          setTravelerCurrency(travelerDataResponse.data.userBankCurrency);
+        }
+      } catch (error) {
+        console.error("Failed to fetch traveler info:", error);
+      } finally {
+        if (isMounted) setLoadingTraveler(false);
+      }
+    })();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Group orders by location key (using exact lat,lng values)
   const groupedOrders = useMemo(() => {
@@ -266,8 +292,7 @@ function ShowBuyers({ orders }: { orders: CompletedOrder[] }) {
     return groups;
   }, [orders]);
 
-  // Handler for marker click. For a single order, we simply show its details;
-  // for multiple orders, we open a list.
+  // Marker click handler
   const handleMarkerClick = (
     ordersGroup: CompletedOrder[],
     position: { lat: number; lng: number }
@@ -275,8 +300,13 @@ function ShowBuyers({ orders }: { orders: CompletedOrder[] }) {
     setActiveGroup({ orders: ordersGroup, position });
   };
 
+  if (loadingTraveler) {
+    return <LoadingSpinner />;
+  }
+
   return (
     <>
+      {/* Render markers for each group */}
       {Object.entries(groupedOrders).map(([locationKey, orderGroup]) => {
         if (orderGroup.length === 0) return null;
         const lat = Number(orderGroup[0].preferredPickupPlace.lat);
@@ -304,7 +334,7 @@ function ShowBuyers({ orders }: { orders: CompletedOrder[] }) {
       })}
 
       {/* InfoWindow for displaying list of orders in a group */}
-      {activeGroup && (
+      {activeGroup && travelerCurrency && (
         <InfoWindow
           position={
             new google.maps.LatLng(
@@ -314,7 +344,10 @@ function ShowBuyers({ orders }: { orders: CompletedOrder[] }) {
           }
           onCloseClick={() => setActiveGroup(null)}
         >
-          <OrderList activeGroup={activeGroup} />
+          <OrderList
+            activeGroup={activeGroup}
+            travelerCurrency={travelerCurrency}
+          />
         </InfoWindow>
       )}
     </>
@@ -323,11 +356,13 @@ function ShowBuyers({ orders }: { orders: CompletedOrder[] }) {
 
 function OrderList({
   activeGroup,
+  travelerCurrency,
 }: {
   activeGroup: {
     orders: CompletedOrder[];
     position: { lat: number; lng: number };
   };
+  travelerCurrency: string;
 }) {
   const [exchangeRates, setExchangeRates] = useState<
     Record<string, ExchangeRate>
@@ -335,59 +370,40 @@ function OrderList({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
     async function fetchExchangeRates() {
-      const newRates: Record<string, ExchangeRate> = {};
-      // Assuming you have one traveler data for all orders
-      const travelerDataResponse: ApiResponse<UserInfo> = await apiClient(
-        "/api/protected/getUserInfo"
-      );
+      try {
+        const newRates: Record<string, ExchangeRate> = {};
+        // Loop only over buyer data -> fetch exchange rate
+        for (const order of activeGroup.orders) {
+          const buyerDataResponse: ApiResponse<UserInfo> = await apiClient(
+            `/api/protected/getUserInfo/${order.buyerId}`
+          );
 
-      for (const order of activeGroup.orders) {
-        const buyerDataResponse: ApiResponse<UserInfo> = await apiClient(
-          `/api/protected/getUserInfo/${order.buyerId}`
-        );
-        const exchangeRateResponse: ApiResponse<ExchangeRate> = await apiClient(
-          `/api/exchange-rate?target=${travelerDataResponse.data.userBankCurrency}&source=${buyerDataResponse.data.userBankCurrency}`
-        );
-        newRates[order._id!] = exchangeRateResponse.data;
+          const exchangeRateResponse: ApiResponse<ExchangeRate> =
+            await apiClient(
+              `/api/exchange-rate?target=${travelerCurrency}&source=${buyerDataResponse.data.userBankCurrency}`
+            );
+
+          newRates[order._id!] = exchangeRateResponse.data;
+        }
+        if (isMounted) {
+          setExchangeRates(newRates);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching exchange rates:", error);
+        if (isMounted) setLoading(false);
       }
-      setExchangeRates(newRates);
-      setLoading(false);
     }
 
     fetchExchangeRates();
-  }, [activeGroup.orders]);
+    return () => {
+      isMounted = false;
+    };
+  }, [activeGroup.orders, travelerCurrency]);
 
-  if (loading)
-    return (
-      <motion.svg
-        className="animate-spin -ml-1 mr-3 h-16 w-16 text-purple-600"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        initial={{ rotate: 0 }}
-        animate={{ rotate: 360 }}
-        transition={{
-          repeat: Infinity,
-          duration: 1,
-          ease: "linear",
-        }}
-      >
-        <circle
-          className="opacity-25"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          strokeWidth="4"
-        ></circle>
-        <path
-          className="opacity-75"
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8v8H4z"
-        ></path>
-      </motion.svg>
-    );
+  if (loading) return <LoadingSpinner />;
 
   return (
     <motion.div
@@ -402,6 +418,16 @@ function OrderList({
       <ul className="max-h-60 overflow-y-auto space-y-3">
         {activeGroup.orders.map((order, index) => {
           const exchangeRate = exchangeRates[order._id!];
+
+          // If rate data is missing or still loading for this order:
+          if (!exchangeRate) {
+            return (
+              <li key={order._id}>
+                <LoadingSpinner />
+              </li>
+            );
+          }
+
           return (
             <motion.li
               key={order._id}
@@ -424,6 +450,7 @@ function OrderList({
                   )}
                 </h2>
               </div>
+
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 300 }}
@@ -438,6 +465,7 @@ function OrderList({
                     { code: exchangeRate.target }
                   )}
                 </h2>
+
                 <Link
                   href={`/negotiate?recipientId=${order.buyerId}&orderId=${order._id}`}
                   className="bg-white text-purple-600 font-bold px-4 py-2 rounded-lg shadow-md hover:bg-opacity-90 transition-colors"

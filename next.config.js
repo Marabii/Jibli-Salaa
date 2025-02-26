@@ -1,9 +1,17 @@
+const createNextIntlPlugin = require("next-intl/plugin");
+
+const withNextIntl = createNextIntlPlugin();
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
     serverActions: {
       bodySizeLimit: "5mb",
     },
+  },
+  i18n: {
+    locales: ["en", "fr", "de"],
+    defaultLocale: "en",
   },
   images: {
     remotePatterns: [
@@ -26,4 +34,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+module.exports = withNextIntl(nextConfig);

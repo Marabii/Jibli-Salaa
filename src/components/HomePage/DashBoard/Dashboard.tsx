@@ -5,8 +5,10 @@ import DashboardCard from "./DashboardCard";
 import { CompletedOrder } from "@/interfaces/Order/order";
 import { Trip } from "@/interfaces/Traveler/Traveler";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
+import { getTranslations } from "next-intl/server";
 
 export default async function DashboardHomePage() {
+  const t = await getTranslations("HomePage");
   let orders: CompletedOrder[] = [];
   let trips: Trip[] = [];
 
@@ -20,9 +22,7 @@ export default async function DashboardHomePage() {
     ]);
     orders = ordersResponse.data;
     trips = tripsResponse.data;
-  } catch (e) {
-    console.log("You are not logged in, dashboard won't show up");
-  }
+  } catch (e) {}
 
   return (
     <>
@@ -37,9 +37,7 @@ export default async function DashboardHomePage() {
             {/* Status Messages */}
             <div className="text-xl mb-8 text-center">
               {orders?.length > 0 && trips?.length > 0 && (
-                <h3 className="mb-4">
-                  You have pending orders and scheduled trips.
-                </h3>
+                <h3 className="mb-4">{t("Dashboard.statusMessages")}</h3>
               )}
               {orders?.length > 0 && !trips?.length && (
                 <h3 className="mb-4">You have pending orders.</h3>
