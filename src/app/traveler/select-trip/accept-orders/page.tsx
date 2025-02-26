@@ -145,7 +145,7 @@ export default function TravelersPage() {
       } else {
         // If no countries selected, fetch all orders
         const response: ApiResponse<CompletedOrder[]> = await apiClient(
-          `/api/protected/getOrders`
+          `/api/getOrders`
         );
         finalOrders = response.data || [];
       }

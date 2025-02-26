@@ -206,7 +206,7 @@ function OrderList({
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="bg-gradient-to-br from-purple-600 to-pink-500 shadow-2xl rounded-2xl p-6 max-w-sm"
+      className="bg-gradient-to-br from-purple-600 to-pink-500 shadow-2xl rounded-2xl p-6"
     >
       <h2 className="text-2xl font-extrabold text-white mb-4 border-b border-white pb-2">
         {activeGroup.orders.length} Order{activeGroup.orders.length > 1 && "s"}
