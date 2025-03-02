@@ -1,7 +1,7 @@
 // app/not-found.tsx
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { motion } from "framer-motion";
 import { FaHome } from "react-icons/fa";
 

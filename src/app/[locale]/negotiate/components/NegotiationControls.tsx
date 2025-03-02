@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import NegotiationForm from "./NegotiationForm/NegotiationForm";
 import { CompletedOrder } from "@/interfaces/Order/order";
 import { ORDER_STATUS } from "@/interfaces/Order/ORDER_STATUS";

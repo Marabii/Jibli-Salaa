@@ -10,7 +10,7 @@ import {
   InfoWindow,
 } from "@vis.gl/react-google-maps";
 import { AddressObject } from "@/interfaces/Map/AddressObject";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { PolyLine } from "./Polyline";
 import { CompletedOrder } from "@/interfaces/Order/order";
 import { motion, AnimatePresence } from "framer-motion";

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { motion } from "framer-motion";
 import { FaClipboardList, FaCheckCircle, FaDollarSign } from "react-icons/fa";
 import { useTranslations } from "next-intl";

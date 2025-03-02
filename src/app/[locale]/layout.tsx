@@ -6,9 +6,9 @@ import Footer from "@/components/Footer";
 import ReduxProvider from "@/store/ReduxProvider";
 import ToastWrapper from "../../components/ToastWrapper";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
-import { notFound } from "next/navigation";
-import { routing } from "@/i18n/routing";
+import { getMessages, setRequestLocale } from "next-intl/server";
+import { headers } from "next/headers"; // needed import
+import { notFound } from "next/navigation"; // needed import
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -35,9 +35,7 @@ export default async function RootLayout({
 }) {
   // Ensure that the incoming `locale` is valid
   const { locale } = await params;
-  if (!routing.locales.includes(locale as any)) {
-    notFound();
-  }
+  setRequestLocale(locale);
 
   const messages = await getMessages();
 

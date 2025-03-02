@@ -4,7 +4,7 @@ import { UserInfo } from "@/interfaces/userInfo/userInfo";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import OrderDetails from "./components/OrderDetails";
 import apiServer from "@/utils/apiServer";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { PhoneIcon } from "@heroicons/react/24/solid";
 import { getTranslations } from "next-intl/server";
 

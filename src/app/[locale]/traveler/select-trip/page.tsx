@@ -2,7 +2,7 @@
 export const dynamic = "force-dynamic";
 
 import "server-only";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import apiServer from "@/utils/apiServer";
 import { UserInfo } from "@/interfaces/userInfo/userInfo";
 import { ROLE } from "@/interfaces/userInfo/userRole";

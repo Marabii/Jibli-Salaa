@@ -1,7 +1,7 @@
 import apiServer from "@/utils/apiServer";
 import { UserInfo } from "@/interfaces/userInfo/userInfo";
 import { ROLE } from "@/interfaces/userInfo/userRole";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ORDER_STATUS } from "@/interfaces/Order/ORDER_STATUS";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import { CompletedOrder } from "@/interfaces/Order/order";

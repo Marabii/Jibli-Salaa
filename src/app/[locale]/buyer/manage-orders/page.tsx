@@ -1,6 +1,6 @@
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import { CompletedOrder } from "@/interfaces/Order/order";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import apiServer from "@/utils/apiServer";
 import ConfirmDelivery from "./ConfirmDelivery";
 import ImgsCarousel from "./ImgsCarousel";

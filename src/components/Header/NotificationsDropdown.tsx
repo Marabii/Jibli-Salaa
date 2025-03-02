@@ -2,7 +2,7 @@
 
 import { useState, useRef, JSX } from "react";
 import { FaBell } from "react-icons/fa";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import {
   MessageNotificationContent,
   NotificationType,

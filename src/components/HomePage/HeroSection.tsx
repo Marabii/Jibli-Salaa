@@ -1,5 +1,5 @@
 import "server-only";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { FaArrowRight } from "react-icons/fa";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";

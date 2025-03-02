@@ -1,7 +1,7 @@
 "use client";
 import SubmitButton from "@/components/SubmitButton";
 import usePending from "@/components/Form/usePending";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 
 export default function SubmitButtonRegister() {
