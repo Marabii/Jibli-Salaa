@@ -26,12 +26,23 @@ export default function LocaleSwitcherSelect({
   const searchParams = useSearchParams(); // Get current query parameters
 
   function onSelectChange(nextLocale: Locale) {
-    // Convert searchParams to a plain object
     const query = Object.fromEntries(searchParams.entries());
 
-    // pathname might be "/ar/negotiate", "/en/negotiate", etc.
-    // We remove the old locale segment (defaultValue) so Next-Intl can prepend the new one.
-    const routeWithoutLocale = pathname.replace(`/${defaultValue}`, "");
+    // Split the path (removing empty segments)
+    let segments = pathname.split("/").filter(Boolean);
+
+    // If the very first segment is the current locale, remove it
+    if (segments[0] === defaultValue) {
+      segments.shift();
+    }
+
+    // Join back to form a path
+    let routeWithoutLocale = "/" + segments.join("/");
+
+    // If we ended up with an empty string, force it to "/"
+    if (routeWithoutLocale === "") {
+      routeWithoutLocale = "/";
+    }
 
     startTransition(() => {
       router.replace(
