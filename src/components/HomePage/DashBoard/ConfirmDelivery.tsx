@@ -1,8 +1,10 @@
 "use client";
 import { useTransition } from "react";
 import { confirmDeliveryAction } from "./confirmDeliveryAction";
+import { useTranslations } from "next-intl";
 
 export default function ConfirmDelivery({ orderId }: { orderId: string }) {
+  const t = useTranslations("HomePage.DashboardPage.ConfirmDelivery");
   const [isPending, startTransition] = useTransition();
 
   const handleConfirmDelivery = async () => {
@@ -11,16 +13,14 @@ export default function ConfirmDelivery({ orderId }: { orderId: string }) {
         await confirmDeliveryAction(orderId);
       } catch (error) {
         console.error(error);
-        alert("Something went wrong, couldn't confirm order");
+        alert(t("error"));
       }
     });
   };
 
   return (
     <div className="bg-gray-100 p-4 rounded-md">
-      <p className="text-black mb-3">
-        Please confirm delivery once you receive your product.
-      </p>
+      <p className="text-black mb-3">{t("instruction")}</p>
       <button
         onClick={handleConfirmDelivery}
         disabled={isPending}
@@ -48,10 +48,10 @@ export default function ConfirmDelivery({ orderId }: { orderId: string }) {
                 d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
               ></path>
             </svg>
-            Confirming...
+            {t("confirming")}
           </>
         ) : (
-          "Confirm Delivery"
+          t("confirmDelivery")
         )}
       </button>
     </div>

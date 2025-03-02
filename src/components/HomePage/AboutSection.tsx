@@ -2,34 +2,41 @@
 
 import { motion } from "framer-motion";
 import { FaGlobe, FaWallet, FaLeaf } from "react-icons/fa";
+import { useTranslations } from "next-intl";
 
-const AboutSection = () => {
+type AboutSectionProps = {
+  locale: string;
+};
+
+const AboutSection = ({ locale }: AboutSectionProps) => {
+  const t = useTranslations("HomePage.AboutSection");
+
   const features = [
     {
-      icon: <FaGlobe className="text-4xl text-black  mb-4" />,
-      title: "Access Global Products",
-      description:
-        "Get items from around the world that are not available or are too expensive in your country.",
+      icon: <FaGlobe className="text-4xl text-black mb-4" />,
+      title: t("features.accessGlobalProducts.title"),
+      description: t("features.accessGlobalProducts.description"),
     },
     {
       icon: <FaWallet className="text-4xl text-black mb-4" />,
-      title: "Earn While Traveling",
-      description:
-        "Travelers can make extra money by delivering items along their route.",
+      title: t("features.earnWhileTraveling.title"),
+      description: t("features.earnWhileTraveling.description"),
     },
     {
       icon: <FaLeaf className="text-4xl text-black mb-4" />,
-      title: "Sustainable Deliveries",
-      description:
-        "Reduce carbon emissions by utilizing existing travel routes for deliveries.",
+      title: t("features.sustainableDeliveries.title"),
+      description: t("features.sustainableDeliveries.description"),
     },
   ];
 
   return (
-    <section className="py-20 bg-gray-100">
+    <section
+      dir={locale === "ar" ? "rtl" : "ltr"}
+      className="py-20 bg-gray-100"
+    >
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold mb-8 text-black">
-          Why Use Jeebware ?
+          {t("sectionHeading")}
         </h2>
         <div className="flex flex-wrap -mx-4">
           {features.map((feature, index) => (
@@ -44,7 +51,7 @@ const AboutSection = () => {
             >
               <div className="border-2 border-black p-6 rounded-3xl hover:shadow-2xl transition flex flex-col w-full h-full">
                 <div className="flex items-center justify-center mb-4">
-                  <div className="text-4xl text-black">{feature.icon}</div>
+                  {feature.icon}
                 </div>
                 <h3 className="text-3xl text-black capitalize font-semibold mb-2 text-center">
                   {feature.title}

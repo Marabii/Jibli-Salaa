@@ -18,6 +18,7 @@ import {
   removeNotification,
 } from "@/store/slices/notificationsSlice";
 import type { AppDispatch } from "@/store/store";
+import { NotificationContent } from "../interfaces/Websockets/Notification";
 
 export function useNotifications() {
   const dispatch = useDispatch<AppDispatch>();
@@ -31,6 +32,7 @@ export function useNotifications() {
 
   // Create a ref for the current pathname.
   const pathnameRef = useRef(pathname);
+
   useEffect(() => {
     pathnameRef.current = pathname;
   }, [pathname]);
@@ -89,14 +91,12 @@ export function useNotifications() {
 
     const endpoint =
       process.env.NEXT_PUBLIC_SERVERURL + (IS_PRODUCTION ? "/wss" : "/ws");
-    console.log("IS_PRODUCTION: ", IS_PRODUCTION);
-    console.log(endpoint);
     const socket = new SockJS(endpoint, undefined, {
       transports: ["websocket"],
     });
 
     const stomp = Stomp.over(socket);
-
+    stomp.debug = () => {};
     stomp.connect({}, () => {
       stomp.subscribe(
         `/user/${userId}/queue/notifications`,
@@ -108,7 +108,6 @@ export function useNotifications() {
               const messageNotificationContent =
                 newNotification.notificationData as MessageNotificationContent;
 
-              // Check if the user is currently on the `/negotiate` page with the same recipientId as the sender.
               if (
                 pathnameRef.current === "/negotiate" &&
                 searchParamsRef.current.get("recipientId") ===

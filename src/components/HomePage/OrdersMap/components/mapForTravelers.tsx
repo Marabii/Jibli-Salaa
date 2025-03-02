@@ -10,11 +10,11 @@ import {
 import { CompletedOrder } from "@/interfaces/Order/order";
 import { motion } from "framer-motion";
 import { ExchangeRate } from "@/interfaces/userInfo/userInfo";
-import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import apiClient from "@/utils/apiClient";
 import { format } from "currency-formatter";
 import LoadingSpinner from "./LoadingSpinner";
 import CurrencySelector from "./CurrencySelector";
+import { useTranslations } from "next-intl";
 
 export default function MapForTravelers({
   orders,
@@ -102,6 +102,8 @@ function ShowBuyers({
     setActiveGroup({ orders: ordersGroup, position });
   };
 
+  const t = useTranslations("HomePage.OrdersMap.OrderList");
+
   return (
     <>
       {/* Render a marker for each group */}
@@ -123,9 +125,14 @@ function ShowBuyers({
                 handleMarkerClick(orderGroup, position);
               }}
             >
-              <div className="bg-gradient-to-br z-50 from-purple-600 to-pink-500 p-2 text-white font-bold text-lg rounded">
-                {orderGroup.length} order{orderGroup.length > 1 ? "s" : ""}
-              </div>
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="bg-gradient-to-br z-50 from-purple-600 to-pink-500 p-2 text-white font-bold text-lg rounded"
+              >
+                {t("ordersCount", { count: orderGroup.length })}
+              </motion.div>
             </AdvancedMarker>
           </div>
         );
@@ -154,16 +161,17 @@ function ShowBuyers({
 /**
  * The list of orders displayed in the info window after clicking on a marker
  */
-function OrderList({
-  activeGroup,
-  travelerCurrency,
-}: {
+
+type OrderListProps = {
   activeGroup: {
     orders: CompletedOrder[];
     position: { lat: number; lng: number };
   };
   travelerCurrency: string;
-}) {
+};
+
+function OrderList({ activeGroup, travelerCurrency }: OrderListProps) {
+  const t = useTranslations("HomePage.OrdersMap.OrderList");
   const [exchangeRates, setExchangeRates] = useState<
     Record<string, ExchangeRate>
   >({});
@@ -175,12 +183,11 @@ function OrderList({
     async function fetchExchangeRates() {
       try {
         const newRates: Record<string, ExchangeRate> = {};
-        // fetch exchange rate for each order's currency => travelerCurrency
+        // Fetch exchange rate for each order's currency => travelerCurrency
         for (const order of activeGroup.orders) {
-          const exchangeRateResponse: ApiResponse<ExchangeRate> =
-            await apiClient(
-              `/api/exchange-rate?target=${travelerCurrency}&source=${order.currency}`
-            );
+          const exchangeRateResponse = await apiClient(
+            `/api/exchange-rate?target=${travelerCurrency}&source=${order.currency}`
+          );
           newRates[order._id!] = exchangeRateResponse.data;
         }
         if (isMounted) {
@@ -209,13 +216,10 @@ function OrderList({
       className="bg-gradient-to-br from-purple-600 to-pink-500 shadow-2xl rounded-2xl p-6 max-w-full sm:max-w-md"
     >
       <h2 className="text-2xl font-extrabold text-white mb-4 border-b border-white pb-2">
-        {activeGroup.orders.length} Order{activeGroup.orders.length > 1 && "s"}
+        {t("ordersTitle", { count: activeGroup.orders.length })}
       </h2>
 
-      <ul
-        // Adjust or remove forced height
-        className="overflow-y-auto max-h-80 space-y-3"
-      >
+      <ul className="overflow-y-auto max-h-80 space-y-3">
         {activeGroup.orders.map((order, index) => {
           const exchangeRate = exchangeRates[order._id!];
 
@@ -235,15 +239,12 @@ function OrderList({
               transition={{ delay: index * 0.1, duration: 0.3 }}
               className="py-3 px-3 rounded-lg hover:bg-white hover:bg-opacity-20 transition-colors"
             >
-              <div
-                className="flex flex-col md:flex-row whitespace-normal 
-                       justify-between items-start md:items-center gap-2 mb-1"
-              >
+              <div className="flex flex-col md:flex-row whitespace-normal justify-between items-start md:items-center gap-2 mb-1">
                 <h2 className="font-semibold text-lg text-white">
                   {order.productName}
                 </h2>
                 <h2 className="text-sm font-bold text-white">
-                  You&apos;ll get:{" "}
+                  {t("youllGet")}{" "}
                   {format(
                     Number(
                       (order.initialDeliveryFee * exchangeRate.rate).toFixed(2)
@@ -259,7 +260,7 @@ function OrderList({
                 className="mt-3 flex flex-col gap-2 md:flex-row items-start md:items-center justify-between"
               >
                 <h2 className="text-sm text-white font-bold">
-                  Price:{" "}
+                  {t("price")}{" "}
                   {format(
                     Number(
                       (order.estimatedValue * exchangeRate.rate).toFixed(2)

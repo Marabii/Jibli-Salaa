@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import NotificationsDropdown from "./NotificationsDropdown";
@@ -8,10 +8,11 @@ import { ROLE } from "@/interfaces/userInfo/userRole";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { UserInfo } from "@/interfaces/userInfo/userInfo";
 import useOutsideClick from "@/hooks/useOutsideClick";
-import { useRef } from "react";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import apiClient from "@/utils/apiClient";
 import { toast } from "react-toastify";
+import { useTranslations } from "next-intl";
+import LocaleSwitcher from "./LocaleSwitcher";
 
 interface MobileHeaderProps {
   userInfo: UserInfo | null;
@@ -28,6 +29,7 @@ export default function MobileHeader({
   isUserAuthenticated,
   handleLogout,
 }: MobileHeaderProps) {
+  const t = useTranslations("Header");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
@@ -41,7 +43,7 @@ export default function MobileHeader({
       );
 
       if (!isOnboardingComplete.data) {
-        toast.info("Taking you to Stripe page, Please wait..");
+        toast.info(t("infoStripe"));
         await apiClient("/api/protected/payment/account", { method: "POST" });
         const createAccountLinkResult: ApiResponse<CreateAccountLinkResponse> =
           await apiClient("/api/protected/payment/account_link", {
@@ -57,7 +59,7 @@ export default function MobileHeader({
       );
       window.open(result.data, "_blank", "noopener,noreferrer");
     } catch (error) {
-      toast.error("Can't check balance, contact support");
+      toast.error(t("errorBalance"));
     }
   };
 
@@ -73,7 +75,7 @@ export default function MobileHeader({
       >
         <Link href="/">
           <h1 className="text-xl font-bold text-white cursor-pointer hover:text-indigo-400 transition-colors">
-            Jeebware
+            {t("brand")}
           </h1>
         </Link>
         <div className="flex relative items-center gap-4">
@@ -83,7 +85,7 @@ export default function MobileHeader({
             <div className="relative">
               <Image
                 src={userInfo.profilePicture}
-                alt="Profile"
+                alt={t("profileAlt")}
                 className="rounded-full cursor-pointer"
                 onClick={toggleProfileDropdown}
                 width={32}
@@ -99,7 +101,7 @@ export default function MobileHeader({
                       }}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
-                      Check Balance
+                      {t("checkBalance")}
                     </button>
                   )}
                   <button
@@ -109,13 +111,13 @@ export default function MobileHeader({
                     }}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
-                    Logout
+                    {t("logout")}
                   </button>
                 </div>
               )}
             </div>
           )}
-
+          <LocaleSwitcher />
           <button
             onClick={toggleMobileMenu}
             className="text-white focus:outline-none"
@@ -134,7 +136,7 @@ export default function MobileHeader({
                 className="text-2xl font-bold cursor-pointer hover:text-indigo-400 transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Jeebware
+                {t("brand")}
               </h1>
             </Link>
             <button
@@ -154,7 +156,7 @@ export default function MobileHeader({
                         onClick={() => setMobileMenuOpen(false)}
                         className="cursor-pointer hover:text-indigo-400 transition-colors"
                       >
-                        Orders
+                        {t("travelerOrders")}
                       </span>
                     </Link>
                   </li>
@@ -164,7 +166,7 @@ export default function MobileHeader({
                         onClick={() => setMobileMenuOpen(false)}
                         className="cursor-pointer hover:text-indigo-400 transition-colors"
                       >
-                        Trips
+                        {t("trips")}
                       </span>
                     </Link>
                   </li>
@@ -174,7 +176,7 @@ export default function MobileHeader({
                         onClick={() => setMobileMenuOpen(false)}
                         className="cursor-pointer hover:text-indigo-400 transition-colors"
                       >
-                        Plan Trip
+                        {t("planTrip")}
                       </span>
                     </Link>
                   </li>
@@ -189,7 +191,7 @@ export default function MobileHeader({
                         onClick={() => setMobileMenuOpen(false)}
                         className="cursor-pointer hover:text-indigo-400 transition-colors"
                       >
-                        Order
+                        {t("buyerOrder")}
                       </span>
                     </Link>
                   </li>
@@ -199,7 +201,7 @@ export default function MobileHeader({
                         onClick={() => setMobileMenuOpen(false)}
                         className="cursor-pointer hover:text-indigo-400 transition-colors"
                       >
-                        Orders
+                        {t("buyerOrders")}
                       </span>
                     </Link>
                   </li>
@@ -213,7 +215,7 @@ export default function MobileHeader({
                       onClick={() => setMobileMenuOpen(false)}
                       className="cursor-pointer hover:text-indigo-400 transition-colors"
                     >
-                      Contact
+                      {t("contact")}
                     </span>
                   </Link>
                 </li>
@@ -224,12 +226,12 @@ export default function MobileHeader({
           <div className="sm:mt-10">
             {!isUserAuthenticated && (
               <Link href="/login">
-                <span
+                <div
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-lg cursor-pointer hover:text-indigo-400 transition-colors"
                 >
-                  Log In
-                </span>
+                  {t("login")}
+                </div>
               </Link>
             )}
           </div>

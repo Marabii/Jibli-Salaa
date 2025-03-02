@@ -2,7 +2,6 @@
 import HeaderInteractive from "./HeaderInteractive";
 import apiServer from "@/utils/apiServer";
 import { UserInfo } from "@/interfaces/userInfo/userInfo";
-import { ROLE } from "@/interfaces/userInfo/userRole";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 
 interface IVerifyUserResponse {

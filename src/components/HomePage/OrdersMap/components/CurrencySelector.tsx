@@ -13,12 +13,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/Select";
+import { useTranslations } from "next-intl";
 
 export default function CurrencySelector({
   setCurrency,
 }: {
   setCurrency: (currency: string) => void;
 }) {
+  const t = useTranslations("HomePage.OrdersMap.CurrencySelector");
+
   // The list of currencies (You can prune or modify this as needed)
   const currencies = stripeConnectPayinCurrencies;
 
@@ -40,7 +43,7 @@ export default function CurrencySelector({
         className="block font-semibold text-lg text-gray-700 dark:text-gray-200"
         htmlFor="currency"
       >
-        What currency do you want to see the order prices in?
+        {t("selectCurrency")}
       </label>
       <Select
         name="currency"

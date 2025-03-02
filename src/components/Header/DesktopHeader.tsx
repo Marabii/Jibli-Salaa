@@ -5,12 +5,13 @@ import Image from "next/image";
 import NotificationsDropdown from "./NotificationsDropdown";
 import { ROLE } from "@/interfaces/userInfo/userRole";
 import { UserInfo } from "@/interfaces/userInfo/userInfo";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import useOutsideClick from "@/hooks/useOutsideClick";
-import { useRef } from "react";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import apiClient from "@/utils/apiClient";
 import { toast } from "react-toastify";
+import { useTranslations } from "next-intl";
+import LocaleSwitcher from "./LocaleSwitcher";
 
 interface DesktopHeaderProps {
   userInfo: UserInfo | null;
@@ -27,6 +28,7 @@ export default function DesktopHeader({
   isUserAuthenticated,
   handleLogout,
 }: DesktopHeaderProps) {
+  const t = useTranslations("Header");
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const toggleProfileDropdown = () => setShowProfileDropdown((prev) => !prev);
 
@@ -37,7 +39,7 @@ export default function DesktopHeader({
       );
 
       if (!isOnboardingComplete.data) {
-        toast.info("Taking you to Stripe page, Please wait..");
+        toast.info(t("infoStripe"));
         await apiClient("/api/protected/payment/account", { method: "POST" });
         const createAccountLinkResult: ApiResponse<CreateAccountLinkResponse> =
           await apiClient("/api/protected/payment/account_link", {
@@ -53,7 +55,7 @@ export default function DesktopHeader({
       );
       window.open(result.data, "_blank", "noopener,noreferrer");
     } catch (error) {
-      toast.error("Can't check balance, contact support");
+      toast.error(t("errorBalance"));
     }
   };
 
@@ -68,7 +70,7 @@ export default function DesktopHeader({
       {/* Logo / Brand */}
       <Link href="/">
         <h1 className="text-2xl font-bold text-white cursor-pointer hover:text-indigo-400 transition-colors">
-          Jeebware
+          {t("brand")}
         </h1>
       </Link>
 
@@ -80,21 +82,21 @@ export default function DesktopHeader({
               <li>
                 <Link href="/traveler/manage-orders">
                   <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                    Orders
+                    {t("travelerOrders")}
                   </span>
                 </Link>
               </li>
               <li>
                 <Link href="/traveler/select-trip">
                   <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                    Trips
+                    {t("trips")}
                   </span>
                 </Link>
               </li>
               <li>
                 <Link href="/traveler">
                   <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                    Plan Trip
+                    {t("planTrip")}
                   </span>
                 </Link>
               </li>
@@ -106,14 +108,14 @@ export default function DesktopHeader({
               <li>
                 <Link href="/buyer">
                   <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                    Order
+                    {t("buyerOrder")}
                   </span>
                 </Link>
               </li>
               <li>
                 <Link href="/buyer/manage-orders">
                   <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                    Orders
+                    {t("buyerOrders")}
                   </span>
                 </Link>
               </li>
@@ -124,7 +126,7 @@ export default function DesktopHeader({
             <li>
               <Link href="/contact">
                 <span className="cursor-pointer text-white hover:text-indigo-400 transition-colors">
-                  Contact
+                  {t("contact")}
                 </span>
               </Link>
             </li>
@@ -134,10 +136,11 @@ export default function DesktopHeader({
 
       {/* Auth, Notifications, and Profile Section */}
       <div className="flex gap-6 items-center relative">
+        <LocaleSwitcher />
         {!isUserAuthenticated && (
           <Link href="/login">
             <span className="text-base text-white hover:text-indigo-400 transition-colors">
-              Log In
+              {t("login")}
             </span>
           </Link>
         )}
@@ -148,7 +151,7 @@ export default function DesktopHeader({
             <div className="relative">
               <Image
                 src={userInfo?.profilePicture || ""}
-                alt="Profile"
+                alt={t("profileAlt")}
                 className="rounded-full cursor-pointer"
                 onClick={toggleProfileDropdown}
                 width={32}
@@ -164,7 +167,7 @@ export default function DesktopHeader({
                       }}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
-                      Check Balance
+                      {t("checkBalance")}
                     </button>
                   )}
                   <button
@@ -174,7 +177,7 @@ export default function DesktopHeader({
                     }}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
-                    Logout
+                    {t("logout")}
                   </button>
                 </div>
               )}

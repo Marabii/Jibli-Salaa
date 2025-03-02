@@ -3,33 +3,43 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { FaClipboardList, FaCheckCircle, FaDollarSign } from "react-icons/fa";
+import { useTranslations } from "next-intl";
 
-const HowItWorksSection = () => {
+type HowItWorksSectionProps = {
+  locale: string;
+};
+
+const HowItWorksSection = ({ locale }: HowItWorksSectionProps) => {
+  const t = useTranslations("HomePage.HowItWorksSection");
+
   const steps = [
     {
       icon: <FaClipboardList className="text-4xl text-black mb-4" />,
-      title: "Post a Request",
-      description:
-        "Buyers post requests for products they want, specifying details and offering a delivery fee.",
+      title: t("steps.postRequest.title"),
+      description: t("steps.postRequest.description"),
     },
     {
       icon: <FaCheckCircle className="text-4xl text-black mb-4" />,
-      title: "Traveler Accepts the Order",
-      description:
-        "Travelers browse requests and accept orders that fit their itinerary.",
+      title: t("steps.travelerAccepts.title"),
+      description: t("steps.travelerAccepts.description"),
     },
     {
       icon: <FaDollarSign className="text-4xl text-black mb-4" />,
-      title: "Delivery and Confirmation",
-      description:
-        "The traveler delivers the item, and the buyer confirms receipt. Payments are securely processed.",
+      title: t("steps.deliveryConfirmation.title"),
+      description: t("steps.deliveryConfirmation.description"),
     },
   ];
 
   return (
-    <section id="how-it-works" className="py-20 bg-gray-100">
+    <section
+      dir={locale === "ar" ? "rtl" : "ltr"}
+      id="how-it-works"
+      className="py-20 bg-gray-100"
+    >
       <div className="container mx-auto px-4">
-        <h2 className="text-4xl text-black font-bold mb-8">How It Works</h2>
+        <h2 className="text-4xl text-black font-bold mb-8">
+          {t("sectionHeading")}
+        </h2>
         <div className="flex flex-wrap -mx-4">
           {steps.map((step, index) => (
             <motion.div
@@ -43,7 +53,7 @@ const HowItWorksSection = () => {
             >
               <div className="border-2 border-black p-6 rounded-3xl hover:shadow-2xl transition flex flex-col w-full">
                 <div className="flex items-center justify-center mb-4">
-                  <div className="text-4xl text-black">{step.icon}</div>
+                  {step.icon}
                 </div>
                 <h3 className="text-3xl text-black capitalize font-semibold mb-2 text-center">
                   {step.title}
@@ -66,7 +76,7 @@ const HowItWorksSection = () => {
             href="/register"
             className="inline-flex font-bold items-center bg-purple-500 text-white px-6 py-3 rounded-full text-lg hover:bg-purple-600 transition"
           >
-            Get Started
+            {t("getStarted")}
           </Link>
         </motion.div>
       </div>

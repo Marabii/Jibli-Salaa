@@ -1,7 +1,549 @@
 {
+  "LocaleSwitcher": {
+    "ar": "Arabe",
+    "en": "Anglais",
+    "fr": "Français",
+    "label": "Langue"
+  },
+  "ContactPage": {
+    "noContact": "Aucun contact disponible",
+    "noContactsMessage": "Vous n'avez actuellement aucun contact. Commencez par ajouter un nouveau contact pour gérer efficacement vos commandes.",
+    "contactsHeader": "Vos contacts",
+    "speakTo": "Parler à",
+    "OrderDetails": {
+      "product": "Produit",
+      "price": "Prix",
+      "quantity": "Quantité",
+      "deliveryFee": "Frais de livraison",
+      "unableToLoad": "Impossible de charger les détails de la commande.",
+      "noOrderDetails": "Aucun détail de commande disponible."
+    }
+  },
+  "Header": {
+    "brand": "Jeebware",
+    "travelerOrders": "Commandes",
+    "trips": "Voyages",
+    "planTrip": "Planifier un voyage",
+    "buyerOrder": "Commande",
+    "buyerOrders": "Commandes",
+    "contact": "Contact",
+    "login": "Se connecter",
+    "checkBalance": "Vérifier le solde",
+    "logout": "Se déconnecter",
+    "infoStripe": "Nous vous redirigeons vers la page Stripe, veuillez patienter..",
+    "errorBalance": "Impossible de vérifier le solde, contactez le support",
+    "profileAlt": "Profil",
+    "Notifications": {
+      "header": "Notifications",
+      "close": "Fermer",
+      "noNotifications": "Aucune notification",
+      "markAsRead": "Marquer comme lu",
+      "negotiatePage": "Négocier",
+      "message": "Vous avez reçu un nouveau message de {senderName}",
+      "orderAccepted": "Votre commande {productName} a été acceptée par {travelerName}.",
+      "orderFinalized": "Votre commande {productName} a été finalisée.",
+      "negotiationRejected": "La négociation concernant {productName} a été rejetée.",
+      "negotiationPending": "Négociation en attente, veuillez consulter les détails de la négociation de {productName}.",
+      "itemPaid": "L'acheteur {buyerName} a payé le produit : {productName}"
+    }
+  },
   "HomePage": {
-    "Dashboard": {
-      "statusMessages": "Vous avez des commandes en attente et des voyages programmés."
+    "HeroSection": {
+      "heroHeading": "Connectez-vous avec des voyageurs, faites-vous livrer des produits",
+      "heroParagraph": "Jeebware est une plateforme qui met en relation les acheteurs avec les voyageurs pour une livraison fluide de produits, tant au niveau local qu'international.",
+      "heroButton": "Découvrez comment ça fonctionne",
+      "heroImageAlt": "Image principale"
+    },
+    "DashboardPage": {
+      "dashboardTitle": "Votre Tableau de Bord",
+      "pendingOrdersMessage": "Vous avez des commandes en attente.",
+      "scheduledTripsMessage": "Vous avez des voyages prévus.",
+      "ordersHeading": "Vos Commandes ({count})",
+      "tripsHeading": "Vos Voyages ({count})",
+      "DashboardCard": {
+        "tripTo": "Voyage à",
+        "departure": "Départ",
+        "arrival": "Arrivée"
+      },
+      "ConfirmDelivery": {
+        "instruction": "Veuillez confirmer la livraison une fois que vous avez reçu votre produit.",
+        "confirmDelivery": "Confirmer la livraison",
+        "confirming": "Confirmation en cours...",
+        "error": "Quelque chose s'est mal passé, impossible de confirmer la commande"
+      }
+    },
+    "OrdersMap": {
+      "title": "Jetez un œil à toutes les commandes en ligne en cours",
+      "CurrencySelector": {
+        "selectCurrency": "Dans quelle devise souhaitez-vous voir les prix des commandes ?"
+      },
+      "OrderList": {
+        "ordersTitle": "{count, plural, one {# Commande} other {# Commandes}}",
+        "ordersCount": "{count, plural, one {# Commande} other {# Commandes}}",
+        "youllGet": "Vous recevrez :",
+        "price": "Prix :"
+      }
+    },
+    "AboutSection": {
+      "sectionHeading": "Pourquoi utiliser Jeebware ?",
+      "features": {
+        "accessGlobalProducts": {
+          "title": "Accédez aux produits mondiaux",
+          "description": "Obtenez des articles du monde entier qui ne sont pas disponibles ou sont trop chers dans votre pays."
+        },
+        "earnWhileTraveling": {
+          "title": "Gagnez en voyageant",
+          "description": "Les voyageurs peuvent gagner de l'argent supplémentaire en livrant des articles sur leur trajet."
+        },
+        "sustainableDeliveries": {
+          "title": "Livraisons durables",
+          "description": "Réduisez les émissions de carbone en utilisant les itinéraires de voyage existants pour les livraisons."
+        }
+      }
+    },
+    "HowItWorksSection": {
+      "sectionHeading": "Comment ça marche",
+      "steps": {
+        "postRequest": {
+          "title": "Publiez une demande",
+          "description": "Les acheteurs publient des demandes pour les produits qu'ils souhaitent, en précisant les détails et en offrant des frais de livraison."
+        },
+        "travelerAccepts": {
+          "title": "Le voyageur accepte la commande",
+          "description": "Les voyageurs consultent les demandes et acceptent les commandes correspondant à leur itinéraire."
+        },
+        "deliveryConfirmation": {
+          "title": "Livraison et confirmation",
+          "description": "Le voyageur livre l'article et l'acheteur confirme sa réception. Les paiements sont traités en toute sécurité."
+        }
+      },
+      "getStarted": "Commencer"
+    },
+    "CallToActionSection": {
+      "sectionHeading": "Prêt à rejoindre la communauté ?",
+      "sectionParagraph": "Inscrivez-vous dès aujourd'hui pour commencer à commander des produits ou gagner de l'argent en tant que voyageur.",
+      "buyerButton": "Inscrivez-vous en tant qu'acheteur",
+      "travelerButton": "Inscrivez-vous en tant que voyageur"
+    }
+  },
+  "LoginPage": {
+    "Layout": {
+      "title": "Connexion",
+      "subheading": "Veuillez remplir votre e-mail et votre mot de passe pour vous connecter"
+    },
+    "Page": {
+      "emailLabel": "Adresse e-mail",
+      "emailPlaceholder": "Tapez votre e-mail",
+      "emailError": "Adresse e-mail invalide",
+      "passwordLabel": "Mot de passe",
+      "passwordPlaceholder": "Entrez votre mot de passe",
+      "passwordError": "Le mot de passe doit contenir au moins 8 caractères, avec une lettre majuscule, une lettre minuscule et un chiffre.",
+      "signInWithGoogle": "Se connecter avec Google",
+      "noAccount": "Vous n'avez pas de compte ?",
+      "register": "Inscrivez-vous"
+    },
+    "Metadata": {
+      "title": "Connexion - Jeebware",
+      "description": "Page de connexion pour le site Jeebware"
+    },
+    "Form": {
+      "defaultText": "Se connecter",
+      "pendingText": "Connexion en cours..."
+    },
+    "Validation": {
+      "emailMissing": "L'e-mail est manquant",
+      "emailInvalid": "Adresse e-mail invalide",
+      "passwordMissing": "Le mot de passe est manquant",
+      "passwordInvalid": "Le mot de passe doit comporter au moins 8 caractères, incluant une majuscule, une minuscule et un chiffre.",
+      "unknownError": "Une erreur inconnue s'est produite"
+    }
+  },
+  "RegisterPage": {
+    "Layout": {
+      "title": "Créez un compte"
+    },
+    "Page": {
+      "introText": "Créez un compte et commencez à utiliser Jeebware",
+      "nameLabel": "Nom",
+      "namePlaceholder": "Tapez votre nom",
+      "nameError": "Le nom ne peut contenir que des lettres et des espaces",
+      "emailLabel": "Adresse e-mail",
+      "emailPlaceholder": "Tapez votre e-mail",
+      "emailError": "Adresse e-mail invalide",
+      "passwordLabel": "Mot de passe",
+      "passwordPlaceholder": "Entrez votre mot de passe",
+      "passwordError": "Le mot de passe doit comporter au moins 8 caractères, incluant une majuscule, une minuscule et un chiffre.",
+      "alreadyHaveAccount": "Vous avez déjà un compte ?",
+      "signIn": "Se connecter"
+    },
+    "CountrySelector": {
+      "label": "Dans quel pays vivez-vous ?",
+      "placeholder": "Sélectionnez le pays où vous vivez"
+    },
+    "PhoneNumberInput": {
+      "label": "Numéro de téléphone",
+      "placeholder": "Entrez votre numéro de téléphone"
+    },
+    "RoleAndCurrencySelectors": {
+      "roleLabel": "Comment comptez-vous utiliser Jeebware ?",
+      "buyerOption": "Acheter des produits",
+      "travelerOption": "Être voyageur",
+      "travelerSub": "Gagnez un revenu supplémentaire",
+      "currencyLabel": "Quelle devise supporte votre banque ?",
+      "currencyPlaceholder": "Sélectionnez la devise de votre banque"
+    },
+    "SubmitButton": {
+      "defaultText": "S'inscrire",
+      "pendingText": "Traitement de la demande...",
+      "googleButton": "Inscrivez-vous avec Google"
+    },
+    "error": {
+      "nameMissing": "Le nom est manquant",
+      "nameInvalid": "Le nom contient des caractères invalides",
+      "emailMissing": "L'email est manquant",
+      "emailInvalid": "Adresse email invalide",
+      "passwordMissing": "Le mot de passe est manquant",
+      "passwordInvalid": "Le mot de passe doit comporter au moins 8 caractères, incluant une majuscule, une minuscule et un chiffre.",
+      "phoneMissing": "Le numéro de téléphone est manquant",
+      "phoneInvalid": "Le numéro de téléphone doit être au format E.164 (ex: +1234567890)",
+      "bankCurrencyMissing": "La devise de votre banque est requise",
+      "countryMissing": "Votre pays de résidence est requis",
+      "roleMissing": "Veuillez sélectionner comment vous envisagez d'utiliser Jeebware"
+    }
+  },
+  "TravelerTrip": {
+    "saveTrip": {
+      "MapInputFrom": {
+        "heading": "Définissez votre lieu de départ"
+      },
+      "MapInputTo": {
+        "heading": "Définissez votre destination"
+      },
+      "TripDates": {
+        "departureHeading": "Date et heure de départ",
+        "departurePlaceholder": "Sélectionnez la date et l'heure de départ",
+        "arrivalHeading": "Date et heure d'arrivée",
+        "arrivalPlaceholder": "Sélectionnez la date et l'heure d'arrivée"
+      },
+      "SubmitButton": {
+        "defaultText": "Enregistrer le voyage",
+        "pendingText": "Enregistrement du voyage..."
+      },
+      "Validation": {
+        "fromAddressRequired": "L'adresse de départ est requise.",
+        "fromLatitudeRequired": "La latitude de départ est requise.",
+        "fromLongitudeRequired": "La longitude de départ est requise.",
+        "toAddressRequired": "L'adresse d'arrivée est requise.",
+        "toLatitudeRequired": "La latitude d'arrivée est requise.",
+        "toLongitudeRequired": "La longitude d'arrivée est requise.",
+        "departureRequired": "La date de départ est requise.",
+        "departureInvalid": "La date de départ est invalide.",
+        "departureFuture": "La date de départ doit être dans le futur.",
+        "arrivalRequired": "La date d'arrivée est requise.",
+        "arrivalInvalid": "La date d'arrivée est invalide.",
+        "arrivalFuture": "La date d'arrivée doit être dans le futur.",
+        "departureBeforeArrival": "La date de départ doit être avant la date d'arrivée.",
+        "arrivalAfterDeparture": "La date d'arrivée doit être après la date de départ."
+      }
+    },
+    "ManageOrders": {
+      "accessDenied": "Accès refusé : Vous n'êtes pas autorisé à voir cette page.",
+      "noDeliveredOrders": "Aucune commande livrée pour le moment",
+      "noDeliveredOrdersDescription": "Il semble que vous n'ayez pas encore livré de produits. Pour commencer, planifiez un voyage, connectez-vous avec les acheteurs et acceptez une commande à livrer. Une fois le produit livré, il apparaîtra ici pour que vous puissiez recevoir votre paiement.",
+      "selectTrip": "Sélectionnez un voyage",
+      "manageYourOrders": "Gérez vos commandes",
+      "orderStatus": {
+        "pending": "Commande passée, aucun voyageur ne l'a encore acceptée",
+        "orderAccepted": "Vous avez accepté la commande",
+        "negotiationPending": "Négociation en cours.",
+        "orderFinalized": "Détails de la commande finalisés.",
+        "priceFrozen": "Paiement autorisé mais pas encore capturé.",
+        "itemBought": "Article acheté par le voyageur.",
+        "enRoute": "L'article est en route.",
+        "delivered": "Article livré avec succès.",
+        "fundsTransferred": "Les fonds ont été transférés.",
+        "unknown": "Statut inconnu."
+      },
+      "productImageAlt": "Produit",
+      "currency": "euros",
+      "negotiate": "Négocier"
+    },
+    "SelectTrip": {
+      "pageTitle": "Sélectionnez un voyage",
+      "tripCount": "Vous êtes programmé pour {count, plural, one {# voyage} other {# voyages}}",
+      "from": "De",
+      "to": "à",
+      "selectTripButton": "Sélectionner ce voyage",
+      "noTrips": "Vous n'avez pas encore enregistré de voyages.",
+      "registerTrip": "Enregistrer un voyage",
+      "accessDenied": "Vous n'êtes pas voyageur. Veuillez vous connecter en tant que voyageur pour accéder à cette page.",
+      "fetchUserError": "Échec de la récupération des informations utilisateur.",
+      "fetchTripsError": "Échec de la récupération des voyages."
+    },
+    "AcceptOrders": {
+      "error": {
+        "missingLatLng": "La latitude et la longitude doivent être fournies dans les paramètres de requête.",
+        "fetchOrdersByCountries": "Erreur lors de la récupération des commandes par pays :",
+        "handleSearch": "Erreur lors de la recherche.",
+        "handleReset": "Erreur lors de la réinitialisation."
+      },
+      "pageTitle": "Vue du voyageur",
+      "filter": {
+        "countriesLabel": "Pays",
+        "countriesPlaceholder": "Sélectionnez des pays",
+        "searchButton": "Rechercher",
+        "searchingText": "Recherche...",
+        "resetButton": "Réinitialiser"
+      },
+      "ordersInfo": {
+        "ordersFound": "{count, plural, one {# Commande trouvée} other {# Commandes trouvées}}",
+        "noOrdersFound": "Nous sommes désolés, aucune commande ne correspond à vos critères."
+      },
+      "selectTrip": {
+        "routeDataToggleHide": "Masquer les informations de l'itinéraire",
+        "routeDataToggleShow": "Afficher les informations de l'itinéraire"
+      },
+      "OrderList": {
+        "ordersTitle": "{count, plural, one {# Commande} other {# Commandes}}",
+        "ordersCount": "{count, plural, one {# Commande} other {# Commandes}}",
+        "youllGet": "Vous recevrez :",
+        "price": "Prix :",
+        "viewDetails": "parler à l'acheteur"
+      },
+      "Directions": {
+        "routeLabel": "Itinéraire : {summary}",
+        "from": "De",
+        "to": "à",
+        "distance": "Distance :",
+        "duration": "Durée :",
+        "option": "Option {num} : {summary}"
+      }
+    }
+  },
+  "Negotiate": {
+    "Page": {
+      "missingParameters": "Paramètres requis manquants : recipientId ou orderId",
+      "failedFetchUser": "Échec de la récupération des informations utilisateur. Veuillez réessayer plus tard.",
+      "failedFetchOrder": "Échec de la récupération des détails de la commande. Veuillez réessayer plus tard.",
+      "failedFetchChat": "Échec de la récupération de l'historique de discussion. Veuillez réessayer plus tard.",
+      "chatConnectionError": "Erreur critique lors de la connexion au chat. Veuillez patienter, la page va se rafraîchir.",
+      "stripeRedirect": "Redirection vers la page Stripe"
+    },
+    "ValidateNegotiations": {
+      "confirmNegotiatedDetails": "Confirmer les détails négociés",
+      "productValue": "Valeur du produit :",
+      "deliveryFee": "Frais de livraison :",
+      "successAccepted": "Négociation acceptée avec succès.",
+      "successRejected": "Négociation rejetée avec succès.",
+      "errorUserInfo": "Une erreur s'est produite lors de la récupération des informations de l'utilisateur.",
+      "errorOrderInfo": "Une erreur s'est produite lors de la récupération des informations de commande.",
+      "errorAccept": "Erreur lors de l'acceptation de la négociation.",
+      "errorReject": "Erreur lors du rejet de la négociation.",
+      "accept": "Accepter",
+      "requestRenegotiation": "Demander une renégociation",
+      "processing": "Traitement en cours..."
+    },
+    "Components": {
+      "OrderDetails": {
+        "orderDetails": "Détails de la commande",
+        "product": "Produit :",
+        "description": "Description :",
+        "quantity": "Quantité :",
+        "productPrice": "Prix du produit :",
+        "deliveryFee": "Frais de livraison :",
+        "deliveryInstructions": "Instructions de livraison :",
+        "orderPlaced": "Commande passée :",
+        "productURL": "URL du produit :",
+        "viewProduct": "Voir le produit",
+        "pickupPlace": "Lieu de retrait :",
+        "orderAccepted": "Commande acceptée",
+        "images": "Images :"
+      },
+      "NegotiationForm": {
+        "finalizeNegotiation": "Finaliser la négociation",
+        "finalizingNegotiation": "Finalisation de la négociation...",
+        "error": {
+          "productValue": "La valeur du produit ne peut pas être inférieure à : {minPrice}",
+          "deliveryFee": "Les frais de livraison ne peuvent pas être inférieurs à : {minFee}"
+        }
+      },
+      "NegotiationControls": {
+        "negotiationInProgress": "Négociation en cours",
+        "negotiationDetailsPrompt": {
+          "start": "Cliquez",
+          "end": "pour examiner les détails de la négociation et accepter ou refuser."
+        },
+        "here": "ici",
+        "orderFinalized": "Commande finalisée !",
+        "orderFinalizedInfo": "La commande a été finalisée. Veuillez patienter pendant que l'acheteur effectue le paiement.",
+        "buyerPaid": "L'acheteur a payé le produit !",
+        "deliverProduct": "Vous pouvez maintenant commencer votre voyage et livrer le produit.",
+        "pendingAcceptance": "Acceptation en attente",
+        "notAccepted": "Vous n'avez PAS ENCORE accepté la commande.",
+        "acceptOrder": "Accepter la commande",
+        "negotiateAndFinalize": "Négocier & Finaliser",
+        "proceedToPayment": "Procéder au paiement",
+        "finalizeOrder": "Finaliser la commande",
+        "finalizeOrderPrompt": "Confirmez le coût du produit et les frais de livraison avec le voyageur, puis finalisez la commande.",
+        "awaitingTravelerConfirmation": "En attente de confirmation du voyageur",
+        "travelerReviewing": "Le voyageur examine les détails de la négociation.",
+        "pendingTravelerAcceptance": "Acceptation du voyageur en attente",
+        "travelerAcceptanceNeeded": "Le voyageur doit accepter la commande avant que la négociation puisse commencer.",
+        "fundsTransferred": "Les fonds ont été transférés au voyageur",
+        "signupTraveler": "Inscrivez-vous en tant que voyageur pour gagner de l'argent."
+      },
+      "MessageInput": {
+        "typeMessage": "Tapez un message...",
+        "sendMessage": "Envoyer le message"
+      },
+      "CriticalErrorBanner": {
+        "criticalErrorMessage": "Erreur critique : {error} - La page sera actualisée dans {seconds} secondes..."
+      },
+      "ChatSection": {
+        "chatWith": "Discussion avec : {recipientName}"
+      }
+    }
+  },
+  "FormErrorHandler": {
+    "errorHeader": "Il y a eu des erreurs lors de votre soumission :"
+  },
+  "BuyerPage": {
+    "SaveOrder": {
+      "ValidateForm": {
+        "error": {
+          "invalidURL": "Veuillez entrer une URL valide.",
+          "estimatedValue": "La valeur estimée doit être supérieure à {min}.",
+          "productName": "Le nom du produit est requis, 3-100 caractères, et peut contenir des lettres, des chiffres, des espaces et les caractères . , ' -",
+          "description": "La description est requise et doit contenir entre 10 et 10 000 caractères, permettant tout type de caractère.",
+          "quantity": "La quantité doit être d'au moins 1.",
+          "dimension": {
+            "length": "La longueur doit être un nombre positif.",
+            "width": "La largeur doit être un nombre positif.",
+            "height": "La hauteur doit être un nombre positif."
+          },
+          "deliveryInstructions": "Les instructions de livraison doivent contenir entre 10 et 10 000 caractères.",
+          "initialDeliveryFee": "Les frais de livraison doivent être supérieurs à {min}.",
+          "preferredPickupPlace": "Veuillez saisir ou ressaisir votre lieu de ramassage préféré.",
+          "selectedFiles": "Veuillez sélectionner des images valides avant de soumettre."
+        }
+      },
+      "Form": {
+        "FormImagesInput": {
+          "uploadHeader": "Téléchargez les images du produit que vous commandez",
+          "uploadInstructions": "Faites glisser et déposez les images ici, ou cliquez pour sélectionner des fichiers"
+        },
+        "FormMapInput": {
+          "pickupPrompt": "Choisissez votre lieu de ramassage préféré"
+        },
+        "FormSubmissionButton": {
+          "saveOrder": "Enregistrer la commande",
+          "savingOrder": "Enregistrement de la commande"
+        },
+        "FormUsualInputs": {
+          "header": "Veuillez remplir les détails de votre commande",
+          "productURL": {
+            "label": "URL du produit (facultatif)",
+            "error": "Veuillez entrer une URL valide."
+          },
+          "estimatedValue": {
+            "label": "Valeur estimée en {code} ({symbol}) :",
+            "error": "Veuillez entrer un nombre supérieur à 10."
+          },
+          "productName": {
+            "label": "Nom du produit",
+            "error": "Le nom du produit est requis, entre 3 et 100 caractères, et peut contenir des lettres, des chiffres, des espaces et les caractères . , ' -"
+          },
+          "description": {
+            "label": "Description",
+            "error": "La description est requise et doit contenir entre 10 et 1000 caractères"
+          },
+          "quantity": {
+            "label": "Combien d'articles souhaitez-vous acheter ?",
+            "error": "La quantité doit être d'au moins 1."
+          },
+          "dimensions": {
+            "length": {
+              "label": "Longueur en cm (facultatif)",
+              "error": "La longueur doit être un nombre positif."
+            },
+            "width": {
+              "label": "Largeur en cm (facultatif)",
+              "error": "La largeur doit être un nombre positif."
+            },
+            "height": {
+              "label": "Hauteur en cm (facultatif)",
+              "error": "La hauteur doit être un nombre positif."
+            }
+          },
+          "deliveryInstructions": {
+            "label": "Instructions spéciales (facultatif)",
+            "error": "Les instructions de livraison doivent contenir moins de 10000 caractères et peuvent contenir des lettres."
+          },
+          "initialDeliveryFee": {
+            "label": "Déclarez combien vous êtes prêt à payer au voyageur en {code} ({symbol})",
+            "error": "Les frais de livraison doivent être supérieurs à 5."
+          }
+        }
+      }
+    },
+    "BuyerPay": {
+      "OrderId": {
+        "CollapsibleText": {
+          "showLess": "Afficher moins",
+          "showMore": "Afficher plus"
+        },
+        "Page": {
+          "notBuyerError": "Vous n'êtes pas un acheteur, vous ne pouvez pas accéder à cette page",
+          "orderNotFinalizedError": "La commande n'est pas encore finalisée, vous ne pouvez pas la payer",
+          "orderDetailsHeader": "Détails de la commande",
+          "productDescriptionLabel": "Description du produit :",
+          "quantityLabel": "Quantité",
+          "valueLabel": "Valeur",
+          "deliveryFeeLabel": "Frais de livraison",
+          "deliveryInstructionsLabel": "Instructions de livraison :",
+          "preferredPickupPlaceLabel": "Lieu de ramassage préféré :"
+        },
+        "PayButton": {
+          "loading": "Chargement",
+          "processing": "Traitement...",
+          "pay": "PAYER",
+          "finalizeNegotiationBeforePay": "Finalisez les termes de la négociation avec le voyageur avant de payer pour le produit",
+          "paymentSessionCreationFailed": "La création de la session de paiement a échoué : {message}",
+          "paymentError": "Une erreur s'est produite lors du paiement."
+        }
+      },
+      "Error": {
+        "Page": {
+          "header": "Paiement Annulé",
+          "message": "Il semble que vous ayez annulé votre paiement. Pas d'inquiétude — si cela était involontaire, n'hésitez pas à réessayer ou à contacter notre équipe de support.",
+          "returnHome": "Retour à l'accueil"
+        }
+      },
+      "Success": {
+        "Page": {
+          "header": "نجاح!",
+          "message": "تمت العملية بنجاح.",
+          "goHome": "العودة إلى الرئيسية"
+        }
+      }
+    },
+    "ManageOrders": {
+      "ConfirmDelivery": {
+        "instruction": "Veuillez confirmer la livraison une fois que vous avez reçu votre produit.",
+        "confirmDelivery": "Confirmer la livraison",
+        "confirming": "Confirmation...",
+        "confirmSuccess": "Nous vous remercions d'avoir confirmé la réception de votre produit et d'utiliser nos services.",
+        "errorAlert": "Quelque chose s'est mal passé, la commande n'a pas pu être confirmée."
+      },
+      "Page": {
+        "manageYourOrders": "Gérez vos commandes",
+        "quantityLabel": "Quantité:",
+        "valueLabel": "Valeur:",
+        "deliveryFeeLabel": "Frais de livraison:",
+        "statusLabel": "Statut:",
+        "placedAtLabel": "Commandé le:",
+        "proceedToPayment": "Procéder au paiement"
+      }
     }
   }
 }

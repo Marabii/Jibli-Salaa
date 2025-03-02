@@ -1,5 +1,5 @@
 "use client";
-
+import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { UserInfo } from "@/interfaces/userInfo/userInfo";
 import DesktopHeader from "./DesktopHeader";
@@ -14,11 +14,12 @@ export default function HeaderInteractive({
   userInfo,
   isUserAuthenticated,
 }: HeaderInteractiveProps) {
+  const locale = useLocale();
   const router = useRouter();
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("/login/logout", {
+      const response = await fetch(`/${locale}/login/logout`, {
         method: "POST",
         credentials: "include",
       });
@@ -39,7 +40,6 @@ export default function HeaderInteractive({
         isUserAuthenticated={isUserAuthenticated}
         handleLogout={handleLogout}
       />
-
       <MobileHeader
         userInfo={userInfo}
         isUserAuthenticated={isUserAuthenticated}

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef, ChangeEvent, useEffect } from "react";
+import { useLocale } from "next-intl";
 import { twMerge } from "tailwind-merge";
 import useOutsideClick from "@/hooks/useOutsideClick";
 
@@ -39,6 +40,10 @@ export default function Input({
   labelTextColor = "black",
   ...props
 }: InputProps) {
+  // Get the current locale to adjust label positioning
+  const locale = useLocale();
+  const labelPosition = locale === "ar" ? "right-2" : "left-2";
+
   // Function to parse pattern and flags from a regex string
   const parseRegex = (patternStr: string): RegExp | null => {
     const regexParts = patternStr.match(/^\/(.+)\/([a-z]*)$/i);
@@ -89,12 +94,12 @@ export default function Input({
 
   return (
     <>
-      <div ref={inputRef} className="relative mt-5 mb-1 w-full">
+      <div dir="auto" ref={inputRef} className="relative mt-5 mb-1 w-full">
         <label
           htmlFor={name}
           style={{ backgroundColor: labelBgColor, color: labelTextColor }}
           className={twMerge(
-            "absolute left-2 px-1 text-xs -z-10 transition-all duration-300",
+            `absolute ${labelPosition} px-1 text-xs -z-10 transition-all duration-300`,
             isFocused || (currentValue !== null && currentValue !== "")
               ? "-top-[0.5rem] z-20"
               : "top-1/2 -translate-y-1/2 text-md text-gray-500",

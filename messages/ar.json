@@ -1,0 +1,549 @@
+{
+  "LocaleSwitcher": {
+    "ar": "العربية",
+    "en": "الإنجليزية",
+    "fr": "الفرنسية",
+    "label": "اللغة"
+  },
+  "ContactPage": {
+    "noContact": "لا توجد جهات اتصال متاحة",
+    "noContactsMessage": "ليس لديك جهات اتصال حالياً. ابدأ بإضافة جهة اتصال جديدة لإدارة طلباتك.",
+    "contactsHeader": "جهات الاتصال",
+    "speakTo": " تحدث مع",
+    "OrderDetails": {
+      "product": "المنتج",
+      "price": "السعر",
+      "quantity": "الكمية",
+      "deliveryFee": "رسوم التوصيل",
+      "unableToLoad": "غير قادر على تحميل تفاصيل الطلب.",
+      "noOrderDetails": "تفاصيل الطلب غير متاحة"
+    }
+  },
+  "Header": {
+    "brand": "Jeebware",
+    "travelerOrders": "الطلبات",
+    "trips": "الرحلات",
+    "planTrip": "خطط لرحلة",
+    "buyerOrder": "طلب",
+    "buyerOrders": "الطلبات",
+    "contact": "جهات الاتصال",
+    "login": "تسجيل الدخول",
+    "checkBalance": "تحقق من الرصيد",
+    "logout": "تسجيل الخروج",
+    "infoStripe": "جارٍ نقلك إلى صفحة Stripe، الرجاء الانتظار..",
+    "errorBalance": "لا يمكن التحقق من الرصيد، يرجى الاتصال بالدعم",
+    "profileAlt": "الملف الشخصي",
+    "Notifications": {
+      "header": "الإشعارات",
+      "close": "إغلاق",
+      "noNotifications": "لا توجد إشعارات",
+      "markAsRead": "تحديد كمقروء",
+      "negotiatePage": "التفاوض",
+      "message": "لقد تلقيت رسالة جديدة من {senderName}",
+      "orderAccepted": "تم قبول طلبك {productName} من قبل {travelerName}.",
+      "orderFinalized": "تم إنهاء طلبك {productName}.",
+      "negotiationRejected": "تم رفض التفاوض بشأن {productName}.",
+      "negotiationPending": "التفاوض معلق، يرجى مراجعة تفاصيل التفاوض الخاصة بـ {productName}.",
+      "itemPaid": "قام المشتري {buyerName} بدفع ثمن المنتج: {productName}"
+    }
+  },
+  "HomePage": {
+    "HeroSection": {
+      "heroHeading": "تواصل مع المسافرين واستلم طلباتك بكل سهولة",
+      "heroParagraph": "هي منصة تربط المشترين بالمسافرين لتوصيل المنتجات بكل سهولة، سواء داخل البلاد أو حول العالم.",
+      "heroButton": "اكتشف كيف تعمل",
+      "heroImageAlt": "الصورة الرئيسية"
+    },
+    "DashboardPage": {
+      "dashboardTitle": "لوحة التحكم",
+      "pendingOrdersMessage": "لديك طلبات معلقة.",
+      "scheduledTripsMessage": "لديك رحلات مجدولة.",
+      "ordersHeading": "طلباتك ({count})",
+      "tripsHeading": "رحلاتك ({count})",
+      "DashboardCard": {
+        "tripTo": "رحلة إلى",
+        "departure": "المغادرة",
+        "arrival": "الوصول"
+      },
+      "ConfirmDelivery": {
+        "instruction": "يرجى تأكيد التسليم بمجرد استلام منتجك.",
+        "confirmDelivery": "تأكيد التسليم",
+        "confirming": "جارٍ التأكيد...",
+        "error": "حدث خطأ ما، تعذر تأكيد الطلب"
+      }
+    },
+    "OrdersMap": {
+      "title": "ألقِ نظرة على جميع الطلبات عبر الإنترنت الحالية",
+      "CurrencySelector": {
+        "selectCurrency": "ما هي العملة التي تريد رؤية أسعار الطلبات بها؟"
+      },
+      "OrderList": {
+        "ordersTitle": "{count, plural, one {# طلب} other {# طلبات}}",
+        "ordersCount": "{count, plural, one {# طلب} other {# طلبات}}",
+        "youllGet": "ستحصل على:",
+        "price": "السعر:"
+      }
+    },
+    "AboutSection": {
+      "sectionHeading": "لماذا تستخدم جيب وير؟",
+      "features": {
+        "accessGlobalProducts": {
+          "title": "الوصول إلى المنتجات العالمية",
+          "description": "احصل على عناصر من جميع أنحاء العالم غير متوفرة أو باهظة الثمن في بلدك."
+        },
+        "earnWhileTraveling": {
+          "title": "اكسب أثناء السفر",
+          "description": "يمكن للمسافرين كسب أموال إضافية عن طريق توصيل العناصر على طول طريقهم."
+        },
+        "sustainableDeliveries": {
+          "title": "التوصيل المستدام",
+          "description": "قلل من انبعاثات الكربون باستخدام طرق السفر الحالية للتوصيل."
+        }
+      }
+    },
+    "HowItWorksSection": {
+      "sectionHeading": "كيف تعمل؟",
+      "steps": {
+        "postRequest": {
+          "title": "انشر طلباً",
+          "description": "يقوم المشترون بنشر طلبات للمنتجات التي يرغبون بها، مع تحديد التفاصيل وتقديم رسوم توصيل."
+        },
+        "travelerAccepts": {
+          "title": "يقبل المسافر الطلب",
+          "description": "يستعرض المسافرون الطلبات ويقبلون الطلبات التي تناسب جدول رحلاتهم."
+        },
+        "deliveryConfirmation": {
+          "title": "التوصيل والتأكيد",
+          "description": "يقوم المسافر بتوصيل العنصر، ويؤكد المشتري استلامه. تتم معالجة المدفوعات بأمان."
+        }
+      },
+      "getStarted": "ابدأ الآن"
+    },
+    "CallToActionSection": {
+      "sectionHeading": "هل أنت مستعد للانضمام إلى المجتمع؟",
+      "sectionParagraph": "سجّل اليوم لتبدأ في طلب المنتجات أو كسب المال كمسافر.",
+      "buyerButton": "سجّل كعميل",
+      "travelerButton": "سجّل كمسافر"
+    }
+  },
+  "LoginPage": {
+    "Layout": {
+      "title": "تسجيل الدخول",
+      "subheading": "يرجى تعبئة بريدك الإلكتروني وكلمة المرور لتسجيل الدخول"
+    },
+    "Page": {
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "اكتب بريدك الإلكتروني",
+      "emailError": "عنوان بريد إلكتروني غير صالح",
+      "passwordLabel": "كلمة المرور",
+      "passwordPlaceholder": "أدخل كلمة المرور الخاصة بك",
+      "passwordError": "يجب أن تكون كلمة المرور 8 أحرف على الأقل وتحتوي على حرف كبير، حرف صغير، ورقم.",
+      "signInWithGoogle": "تسجيل الدخول باستخدام جوجل",
+      "noAccount": "ليس لديك حساب؟",
+      "register": "سجل الآن"
+    },
+    "Metadata": {
+      "title": "تسجيل الدخول - جيب وير",
+      "description": "صفحة تسجيل الدخول لموقع جيب وير"
+    },
+    "Form": {
+      "defaultText": "تسجيل الدخول",
+      "pendingText": "جارٍ تسجيل الدخول..."
+    },
+    "Validation": {
+      "emailMissing": "البريد الإلكتروني مفقود",
+      "emailInvalid": "عنوان البريد الإلكتروني غير صالح",
+      "passwordMissing": "كلمة المرور مفقودة",
+      "passwordInvalid": "يجب أن تكون كلمة المرور 8 أحرف على الأقل وتحتوي على حرف كبير، حرف صغير، ورقم.",
+      "unknownError": "حدث خطأ غير معروف"
+    }
+  },
+  "RegisterPage": {
+    "Layout": {
+      "title": "إنشاء حساب"
+    },
+    "Page": {
+      "introText": "قم بإنشاء حساب وابدأ باستخدام جيب وير",
+      "nameLabel": "الاسم",
+      "namePlaceholder": "اكتب اسمك",
+      "nameError": "يمكن أن يحتوي الاسم على أحرف ومسافات فقط",
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "اكتب بريدك الإلكتروني",
+      "emailError": "عنوان بريد إلكتروني غير صالح",
+      "passwordLabel": "كلمة المرور",
+      "passwordPlaceholder": "أدخل كلمة المرور الخاصة بك",
+      "passwordError": "يجب أن تكون كلمة المرور 8 أحرف على الأقل وتحتوي على حرف كبير، حرف صغير، ورقم.",
+      "alreadyHaveAccount": "هل لديك حساب؟",
+      "signIn": "تسجيل الدخول"
+    },
+    "CountrySelector": {
+      "label": "في أي دولة تقيم؟",
+      "placeholder": "اختر الدولة التي تقيم بها"
+    },
+    "PhoneNumberInput": {
+      "label": "رقم الهاتف",
+      "placeholder": "أدخل رقم هاتفك"
+    },
+    "RoleAndCurrencySelectors": {
+      "roleLabel": "كيف تخطط لاستخدام جيب وير؟",
+      "buyerOption": "شراء المنتجات",
+      "travelerOption": "كونك مسافر",
+      "travelerSub": "اكسب دخلاً إضافيًا",
+      "currencyLabel": "ما هي العملة التي يدعمها مصرفك؟",
+      "currencyPlaceholder": "اختر العملة التي يستخدمها مصرفك"
+    },
+    "SubmitButton": {
+      "defaultText": "سجل",
+      "pendingText": "جارٍ معالجة الطلب...",
+      "googleButton": "التسجيل باستخدام جوجل"
+    },
+    "error": {
+      "nameMissing": "الاسم مفقود",
+      "nameInvalid": "يحتوي الاسم على أحرف غير صالحة",
+      "emailMissing": "البريد الإلكتروني مفقود",
+      "emailInvalid": "عنوان البريد الإلكتروني غير صالح",
+      "passwordMissing": "كلمة المرور مفقودة",
+      "passwordInvalid": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل، وتشمل حرفًا كبيرًا وحرفًا صغيرًا ورقمًا.",
+      "phoneMissing": "رقم الهاتف مفقود",
+      "phoneInvalid": "يجب أن يكون رقم الهاتف بصيغة E.164 (مثال: +1234567890)",
+      "bankCurrencyMissing": "عملة البنك مطلوبة",
+      "countryMissing": "بلد الإقامة مطلوب",
+      "roleMissing": "يرجى تحديد كيف تخطط لاستخدام Jeebware"
+    }
+  },
+  "TravelerTrip": {
+    "saveTrip": {
+      "MapInputFrom": {
+        "heading": "حدد موقع انطلاقك"
+      },
+      "MapInputTo": {
+        "heading": "حدد وجهتك"
+      },
+      "TripDates": {
+        "departureHeading": "تاريخ ووقت المغادرة",
+        "departurePlaceholder": "اختر تاريخ ووقت المغادرة",
+        "arrivalHeading": "تاريخ ووقت الوصول",
+        "arrivalPlaceholder": "اختر تاريخ ووقت الوصول"
+      },
+      "SubmitButton": {
+        "defaultText": "حفظ الرحلة",
+        "pendingText": "جار حفظ الرحلة..."
+      },
+      "Validation": {
+        "fromAddressRequired": "العنوان (من) مطلوب.",
+        "fromLatitudeRequired": "خط العرض للبداية مطلوب.",
+        "fromLongitudeRequired": "خط الطول للبداية مطلوب.",
+        "toAddressRequired": "العنوان (إلى) مطلوب.",
+        "toLatitudeRequired": "خط العرض للوجهة مطلوب.",
+        "toLongitudeRequired": "خط الطول للوجهة مطلوب.",
+        "departureRequired": "تاريخ المغادرة مطلوب.",
+        "departureInvalid": "تاريخ المغادرة غير صالح.",
+        "departureFuture": "يجب أن يكون تاريخ المغادرة في المستقبل.",
+        "arrivalRequired": "تاريخ الوصول مطلوب.",
+        "arrivalInvalid": "تاريخ الوصول غير صالح.",
+        "arrivalFuture": "يجب أن يكون تاريخ الوصول في المستقبل.",
+        "departureBeforeArrival": "يجب أن يكون تاريخ المغادرة قبل تاريخ الوصول.",
+        "arrivalAfterDeparture": "يجب أن يكون تاريخ الوصول بعد تاريخ المغادرة."
+      }
+    },
+    "ManageOrders": {
+      "accessDenied": "تم الرفض: أنت غير مخول لعرض هذه الصفحة.",
+      "noDeliveredOrders": "لا توجد طلبات مسلمة بعد",
+      "noDeliveredOrdersDescription": "يبدو أنك لم تقم بتسليم أي منتجات حتى الآن. للبدء، قم بجدولة رحلة، تواصل مع المشترين، واقبل طلبًا للتسليم. بمجرد تسليم المنتج، سيظهر هنا لتستلم دفعتك.",
+      "selectTrip": "اختر رحلة",
+      "manageYourOrders": "إدارة طلباتك",
+      "orderStatus": {
+        "pending": "تم تقديم الطلب، ولم يقبله أي مسافر بعد",
+        "orderAccepted": "لقد قبلت الطلب",
+        "negotiationPending": "المفاوضات جارية.",
+        "orderFinalized": "تم الانتهاء من تفاصيل الطلب.",
+        "priceFrozen": "تم تفويض الدفع ولكن لم يتم استلامه بعد.",
+        "itemBought": "تم شراء المنتج بواسطة المسافر.",
+        "enRoute": "المنتج في طريقه إليك.",
+        "delivered": "تم تسليم المنتج بنجاح.",
+        "fundsTransferred": "تم تحويل الأموال.",
+        "unknown": "حالة غير معروفة."
+      },
+      "productImageAlt": "منتج",
+      "currency": "يورو",
+      "negotiate": "تفاوض"
+    },
+    "SelectTrip": {
+      "pageTitle": "اختر رحلة",
+      "tripCount": "أنت مقرر لـ {count, plural, one {رحلة واحدة} other {# رحلات}}",
+      "from": "من",
+      "to": "إلى",
+      "selectTripButton": "اختر هذه الرحلة",
+      "noTrips": "لم تقم بتسجيل أي رحلات بعد.",
+      "registerTrip": "سجل رحلة",
+      "accessDenied": "أنت لست مسافرًا. يرجى تسجيل الدخول كمسافر للوصول إلى هذه الصفحة.",
+      "fetchUserError": "فشل في جلب معلومات المستخدم.",
+      "fetchTripsError": "فشل في جلب الرحلات."
+    },
+    "AcceptOrders": {
+      "error": {
+        "missingLatLng": "يجب توفير خطوط العرض والطول في معلمات الاستعلام.",
+        "fetchOrdersByCountries": "خطأ في جلب الطلبات حسب الدول:",
+        "handleSearch": "حدث خطأ أثناء البحث.",
+        "handleReset": "حدث خطأ أثناء إعادة التعيين."
+      },
+      "pageTitle": "عرض المسافر",
+      "filter": {
+        "countriesLabel": "الدول",
+        "countriesPlaceholder": "اختر دولاً",
+        "searchButton": "بحث",
+        "searchingText": "جار البحث...",
+        "resetButton": "إعادة تعيين"
+      },
+      "ordersInfo": {
+        "ordersFound": "{count, plural, one {# طلب وجد} other {# طلبات وجدت}}",
+        "noOrdersFound": "نأسف، لم يتم العثور على طلبات تطابق معاييرك."
+      },
+      "selectTrip": {
+        "routeDataToggleHide": "إخفاء بيانات الطريق",
+        "routeDataToggleShow": "إظهار بيانات الطريق"
+      },
+      "OrderList": {
+        "ordersTitle": "{count, plural, one {# طلب} other {# طلبات}}",
+        "ordersCount": "{count, plural, one {# طلب} other {# طلبات}}",
+        "youllGet": "ستحصل على:",
+        "price": "السعر:",
+        "viewDetails": "تحدث مع المشتري"
+      },
+      "Directions": {
+        "routeLabel": "الطريق: {summary}",
+        "from": "من",
+        "to": "إلى",
+        "distance": "المسافة:",
+        "duration": "المدة:",
+        "option": "الخيار {num}: {summary}"
+      }
+    }
+  },
+  "Negotiate": {
+    "Page": {
+      "missingParameters": "المعلمات المطلوبة مفقودة: recipientId أو orderId",
+      "failedFetchUser": "فشل في جلب معلومات المستخدم. الرجاء المحاولة مرة أخرى لاحقًا.",
+      "failedFetchOrder": "فشل في جلب تفاصيل الطلب. الرجاء المحاولة مرة أخرى لاحقًا.",
+      "failedFetchChat": "فشل في جلب سجل الدردشة. الرجاء المحاولة مرة أخرى لاحقًا.",
+      "chatConnectionError": "خطأ حرج في الاتصال بالدردشة. الرجاء الانتظار؛ سيتم تحديث الصفحة.",
+      "stripeRedirect": "يتم تحويلك إلى صفحة Stripe"
+    },
+    "ValidateNegotiations": {
+      "confirmNegotiatedDetails": "تأكيد التفاصيل المتفاوض عليها",
+      "productValue": "قيمة المنتج:",
+      "deliveryFee": "رسوم التوصيل:",
+      "successAccepted": "تم قبول التفاوض بنجاح.",
+      "successRejected": "تم رفض التفاوض بنجاح.",
+      "errorUserInfo": "حدث خطأ أثناء جلب معلومات المستخدم.",
+      "errorOrderInfo": "حدث خطأ أثناء جلب معلومات الطلب.",
+      "errorAccept": "خطأ في قبول التفاوض.",
+      "errorReject": "خطأ في رفض التفاوض.",
+      "accept": "قبول",
+      "requestRenegotiation": "طلب إعادة التفاوض",
+      "processing": "جار المعالجة..."
+    },
+    "Components": {
+      "OrderDetails": {
+        "orderDetails": "تفاصيل الطلب",
+        "product": "المنتج:",
+        "description": "الوصف:",
+        "quantity": "الكمية:",
+        "productPrice": "سعر المنتج:",
+        "deliveryFee": "رسوم التوصيل:",
+        "deliveryInstructions": "تعليمات التوصيل:",
+        "orderPlaced": "تاريخ الطلب:",
+        "productURL": "رابط المنتج:",
+        "viewProduct": "عرض المنتج",
+        "pickupPlace": "مكان الاستلام:",
+        "orderAccepted": "تم قبول الطلب",
+        "images": "الصور:"
+      },
+      "NegotiationForm": {
+        "finalizeNegotiation": "إنهاء التفاوض",
+        "finalizingNegotiation": "جارٍ إنهاء التفاوض...",
+        "error": {
+          "productValue": "لا يمكن أن تكون قيمة المنتج أقل من: {minPrice}",
+          "deliveryFee": "لا يمكن أن تكون رسوم التوصيل أقل من: {minFee}"
+        }
+      },
+      "NegotiationControls": {
+        "negotiationInProgress": "جاري التفاوض",
+        "negotiationDetailsPrompt": {
+          "start": "اضغط",
+          "end": "لمراجعة تفاصيل التفاوض وقبولها أو رفضها."
+        },
+        "here": "هنا",
+        "orderFinalized": "تم إنهاء الطلب!",
+        "orderFinalizedInfo": "تم إنهاء الطلب. انتظر بينما يقوم المشتري بمعالجة الدفع.",
+        "buyerPaid": "لقد قام المشتري بدفع ثمن المنتج!",
+        "deliverProduct": "يمكنك الآن بدء رحلتك وتسليم المنتج.",
+        "pendingAcceptance": "بانتظار القبول",
+        "notAccepted": "لم تقم بقبول الطلب بعد.",
+        "acceptOrder": "قبول الطلب",
+        "negotiateAndFinalize": "التفاوض والإنهاء",
+        "proceedToPayment": "الانتقال إلى الدفع",
+        "finalizeOrder": "إنهاء الطلب",
+        "finalizeOrderPrompt": "أكد تكلفة المنتج ورسوم التوصيل مع المسافر، ثم أنهِ الطلب.",
+        "awaitingTravelerConfirmation": "بانتظار تأكيد المسافر",
+        "travelerReviewing": "يقوم المسافر بمراجعة تفاصيل التفاوض.",
+        "pendingTravelerAcceptance": "بانتظار قبول المسافر",
+        "travelerAcceptanceNeeded": "يجب على المسافر قبول الطلب قبل بدء التفاوض.",
+        "fundsTransferred": "تم تحويل الأموال إلى المسافر",
+        "signupTraveler": "سجل كمسافر لكسب بعض المال."
+      },
+      "MessageInput": {
+        "typeMessage": "اكتب رسالة...",
+        "sendMessage": "إرسال الرسالة"
+      },
+      "CriticalErrorBanner": {
+        "criticalErrorMessage": "خطأ حرج: {error} - سيتم تحديث الصفحة خلال {seconds} ثانية..."
+      },
+      "ChatSection": {
+        "chatWith": " الدردشة مع: {recipientName}"
+      }
+    }
+  },
+  "FormErrorHandler": {
+    "errorHeader": "وقعت بعض الأخطاء أثناء تقديم طلبك:"
+  },
+  "BuyerPage": {
+    "SaveOrder": {
+      "ValidateForm": {
+        "error": {
+          "invalidURL": "يرجى إدخال عنوان URL صالح.",
+          "estimatedValue": "يجب أن تكون القيمة المقدرة أكبر من {min}.",
+          "productName": "اسم المنتج مطلوب، من 3 إلى 100 حرف، ويمكن أن يحتوي على أحرف وأرقام ومسافات والحروف . , ' -",
+          "description": "الوصف مطلوب ويجب أن يكون من 10 إلى 10,000 حرف، مع السماح بأي نوع من الأحرف.",
+          "quantity": "يجب أن تكون الكمية 1 على الأقل.",
+          "dimension": {
+            "length": "يجب أن يكون الطول رقمًا إيجابيًا.",
+            "width": "يجب أن يكون العرض رقمًا إيجابيًا.",
+            "height": "يجب أن يكون الارتفاع رقمًا إيجابيًا."
+          },
+          "deliveryInstructions": "يجب أن تكون تعليمات التسليم من 10 إلى 10,000 حرف.",
+          "initialDeliveryFee": "يجب أن تكون رسوم التوصيل أكبر من {min}.",
+          "preferredPickupPlace": "يرجى إدخال أو إعادة إدخال مكان الاستلام المفضل لديك.",
+          "selectedFiles": "يرجى اختيار صور صالحة قبل الإرسال."
+        }
+      },
+      "Form": {
+        "FormImagesInput": {
+          "uploadHeader": "قم بتحميل صور المنتج الذي تطلبه",
+          "uploadInstructions": "اسحب الصور هنا أو انقر لتحديد الملفات"
+        },
+        "FormMapInput": {
+          "pickupPrompt": "اختر مكان الاستلام المفضل لديك"
+        },
+        "FormSubmissionButton": {
+          "saveOrder": "احفظ الطلب",
+          "savingOrder": "جارٍ حفظ الطلب"
+        },
+        "FormUsualInputs": {
+          "header": "يرجى ملء تفاصيل طلبك",
+          "productURL": {
+            "label": "رابط المنتج (اختياري)",
+            "error": "يرجى إدخال رابط صالح."
+          },
+          "estimatedValue": {
+            "label": "القيمة المقدرة بـ {code} ({symbol}):",
+            "error": "يرجى إدخال رقم أكبر من 10."
+          },
+          "productName": {
+            "label": "اسم المنتج",
+            "error": "اسم المنتج مطلوب، من 3 إلى 100 حرف، ويمكن أن يحتوي على أحرف، أرقام، مسافات، والأحرف . , ' -"
+          },
+          "description": {
+            "label": "الوصف",
+            "error": "الوصف مطلوب ويجب أن يكون من 10 إلى 1000 حرف"
+          },
+          "quantity": {
+            "label": "كم عدد العناصر التي ترغب في شرائها؟",
+            "error": "يجب أن تكون الكمية 1 على الأقل."
+          },
+          "dimensions": {
+            "length": {
+              "label": "الطول بالسنتيمتر (اختياري)",
+              "error": "يجب أن يكون الطول رقمًا إيجابيًا."
+            },
+            "width": {
+              "label": "العرض بالسنتيمتر (اختياري)",
+              "error": "يجب أن يكون العرض رقمًا إيجابيًا."
+            },
+            "height": {
+              "label": "الارتفاع بالسنتيمتر (اختياري)",
+              "error": "يجب أن يكون الارتفاع رقمًا إيجابيًا."
+            }
+          },
+          "deliveryInstructions": {
+            "label": "تعليمات خاصة (اختياري)",
+            "error": "يجب أن تكون تعليمات التسليم أقل من 10000 حرف ويمكن أن تحتوي على أحرف."
+          },
+          "initialDeliveryFee": {
+            "label": "حدد المبلغ الذي ترغب في دفعه للمسافر بـ {code} ({symbol})",
+            "error": "يجب أن تكون رسوم التوصيل أكبر من 5."
+          }
+        }
+      }
+    },
+    "BuyerPay": {
+      "OrderId": {
+        "CollapsibleText": {
+          "showLess": "إخفاء المزيد",
+          "showMore": "عرض المزيد"
+        },
+        "Page": {
+          "notBuyerError": "أنت لست مشتريًا، لا يمكنك الوصول إلى هذه الصفحة",
+          "orderNotFinalizedError": "الطلب لم يُنهَ بعد، لا يمكنك الدفع له",
+          "orderDetailsHeader": "تفاصيل الطلب",
+          "productDescriptionLabel": "وصف المنتج:",
+          "quantityLabel": "الكمية",
+          "valueLabel": "القيمة",
+          "deliveryFeeLabel": "رسوم التوصيل",
+          "deliveryInstructionsLabel": "تعليمات التوصيل:",
+          "preferredPickupPlaceLabel": "مكان الاستلام المفضل:"
+        },
+        "PayButton": {
+          "loading": "جار التحميل",
+          "processing": "جار المعالجة...",
+          "pay": "ادفع",
+          "finalizeNegotiationBeforePay": "قم بإنهاء شروط التفاوض مع المسافر قبل الدفع للمنتج",
+          "paymentSessionCreationFailed": "فشل إنشاء جلسة الدفع: {message}",
+          "paymentError": "حدث خطأ أثناء عملية الدفع."
+        }
+      },
+      "Error": {
+        "Page": {
+          "header": "تم إلغاء الدفع",
+          "message": "يبدو أنك قد ألغيت عملية الدفع. لا تقلق — إذا كان هذا غير مقصود، يمكنك المحاولة مرة أخرى أو التواصل مع فريق الدعم لدينا.",
+          "returnHome": "العودة إلى الصفحة الرئيسية"
+        }
+      },
+      "Success": {
+        "Page": {
+          "header": "نجاح!",
+          "message": "تمت العملية بنجاح.",
+          "goHome": "العودة إلى الرئيسية"
+        }
+      }
+    },
+    "ManageOrders": {
+      "ConfirmDelivery": {
+        "instruction": "يرجى تأكيد التسليم بمجرد استلامك للمنتج.",
+        "confirmDelivery": "تأكيد التسليم",
+        "confirming": "جارٍ التأكيد...",
+        "confirmSuccess": "نشكركم على تأكيد استلام منتجكم واستخدام خدماتنا.",
+        "errorAlert": "حدث خطأ ما، لم يتمكن من تأكيد الطلب."
+      },
+      "Page": {
+        "manageYourOrders": "إدارة طلباتك",
+        "quantityLabel": "الكمية:",
+        "valueLabel": "القيمة:",
+        "deliveryFeeLabel": "رسوم التوصيل:",
+        "statusLabel": "الحالة:",
+        "placedAtLabel": "تاريخ الطلب:",
+        "proceedToPayment": "المتابعة للدفع"
+      }
+    }
+  }
+}
