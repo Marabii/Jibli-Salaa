@@ -56,9 +56,8 @@
     },
     "DashboardPage": {
       "dashboardTitle": "Your Dashboard",
-      "pendingOrdersMessage": "You have pending orders.",
+      "pendingOrdersMessage": "You have pending orders: ({count})",
       "scheduledTripsMessage": "You have scheduled trips.",
-      "ordersHeading": "Your Orders ({count})",
       "tripsHeading": "Your Trips ({count})",
       "DashboardCard": {
         "tripTo": "Trip to",

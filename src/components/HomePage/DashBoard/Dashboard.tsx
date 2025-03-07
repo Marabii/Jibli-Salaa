@@ -33,7 +33,7 @@ export default async function DashboardHomePage({
     <>
       {(orders?.length > 0 || trips?.length > 0) && (
         <section
-          dir={locale === "ar" ? "rtl" : "ltr"}
+          dir="ltr"
           className="py-20 motion-translate-x-in-[-100%] motion-translate-y-in-[0%] motion-opacity-in-[0%] motion-duration-[1.00s]/opacity"
         >
           <div className="container mx-auto px-4">
@@ -44,7 +44,9 @@ export default async function DashboardHomePage({
             {/* Status Messages */}
             <div className="text-xl mb-8 text-center">
               {orders?.length > 0 && !trips?.length && (
-                <h3 className="mb-4">{t("pendingOrdersMessage")}</h3>
+                <h3 className="mb-4">
+                  {t("pendingOrdersMessage", { count: orders.length })}
+                </h3>
               )}
               {!orders?.length && trips?.length > 0 && (
                 <h3 className="mb-4">{t("scheduledTripsMessage")}</h3>
@@ -54,9 +56,9 @@ export default async function DashboardHomePage({
             {/* Display Orders */}
             {orders?.length > 0 && (
               <div className="mb-12">
-                <h2 className="text-2xl font-semibold mb-4">
+                {/* <h2 className="text-2xl text-center font-semibold mb-4">
                   {t("ordersHeading", { count: orders.length })}
-                </h2>
+                </h2> */}
                 <div className="flex flex-wrap gap-6">
                   {orders.map((order, index) => (
                     <DashboardCard key={index} type="order" data={order} />

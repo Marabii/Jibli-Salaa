@@ -56,9 +56,8 @@
     },
     "DashboardPage": {
       "dashboardTitle": "لوحة التحكم",
-      "pendingOrdersMessage": "لديك طلبات معلقة.",
+      "pendingOrdersMessage": "({count}) لديك طلبات",
       "scheduledTripsMessage": "لديك رحلات مجدولة.",
-      "ordersHeading": "طلباتك ({count})",
       "tripsHeading": "رحلاتك ({count})",
       "DashboardCard": {
         "tripTo": "رحلة إلى",

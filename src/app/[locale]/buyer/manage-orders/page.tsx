@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 import { format } from "currency-formatter";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Settings } from "lucide-react";
+import { ORDER_STATUS } from "../../../../interfaces/Order/ORDER_STATUS";
 
 export default async function ManageOrders() {
   const t = await getTranslations("BuyerPage.ManageOrders.Page");
@@ -53,6 +54,7 @@ export default async function ManageOrders() {
                 >
                   <Settings className="z-50" size={40} />
                 </Link>
+
                 <div className={`p-6 ${textAlignClass}`}>
                   <h2 className="text-2xl font-semibold text-gray-800 mb-2">
                     {order.productName}
@@ -110,7 +112,7 @@ export default async function ManageOrders() {
                     )}
                   </div>
                   <div className="flex space-x-4">
-                    {order.orderStatus === "ORDER_FINALIZED" && (
+                    {order.orderStatus === ORDER_STATUS.ORDER_FINALIZED && (
                       <Link
                         className="flex-1 text-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300"
                         href={`/buyer/buyer-pay/${order._id}`}

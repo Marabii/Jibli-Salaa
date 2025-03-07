@@ -56,9 +56,8 @@
     },
     "DashboardPage": {
       "dashboardTitle": "Votre Tableau de Bord",
-      "pendingOrdersMessage": "Vous avez des commandes en attente.",
+      "pendingOrdersMessage": "Vous avez des commandes en attente: ({count})",
       "scheduledTripsMessage": "Vous avez des voyages prévus.",
-      "ordersHeading": "Vos Commandes ({count})",
       "tripsHeading": "Vos Voyages ({count})",
       "DashboardCard": {
         "tripTo": "Voyage à",

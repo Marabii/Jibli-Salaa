@@ -16,6 +16,7 @@ export default function ImgsCarousel({ order }: { order: CompletedOrder }) {
   return (
     <Carousel
       className="w-full"
+      dir="ltr"
       opts={{ duration: 50 }}
       plugins={[
         Autoplay({

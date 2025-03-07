@@ -15,6 +15,7 @@ import Image from "next/image";
 export default function ImgsCarousel({ order }: { order: CompletedOrder }) {
   return (
     <Carousel
+      dir="ltr"
       className="w-full"
       opts={{ duration: 50 }}
       plugins={[
