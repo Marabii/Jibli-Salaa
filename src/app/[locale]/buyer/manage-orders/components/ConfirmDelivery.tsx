@@ -5,7 +5,9 @@ import { confirmDeliveryAction } from "./confirmDeliveryAction";
 import { toast } from "react-toastify";
 
 export default function ConfirmDelivery({ orderId }: { orderId: string }) {
-  const t = useTranslations("BuyerPage.ManageOrders.ConfirmDelivery");
+  const t = useTranslations(
+    "BuyerPage.ManageOrders.Components.ConfirmDelivery"
+  );
   const [isPending, startTransition] = useTransition();
 
   const handleConfirmDelivery = async () => {

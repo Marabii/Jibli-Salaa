@@ -63,7 +63,7 @@ export default function Input({
   const [isFocused, setIsFocused] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentValue, setCurrentValue] = useState<string | number>(
-    initialValue
+    value !== undefined ? value : initialValue
   );
 
   const inputRef = useRef<HTMLDivElement>(null);
@@ -71,9 +71,9 @@ export default function Input({
   useOutsideClick(inputRef, () => setIsFocused(false));
 
   useEffect(() => {
-    // Sync the initialValue with the currentValue state
-    setCurrentValue(initialValue);
-  }, [initialValue]);
+    // Sync the prop value with the currentValue state.
+    setCurrentValue(value !== undefined ? value : initialValue);
+  }, [value, initialValue]);
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>

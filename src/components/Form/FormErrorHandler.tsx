@@ -23,6 +23,7 @@ export default function FormErrorHandler() {
   return (
     <CustomTransition show={errorMessages.length > 0}>
       <div
+        dir="auto"
         ref={errorRef}
         className="my-4 py-4 px-2 bg-red-100 border border-red-400 text-red-700 rounded"
       >

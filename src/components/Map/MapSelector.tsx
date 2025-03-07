@@ -1,4 +1,5 @@
 "use client";
+
 import { APIProvider, MapMouseEvent } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
 import {
@@ -44,15 +45,30 @@ export default function MapSelector({
       initialLocation.lng !== null
     ) {
       setSelectedLocation(initialLocation);
-      setCurrentMarker({
-        formatted_address: initialLocation.formatted_address,
-        geometry: {
-          location: new google.maps.LatLng(
-            initialLocation.lat,
-            initialLocation.lng
-          ),
-        },
-      });
+
+      const interval = setInterval(() => {
+        if (
+          typeof window.google !== "undefined" &&
+          window.google.maps &&
+          typeof window.google.maps.LatLng === "function" &&
+          initialLocation.lat !== null &&
+          initialLocation.lng !== null
+        ) {
+          // API is ready, create the marker.
+          setCurrentMarker({
+            formatted_address: initialLocation.formatted_address,
+            geometry: {
+              location: new google.maps.LatLng(
+                initialLocation.lat,
+                initialLocation.lng
+              ),
+            },
+          });
+          clearInterval(interval);
+        }
+      }, 100);
+
+      return () => clearInterval(interval);
     }
   }, [initialLocation]);
 

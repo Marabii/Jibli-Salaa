@@ -21,9 +21,9 @@ interface Metadata {
 }
 
 export const metadata: Metadata = {
-  title: "JeebWare",
+  title: "Jeebware",
   description:
-    "Welcome to JeebWare, the ultimate platform that connects savvy travelers with buyers seeking affordable or hard-to-find products across borders. JeebWare empowers travelers to earn money while on the move by delivering requested items, offering a faster and more cost-effective alternative to traditional shipping services.",
+    "Welcome to Jeebware, the ultimate platform that connects savvy travelers with buyers seeking affordable or hard-to-find products across borders. Jeebware empowers travelers to earn money while on the move by delivering requested items, offering a faster and more cost-effective alternative to traditional shipping services.",
 };
 
 export default async function RootLayout({

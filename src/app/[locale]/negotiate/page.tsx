@@ -14,11 +14,7 @@ import { UserInfo } from "@/interfaces/userInfo/userInfo";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import { CompletedOrder } from "@/interfaces/Order/order";
 import { ChatMessage } from "@/interfaces/Websockets/ChatMessage";
-import {
-  NotificationContent,
-  NotificationType,
-  OrderAcceptedNotificationContent,
-} from "@/interfaces/Websockets/Notification";
+import { NotificationType } from "@/interfaces/Websockets/Notification";
 
 import ChatSection from "./components/ChatSection";
 import NegotiationPanel from "./components/NegotiationPanel";
@@ -130,8 +126,7 @@ export default function NegotiatePage(): JSX.Element {
     if (!orderId) return;
     try {
       const response: ApiResponse<CompletedOrder> = await apiClient(
-        `/api/getOrderById/${orderId}`,
-        { next: { tags: ["fetchOrderInfoTag"] } }
+        `/api/getOrderById/${orderId}`
       );
       if (response?.data) {
         setOrderInfo(response.data);

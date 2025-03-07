@@ -186,6 +186,7 @@
     },
     "RoleAndCurrencySelectors": {
       "roleLabel": "How do you plan to use Jeebware?",
+      "rolePlaceholder": "Buy products or deliver them ?",
       "buyerOption": "Buy Products",
       "travelerOption": "Be a Traveler",
       "travelerSub": "Earn extra income",
@@ -360,6 +361,8 @@
         "images": "Images:"
       },
       "NegotiationForm": {
+        "actualValueLabel": "Product's Actual Value in {symbol}",
+        "actualDeliveryFeeLabel": "Agreed Upon Delivery Fee in {symbol}",
         "finalizeNegotiation": "Finalize Negotiation",
         "finalizingNegotiation": "Finalizing negotiation...",
         "error": {
@@ -423,7 +426,7 @@
           },
           "deliveryInstructions": "Delivery instructions must be 10-10,000 characters long.",
           "initialDeliveryFee": "Delivery fee must be larger than {min}.",
-          "preferredPickupPlace": "Please enter or re-enter your preferred pickup place.",
+          "preferredPickupPlace": "Please enter your preferred pickup place.",
           "selectedFiles": "Please select valid images before submitting."
         }
       },
@@ -528,12 +531,99 @@
       }
     },
     "ManageOrders": {
-      "ConfirmDelivery": {
-        "instruction": "Please confirm delivery once you receive your product.",
-        "confirmDelivery": "Confirm Delivery",
-        "confirming": "Confirming...",
-        "confirmSuccess": "Thank you for confirming receipt of your product, thank you for using our services.",
-        "errorAlert": "Something went wrong, couldn't confirm order."
+      "Components": {
+        "ConfirmDelivery": {
+          "instruction": "Please confirm delivery once you receive your product.",
+          "confirmDelivery": "Confirm Delivery",
+          "confirming": "Confirming...",
+          "confirmSuccess": "Thank you for confirming receipt of your product, thank you for using our services.",
+          "errorAlert": "Something went wrong, couldn't confirm order."
+        }
+      },
+      "EditOrder": {
+        "OrderId": {
+          "ValidateForm": {
+            "error": {
+              "invalidURL": "Please enter a valid URL.",
+              "estimatedValue": "Estimated value must be more than {min}.",
+              "productName": "Product name is required, 3-100 characters, and may contain letters, numbers, spaces, and . , ' -",
+              "description": "Description is required and must be 10-10,000 characters long, allowing any type of character.",
+              "quantity": "Quantity must be at least 1.",
+              "dimension": {
+                "length": "Length must be a positive number.",
+                "width": "Width must be a positive number.",
+                "height": "Height must be a positive number."
+              },
+              "deliveryInstructions": "Delivery instructions must be 10-10,000 characters long.",
+              "initialDeliveryFee": "Delivery fee must be larger than {min}.",
+              "preferredPickupPlace": "Please enter your preferred pickup place.",
+              "selectedFiles": "Please select valid images before submitting."
+            }
+          },
+          "Form": {
+            "FormImagesInput": {
+              "uploadHeader": "Upload Images",
+              "uploadInstructions": "Drag and drop images here, or click to select files.",
+              "instructionParagraph": "To update your order images, you can drag and drop new images into the area below or click it to select files. For any image displayed below that you no longer want, click the red delete button (x) on the top-right corner.",
+              "previouslyUploadedImages": "Previously Uploaded Images",
+              "newImagesToUpload": "New Images to Upload",
+              "deleteExistingImage": "Delete existing image",
+              "deleteNewImage": "Delete new image"
+            },
+            "FormMapInput": {
+              "pickupPrompt": "Choose your preferred pickup place"
+            },
+            "FormSubmissionButton": {
+              "updateOrder": "Update Order",
+              "updatingOrder": "Updating order"
+            },
+            "FormUsualInputs": {
+              "header": "Please fill out your order details",
+              "productURL": {
+                "label": "Product URL (Optional)",
+                "error": "Please enter a valid URL."
+              },
+              "estimatedValue": {
+                "label": "Estimated Value in {code} ({symbol}):",
+                "error": "Please enter a number higher than 10."
+              },
+              "productName": {
+                "label": "Product Name",
+                "error": "Product name is required, 3-100 characters, and may contain letters, numbers, spaces, and . , ' -"
+              },
+              "description": {
+                "label": "Description",
+                "error": "Description is required, 10-1000 characters"
+              },
+              "quantity": {
+                "label": "How many items are you willing to buy?",
+                "error": "Quantity must be at least 1."
+              },
+              "dimensions": {
+                "length": {
+                  "label": "Length in cm (optional)",
+                  "error": "Length must be a positive number."
+                },
+                "width": {
+                  "label": "Width in cm (optional)",
+                  "error": "Width must be a positive number."
+                },
+                "height": {
+                  "label": "Height in cm (optional)",
+                  "error": "Height must be a positive number."
+                }
+              },
+              "deliveryInstructions": {
+                "label": "Special Instructions (optional)",
+                "error": "Delivery instructions must be less than 10000 characters and may contain letters."
+              },
+              "initialDeliveryFee": {
+                "label": "Declare how much you're willing to pay the traveler in {code} ({symbol})",
+                "error": "Delivery fee must be larger than 5."
+              }
+            }
+          }
+        }
       },
       "Page": {
         "manageYourOrders": "Manage Your Orders",

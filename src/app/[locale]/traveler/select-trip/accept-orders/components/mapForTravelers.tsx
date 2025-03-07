@@ -19,7 +19,7 @@ import { ExchangeRate, UserInfo } from "@/interfaces/userInfo/userInfo";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import apiClient from "@/utils/apiClient";
 import { format } from "currency-formatter";
-import LoadingSpinner from "./LoadingSpinner";
+import LoadingSpinner from "@/components/Loading/LoadingSpinner/LoadingSpinner";
 import { useTranslations } from "next-intl";
 
 export type Route = {

@@ -24,7 +24,7 @@
     "travelerOrders": "Commandes",
     "trips": "Voyages",
     "planTrip": "Planifier un voyage",
-    "buyerOrder": "Commande",
+    "buyerOrder": "Commander",
     "buyerOrders": "Commandes",
     "contact": "Contact",
     "login": "Se connecter",
@@ -186,6 +186,7 @@
     },
     "RoleAndCurrencySelectors": {
       "roleLabel": "Comment comptez-vous utiliser Jeebware ?",
+      "rolePlaceholder": "Voulez-vous livrer des produits ou les acheter ?",
       "buyerOption": "Acheter des produits",
       "travelerOption": "Être voyageur",
       "travelerSub": "Gagnez un revenu supplémentaire",
@@ -360,6 +361,8 @@
         "images": "Images :"
       },
       "NegotiationForm": {
+        "actualValueLabel": "Valeur réelle du produit en {symbol}",
+        "actualDeliveryFeeLabel": "Frais de livraison convenus en {symbol}",
         "finalizeNegotiation": "Finaliser la négociation",
         "finalizingNegotiation": "Finalisation de la négociation...",
         "error": {
@@ -423,7 +426,7 @@
           },
           "deliveryInstructions": "Les instructions de livraison doivent contenir entre 10 et 10 000 caractères.",
           "initialDeliveryFee": "Les frais de livraison doivent être supérieurs à {min}.",
-          "preferredPickupPlace": "Veuillez saisir ou ressaisir votre lieu de ramassage préféré.",
+          "preferredPickupPlace": "Veuillez saisir votre lieu de collecte préféré.",
           "selectedFiles": "Veuillez sélectionner des images valides avant de soumettre."
         }
       },
@@ -433,7 +436,7 @@
           "uploadInstructions": "Faites glisser et déposez les images ici, ou cliquez pour sélectionner des fichiers"
         },
         "FormMapInput": {
-          "pickupPrompt": "Choisissez votre lieu de ramassage préféré"
+          "pickupPrompt": "Veuillez saisir votre lieu de collecte préféré."
         },
         "FormSubmissionButton": {
           "saveOrder": "Enregistrer la commande",
@@ -528,12 +531,99 @@
       }
     },
     "ManageOrders": {
-      "ConfirmDelivery": {
-        "instruction": "Veuillez confirmer la livraison une fois que vous avez reçu votre produit.",
-        "confirmDelivery": "Confirmer la livraison",
-        "confirming": "Confirmation...",
-        "confirmSuccess": "Nous vous remercions d'avoir confirmé la réception de votre produit et d'utiliser nos services.",
-        "errorAlert": "Quelque chose s'est mal passé, la commande n'a pas pu être confirmée."
+      "Components": {
+        "ConfirmDelivery": {
+          "instruction": "Veuillez confirmer la livraison une fois que vous avez reçu votre produit.",
+          "confirmDelivery": "Confirmer la livraison",
+          "confirming": "Confirmation...",
+          "confirmSuccess": "Nous vous remercions d'avoir confirmé la réception de votre produit et d'utiliser nos services.",
+          "errorAlert": "Quelque chose s'est mal passé, la commande n'a pas pu être confirmée."
+        }
+      },
+      "EditOrder": {
+        "OrderId": {
+          "ValidateForm": {
+            "error": {
+              "invalidURL": "Veuillez entrer une URL valide.",
+              "estimatedValue": "La valeur estimée doit être supérieure à {min}.",
+              "productName": "Le nom du produit est requis, 3-100 caractères, et peut contenir des lettres, des chiffres, des espaces et les caractères . , ' -",
+              "description": "La description est requise et doit contenir entre 10 et 10 000 caractères, permettant tout type de caractère.",
+              "quantity": "La quantité doit être d'au moins 1.",
+              "dimension": {
+                "length": "La longueur doit être un nombre positif.",
+                "width": "La largeur doit être un nombre positif.",
+                "height": "La hauteur doit être un nombre positif."
+              },
+              "deliveryInstructions": "Les instructions de livraison doivent contenir entre 10 et 10 000 caractères.",
+              "initialDeliveryFee": "Les frais de livraison doivent être supérieurs à {min}.",
+              "preferredPickupPlace": "Veuillez saisir votre lieu de collecte préféré.",
+              "selectedFiles": "Veuillez sélectionner des images valides avant de soumettre."
+            }
+          },
+          "Form": {
+            "FormImagesInput": {
+              "uploadHeader": "Télécharger des images",
+              "uploadInstructions": "Glissez-déposez les images ici, ou cliquez pour sélectionner des fichiers.",
+              "instructionParagraph": "Pour mettre à jour les images de votre commande, vous pouvez glisser-déposer de nouvelles images dans la zone ci-dessous ou cliquer pour sélectionner des fichiers. Pour toute image affichée ci-dessous que vous ne souhaitez plus, cliquez sur le bouton de suppression rouge (x) en haut à droite.",
+              "previouslyUploadedImages": "Images téléchargées précédemment",
+              "newImagesToUpload": "Nouvelles images à télécharger",
+              "deleteExistingImage": "Supprimer l'image existante",
+              "deleteNewImage": "Supprimer la nouvelle image"
+            },
+            "FormMapInput": {
+              "pickupPrompt": "Veuillez saisir votre lieu de collecte préféré."
+            },
+            "FormSubmissionButton": {
+              "updateOrder": "Mettre à jour la commande",
+              "updatingOrder": "Mise à jour de la commande"
+            },
+            "FormUsualInputs": {
+              "header": "Veuillez remplir les détails de votre commande",
+              "productURL": {
+                "label": "URL du produit (facultatif)",
+                "error": "Veuillez entrer une URL valide."
+              },
+              "estimatedValue": {
+                "label": "Valeur estimée en {code} ({symbol}) :",
+                "error": "Veuillez entrer un nombre supérieur à 10."
+              },
+              "productName": {
+                "label": "Nom du produit",
+                "error": "Le nom du produit est requis, entre 3 et 100 caractères, et peut contenir des lettres, des chiffres, des espaces et les caractères . , ' -"
+              },
+              "description": {
+                "label": "Description",
+                "error": "La description est requise et doit contenir entre 10 et 1000 caractères"
+              },
+              "quantity": {
+                "label": "Combien d'articles souhaitez-vous acheter ?",
+                "error": "La quantité doit être d'au moins 1."
+              },
+              "dimensions": {
+                "length": {
+                  "label": "Longueur en cm (facultatif)",
+                  "error": "La longueur doit être un nombre positif."
+                },
+                "width": {
+                  "label": "Largeur en cm (facultatif)",
+                  "error": "La largeur doit être un nombre positif."
+                },
+                "height": {
+                  "label": "Hauteur en cm (facultatif)",
+                  "error": "La hauteur doit être un nombre positif."
+                }
+              },
+              "deliveryInstructions": {
+                "label": "Instructions spéciales (facultatif)",
+                "error": "Les instructions de livraison doivent contenir moins de 10000 caractères et peuvent contenir des lettres."
+              },
+              "initialDeliveryFee": {
+                "label": "Déclarez combien vous êtes prêt à payer au voyageur en {code} ({symbol})",
+                "error": "Les frais de livraison doivent être supérieurs à 5."
+              }
+            }
+          }
+        }
       },
       "Page": {
         "manageYourOrders": "Gérez vos commandes",

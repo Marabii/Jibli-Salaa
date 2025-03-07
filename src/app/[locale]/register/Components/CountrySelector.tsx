@@ -1,4 +1,5 @@
 "use client";
+import React, { useState } from "react";
 import {
   Select,
   SelectContent,
@@ -46,6 +47,11 @@ const countryOptionsByLetter: CountryOptionsByLetter = emojiFlags.data
 
 export default function CountrySelector() {
   const t = useTranslations("RegisterPage.CountrySelector");
+  const [selectedCountry, setSelectedCountry] = useState<string>("");
+
+  const handleChange = (value: string) => {
+    setSelectedCountry(value);
+  };
 
   return (
     <div>
@@ -55,7 +61,12 @@ export default function CountrySelector() {
       >
         {t("label")}
       </label>
-      <Select name="userCountry">
+      <Select
+        name="userCountry"
+        key={selectedCountry}
+        value={selectedCountry}
+        onValueChange={handleChange}
+      >
         <SelectTrigger className="rounded-none h-[67.7px] w-full border-2 border-black p-5">
           <SelectValue placeholder={t("placeholder")} />
         </SelectTrigger>

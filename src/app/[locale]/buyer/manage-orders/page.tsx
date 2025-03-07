@@ -2,19 +2,17 @@ import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import { CompletedOrder } from "@/interfaces/Order/order";
 import { Link } from "@/i18n/navigation";
 import apiServer from "@/utils/apiServer";
-import ConfirmDelivery from "./ConfirmDelivery";
-import ImgsCarousel from "./ImgsCarousel";
+import ConfirmDelivery from "./components/ConfirmDelivery";
+import ImgsCarousel from "./components/ImgsCarousel";
 import { redirect } from "next/navigation";
 import { format } from "currency-formatter";
 import { getTranslations, getLocale } from "next-intl/server";
+import { Settings } from "lucide-react";
 
 export default async function ManageOrders() {
-  // Get translations and the current locale.
   const t = await getTranslations("BuyerPage.ManageOrders.Page");
   const locale = await getLocale();
-  // Set text direction: 'rtl' for Arabic, 'ltr' for other locales.
   const direction = locale === "ar" ? "rtl" : "ltr";
-  // Optionally, set a text alignment class.
   const textAlignClass = direction === "rtl" ? "text-right" : "text-left";
 
   const response: ApiResponse<CompletedOrder[]> = await apiServer(
@@ -43,11 +41,18 @@ export default async function ManageOrders() {
             return (
               <div
                 key={order._id}
-                className={`bg-white shadow-xl rounded-2xl overflow-hidden hover:shadow-2xl transition-shadow duration-300 ${textAlignClass}`}
+                className={`relative bg-white shadow-xl rounded-2xl overflow-hidden hover:shadow-2xl transition-shadow duration-300 ${textAlignClass}`}
               >
                 {order.images && order.images.length > 0 && (
                   <ImgsCarousel order={order} />
                 )}
+                {/* Gear Icon */}
+                <Link
+                  href={`/buyer/manage-orders/edit-order/${order._id}`}
+                  className="absolute top-2 bg-slate-200 p-2 rounded-full right-2 text-gray-500 hover:text-gray-700"
+                >
+                  <Settings className="z-50" size={40} />
+                </Link>
                 <div className={`p-6 ${textAlignClass}`}>
                   <h2 className="text-2xl font-semibold text-gray-800 mb-2">
                     {order.productName}
@@ -104,7 +109,6 @@ export default async function ManageOrders() {
                       </p>
                     )}
                   </div>
-                  {/* Conditional actions based on orderStatus */}
                   <div className="flex space-x-4">
                     {order.orderStatus === "ORDER_FINALIZED" && (
                       <Link

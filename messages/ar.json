@@ -186,6 +186,7 @@
     },
     "RoleAndCurrencySelectors": {
       "roleLabel": "كيف تخطط لاستخدام جيب وير؟",
+      "rolePlaceholder": "اتريد توصيل المنتاجات ام شراءها ؟",
       "buyerOption": "شراء المنتجات",
       "travelerOption": "كونك مسافر",
       "travelerSub": "اكسب دخلاً إضافيًا",
@@ -360,6 +361,8 @@
         "images": "الصور:"
       },
       "NegotiationForm": {
+        "actualValueLabel": "القيمة الفعلية للمنتج بـ {symbol}",
+        "actualDeliveryFeeLabel": "رسوم التوصيل المتفق عليها بـ {symbol}",
         "finalizeNegotiation": "إنهاء التفاوض",
         "finalizingNegotiation": "جارٍ إنهاء التفاوض...",
         "error": {
@@ -528,12 +531,99 @@
       }
     },
     "ManageOrders": {
-      "ConfirmDelivery": {
-        "instruction": "يرجى تأكيد التسليم بمجرد استلامك للمنتج.",
-        "confirmDelivery": "تأكيد التسليم",
-        "confirming": "جارٍ التأكيد...",
-        "confirmSuccess": "نشكركم على تأكيد استلام منتجكم واستخدام خدماتنا.",
-        "errorAlert": "حدث خطأ ما، لم يتمكن من تأكيد الطلب."
+      "Components": {
+        "ConfirmDelivery": {
+          "instruction": "يرجى تأكيد التسليم بمجرد استلامك للمنتج.",
+          "confirmDelivery": "تأكيد التسليم",
+          "confirming": "جارٍ التأكيد...",
+          "confirmSuccess": "نشكركم على تأكيد استلام منتجكم واستخدام خدماتنا.",
+          "errorAlert": "حدث خطأ ما، لم يتمكن من تأكيد الطلب."
+        }
+      },
+      "EditOrder": {
+        "OrderId": {
+          "ValidateForm": {
+            "error": {
+              "invalidURL": "يرجى إدخال عنوان URL صالح.",
+              "estimatedValue": "يجب أن تكون القيمة المقدرة أكبر من {min}.",
+              "productName": "اسم المنتج مطلوب، من 3 إلى 100 حرف، ويمكن أن يحتوي على أحرف وأرقام ومسافات والحروف . , ' -",
+              "description": "الوصف مطلوب ويجب أن يكون من 10 إلى 10,000 حرف، مع السماح بأي نوع من الأحرف.",
+              "quantity": "يجب أن تكون الكمية 1 على الأقل.",
+              "dimension": {
+                "length": "يجب أن يكون الطول رقمًا إيجابيًا.",
+                "width": "يجب أن يكون العرض رقمًا إيجابيًا.",
+                "height": "يجب أن يكون الارتفاع رقمًا إيجابيًا."
+              },
+              "deliveryInstructions": "يجب أن تكون تعليمات التسليم من 10 إلى 10,000 حرف.",
+              "initialDeliveryFee": "يجب أن تكون رسوم التوصيل أكبر من {min}.",
+              "preferredPickupPlace": "يرجى إدخال أو إعادة إدخال مكان الاستلام المفضل لديك.",
+              "selectedFiles": "يرجى اختيار صور صالحة قبل الإرسال."
+            }
+          },
+          "Form": {
+            "FormImagesInput": {
+              "uploadHeader": "رفع الصور",
+              "uploadInstructions": "قم بسحب وإفلات الصور هنا، أو انقر لتحديد الملفات.",
+              "instructionParagraph": "لتحديث صور طلبك، يمكنك سحب وإفلات صور جديدة في المنطقة أدناه أو النقر لتحديد الملفات. لأي صورة معروضة أدناه لم تعد ترغب بها، انقر على زر الحذف الأحمر (x) في الزاوية العليا اليمنى.",
+              "previouslyUploadedImages": "الصور المرفوعة سابقاً",
+              "newImagesToUpload": "صور جديدة للرفع",
+              "deleteExistingImage": "حذف الصورة الحالية",
+              "deleteNewImage": "حذف الصورة الجديدة"
+            },
+            "FormMapInput": {
+              "pickupPrompt": "اختر مكان الاستلام المفضل لديك"
+            },
+            "FormSubmissionButton": {
+              "updateOrder": "تحديث الطلب",
+              "updatingOrder": "جارٍ تحديث الطلب"
+            },
+            "FormUsualInputs": {
+              "header": "يرجى ملء تفاصيل طلبك",
+              "productURL": {
+                "label": "رابط المنتج (اختياري)",
+                "error": "يرجى إدخال رابط صالح."
+              },
+              "estimatedValue": {
+                "label": "القيمة المقدرة بـ {code} ({symbol}):",
+                "error": "يرجى إدخال رقم أكبر من 10."
+              },
+              "productName": {
+                "label": "اسم المنتج",
+                "error": "اسم المنتج مطلوب، من 3 إلى 100 حرف، ويمكن أن يحتوي على أحرف، أرقام، مسافات، والأحرف . , ' -"
+              },
+              "description": {
+                "label": "الوصف",
+                "error": "الوصف مطلوب ويجب أن يكون من 10 إلى 1000 حرف"
+              },
+              "quantity": {
+                "label": "كم عدد العناصر التي ترغب في شرائها؟",
+                "error": "يجب أن تكون الكمية 1 على الأقل."
+              },
+              "dimensions": {
+                "length": {
+                  "label": "الطول بالسنتيمتر (اختياري)",
+                  "error": "يجب أن يكون الطول رقمًا إيجابيًا."
+                },
+                "width": {
+                  "label": "العرض بالسنتيمتر (اختياري)",
+                  "error": "يجب أن يكون العرض رقمًا إيجابيًا."
+                },
+                "height": {
+                  "label": "الارتفاع بالسنتيمتر (اختياري)",
+                  "error": "يجب أن يكون الارتفاع رقمًا إيجابيًا."
+                }
+              },
+              "deliveryInstructions": {
+                "label": "تعليمات خاصة (اختياري)",
+                "error": "يجب أن تكون تعليمات التسليم أقل من 10000 حرف ويمكن أن تحتوي على أحرف."
+              },
+              "initialDeliveryFee": {
+                "label": "حدد المبلغ الذي ترغب في دفعه للمسافر بـ {code} ({symbol})",
+                "error": "يجب أن تكون رسوم التوصيل أكبر من 5."
+              }
+            }
+          }
+        }
       },
       "Page": {
         "manageYourOrders": "إدارة طلباتك",
