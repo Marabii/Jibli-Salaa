@@ -326,8 +326,7 @@
       "failedFetchUser": "Échec de la récupération des informations utilisateur. Veuillez réessayer plus tard.",
       "failedFetchOrder": "Échec de la récupération des détails de la commande. Veuillez réessayer plus tard.",
       "failedFetchChat": "Échec de la récupération de l'historique de discussion. Veuillez réessayer plus tard.",
-      "chatConnectionError": "Erreur critique lors de la connexion au chat. Veuillez patienter, la page va se rafraîchir.",
-      "stripeRedirect": "Redirection vers la page Stripe"
+      "chatConnectionError": "Erreur critique lors de la connexion au chat. Veuillez patienter, la page va se rafraîchir."
     },
     "ValidateNegotiations": {
       "confirmNegotiatedDetails": "Confirmer les détails négociés",
@@ -370,6 +369,7 @@
         }
       },
       "NegotiationControls": {
+        "stripeRedirect": "Redirection vers la page Stripe",
         "negotiationInProgress": "Négociation en cours",
         "negotiationDetailsPrompt": {
           "start": "Cliquez",
@@ -577,6 +577,7 @@
               "updatingOrder": "Mise à jour de la commande"
             },
             "FormUsualInputs": {
+              "tooltipMessage": "L'acheteur ne peut pas modifier cette valeur une fois que la commande est en cours de finalisation ou a été finalisée.",
               "header": "Veuillez remplir les détails de votre commande",
               "productURL": {
                 "label": "URL du produit (facultatif)",

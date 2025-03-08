@@ -1,5 +1,6 @@
 import "server-only";
 import Input from "@/components/Input";
+import TooltipHover from "@/components/TooltipHover";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import { UserInfo } from "@/interfaces/userInfo/userInfo";
 import apiServer from "@/utils/apiServer";
@@ -24,6 +25,13 @@ export default async function FormUsualInputs({
   const userInfo = userInfoResponse.data;
   const currencyDetails = findCurrency(userInfo.userBankCurrency);
 
+  const canChangeOrderPriceDetails =
+    orderInfoCopy.orderStatus === ORDER_STATUS.PENDING ||
+    orderInfoCopy.orderStatus === ORDER_STATUS.ORDER_ACCEPTED;
+
+  // Tooltip message
+  const tooltipMessage = t("tooltipMessage");
+
   return (
     <div className="z-10">
       <h2 className="text-2xl font-semibold text-gray-700 mb-4">
@@ -41,54 +49,112 @@ export default async function FormUsualInputs({
         errorMessage={t("productURL.error")}
       />
 
-      {(orderInfoCopy.orderStatus === ORDER_STATUS.PENDING ||
-        orderInfoCopy.orderStatus === ORDER_STATUS.ORDER_ACCEPTED) && (
-        <>
-          {/* Estimated Value */}
-          <Input
-            className="w-full border-2 border-black p-5"
-            type="number"
-            value={orderInfoCopy.estimatedValue || 10}
-            name="estimatedValue"
-            label={t("estimatedValue.label", {
-              code: currencyDetails?.code,
-              symbol: currencyDetails?.symbol,
-            })}
-            pattern={String(/^(1[1-9]|[2-9][0-9]|[1-9][0-9]{2,})$/)}
-            errorMessage={t("estimatedValue.error")}
-            initialValue={10}
-            required
-          />
+      {/* Estimated Value */}
+      {canChangeOrderPriceDetails ? (
+        <Input
+          className="w-full border-2 border-black p-5"
+          type="number"
+          value={orderInfoCopy.estimatedValue}
+          name="estimatedValue"
+          label={t("estimatedValue.label", {
+            code: currencyDetails?.code,
+            symbol: currencyDetails?.symbol,
+          })}
+          pattern={String(/^(1[1-9]|[2-9][0-9]|[1-9][0-9]{2,})$/)}
+          errorMessage={t("estimatedValue.error")}
+          initialValue={10}
+          required
+        />
+      ) : (
+        <TooltipHover tooltipText={tooltipMessage}>
+          <div className="pointer-events-none opacity-40">
+            <Input
+              className="w-full border-2 border-black p-5"
+              type="number"
+              readOnly
+              value={orderInfoCopy.estimatedValue}
+              name="estimatedValue"
+              label={t("estimatedValue.label", {
+                code: currencyDetails?.code,
+                symbol: currencyDetails?.symbol,
+              })}
+              pattern={String(/^(1[1-9]|[2-9][0-9]|[1-9][0-9]{2,})$/)}
+              errorMessage={t("estimatedValue.error")}
+              initialValue={10}
+              required
+            />
+          </div>
+        </TooltipHover>
+      )}
 
-          {/* Initial Delivery Fee */}
-          <Input
-            className="w-full border-2 border-black p-5"
-            type="number"
-            value={orderInfoCopy.initialDeliveryFee || 5}
-            label={t("initialDeliveryFee.label", {
-              code: currencyDetails?.code,
-              symbol: currencyDetails?.symbol,
-            })}
-            name="initialDeliveryFee"
-            pattern={String(/^[5-9]\d*$|^\d{2,}$/)}
-            errorMessage={t("initialDeliveryFee.error")}
-            initialValue={5}
-            required
-          />
+      {/* Initial Delivery Fee */}
+      {canChangeOrderPriceDetails ? (
+        <Input
+          className="w-full border-2 border-black p-5"
+          type="number"
+          value={orderInfoCopy.initialDeliveryFee}
+          label={t("initialDeliveryFee.label", {
+            code: currencyDetails?.code,
+            symbol: currencyDetails?.symbol,
+          })}
+          name="initialDeliveryFee"
+          pattern={String(/^[5-9]\d*$|^\d{2,}$/)}
+          errorMessage={t("initialDeliveryFee.error")}
+          initialValue={5}
+          required
+        />
+      ) : (
+        <TooltipHover tooltipText={tooltipMessage}>
+          <div className="pointer-events-none opacity-40">
+            <Input
+              className="w-full border-2 border-black p-5"
+              type="number"
+              readOnly
+              value={orderInfoCopy.initialDeliveryFee}
+              label={t("initialDeliveryFee.label", {
+                code: currencyDetails?.code,
+                symbol: currencyDetails?.symbol,
+              })}
+              name="initialDeliveryFee"
+              pattern={String(/^[5-9]\d*$|^\d{2,}$/)}
+              errorMessage={t("initialDeliveryFee.error")}
+              initialValue={5}
+              required
+            />
+          </div>
+        </TooltipHover>
+      )}
 
-          {/* Quantity */}
-          <Input
-            className="w-full border-2 border-black p-5"
-            type="number"
-            value={orderInfoCopy.quantity || 1}
-            label={t("quantity.label")}
-            name="quantity"
-            pattern={String(/^([1-9]|[1-9][0-9]+)$/)}
-            errorMessage={t("quantity.error")}
-            initialValue={1}
-            required
-          />
-        </>
+      {/* Quantity */}
+      {canChangeOrderPriceDetails ? (
+        <Input
+          className="w-full border-2 border-black p-5"
+          type="number"
+          value={orderInfoCopy.quantity}
+          label={t("quantity.label")}
+          name="quantity"
+          pattern={String(/^([1-9]|[1-9][0-9]+)$/)}
+          errorMessage={t("quantity.error")}
+          initialValue={1}
+          required
+        />
+      ) : (
+        <TooltipHover tooltipText={tooltipMessage}>
+          <div className="pointer-events-none  opacity-40">
+            <Input
+              className="w-full border-2 border-black p-5"
+              type="number"
+              readOnly
+              value={orderInfoCopy.quantity}
+              label={t("quantity.label")}
+              name="quantity"
+              pattern={String(/^([1-9]|[1-9][0-9]+)$/)}
+              errorMessage={t("quantity.error")}
+              initialValue={1}
+              required
+            />
+          </div>
+        </TooltipHover>
       )}
 
       {/* Product Name */}
@@ -161,7 +227,7 @@ export default async function FormUsualInputs({
         isTextarea={true}
       />
 
-      {/*Hidden input for orderId*/}
+      {/* Hidden input for orderId */}
       <input type="hidden" name="orderId" value={orderInfoCopy._id || ""} />
     </div>
   );

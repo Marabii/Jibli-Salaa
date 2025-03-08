@@ -326,8 +326,7 @@
       "failedFetchUser": "فشل في جلب معلومات المستخدم. الرجاء المحاولة مرة أخرى لاحقًا.",
       "failedFetchOrder": "فشل في جلب تفاصيل الطلب. الرجاء المحاولة مرة أخرى لاحقًا.",
       "failedFetchChat": "فشل في جلب سجل الدردشة. الرجاء المحاولة مرة أخرى لاحقًا.",
-      "chatConnectionError": "خطأ حرج في الاتصال بالدردشة. الرجاء الانتظار؛ سيتم تحديث الصفحة.",
-      "stripeRedirect": "يتم تحويلك إلى صفحة Stripe"
+      "chatConnectionError": "خطأ حرج في الاتصال بالدردشة. الرجاء الانتظار؛ سيتم تحديث الصفحة."
     },
     "ValidateNegotiations": {
       "confirmNegotiatedDetails": "تأكيد التفاصيل المتفاوض عليها",
@@ -370,6 +369,7 @@
         }
       },
       "NegotiationControls": {
+        "stripeRedirect": "يتم تحويلك إلى صفحة Stripe",
         "negotiationInProgress": "جاري التفاوض",
         "negotiationDetailsPrompt": {
           "start": "اضغط",
@@ -577,6 +577,7 @@
               "updatingOrder": "جارٍ تحديث الطلب"
             },
             "FormUsualInputs": {
+              "tooltipMessage": "لا يمكن للمشتري تعديل هذه القيمة بمجرد أن يكون الطلب قيد الإتمام أو قد تم إتمامه بالفعل.",
               "header": "يرجى ملء تفاصيل طلبك",
               "productURL": {
                 "label": "رابط المنتج (اختياري)",

@@ -326,8 +326,7 @@
       "failedFetchUser": "Failed to fetch user information. Please try again later.",
       "failedFetchOrder": "Failed to fetch order details. Please try again later.",
       "failedFetchChat": "Failed to fetch chat history. Please try again later.",
-      "chatConnectionError": "Critical error connecting to chat. Please wait; page will refresh.",
-      "stripeRedirect": "Taking you to Stripe page"
+      "chatConnectionError": "Critical error connecting to chat. Please wait; page will refresh."
     },
     "ValidateNegotiations": {
       "confirmNegotiatedDetails": "Confirm Negotiated Details",
@@ -370,6 +369,7 @@
         }
       },
       "NegotiationControls": {
+        "stripeRedirect": "Taking you to Stripe page",
         "negotiationInProgress": "Negotiation in Progress",
         "negotiationDetailsPrompt": {
           "start": "Click",
@@ -577,6 +577,7 @@
               "updatingOrder": "Updating order"
             },
             "FormUsualInputs": {
+              "tooltipMessage": "The buyer is unable to modify this value once the order is being or has been finalized.",
               "header": "Please fill out your order details",
               "productURL": {
                 "label": "Product URL (Optional)",

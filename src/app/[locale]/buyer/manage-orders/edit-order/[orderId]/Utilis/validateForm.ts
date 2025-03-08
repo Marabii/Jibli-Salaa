@@ -45,7 +45,7 @@ const validateForm = (
   }
 
   // Validate quantity (must be more than 1)
-  if (buyerOrder.quantity && buyerOrder.quantity < 1) {
+  if (!buyerOrder.quantity || buyerOrder.quantity < 1) {
     errors.quantity = t("error.quantity");
   }
 

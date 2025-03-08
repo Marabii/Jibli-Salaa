@@ -21,6 +21,8 @@ interface InputProps {
   required?: boolean;
   labelBgColor?: string;
   labelTextColor?: string;
+  readOnly?: boolean; // added readOnly prop
+  errorClassName?: string; // added errorClassName prop
 }
 
 export default function Input({
@@ -38,6 +40,8 @@ export default function Input({
   required = false,
   labelBgColor = "white",
   labelTextColor = "black",
+  readOnly = false,
+  errorClassName,
   ...props
 }: InputProps) {
   // Get the current locale to adjust label positioning
@@ -116,6 +120,7 @@ export default function Input({
             value={currentValue}
             onChange={handleChange}
             required={required}
+            readOnly={readOnly}
             className={twMerge(
               "bg-transparent",
               className ||
@@ -132,6 +137,7 @@ export default function Input({
             onChange={handleChange}
             style={{ height: textareaHeight }}
             required={required}
+            readOnly={readOnly}
             className={twMerge(
               "bg-transparent",
               className ||
@@ -142,7 +148,11 @@ export default function Input({
           />
         )}
       </div>
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && (
+        <p className={twMerge("text-sm text-red-500", errorClassName)}>
+          {error}
+        </p>
+      )}
     </>
   );
 }

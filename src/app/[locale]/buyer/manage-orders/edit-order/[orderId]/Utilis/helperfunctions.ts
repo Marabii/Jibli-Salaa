@@ -115,7 +115,7 @@ export async function handleSubmit(editOrderDetails: EditOrderI) {
         key,
         JSON.stringify(editOrderDetails[key as keyof typeof editOrderDetails])
       );
-    } else {
+    } else if (editOrderDetails[key as keyof typeof editOrderDetails]) {
       data.append(
         key,
         String(editOrderDetails[key as keyof typeof editOrderDetails])

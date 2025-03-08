@@ -31,7 +31,7 @@ export async function editOrderAction(
     return { status: "success", data: editOrderDetails };
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error:", error);
+      console.error(error);
       return {
         status: "failure",
         errors: { global: error.message },
