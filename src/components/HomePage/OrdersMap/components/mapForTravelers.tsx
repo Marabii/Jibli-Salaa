@@ -12,17 +12,28 @@ import { motion } from "framer-motion";
 import { ExchangeRate } from "@/interfaces/userInfo/userInfo";
 import apiClient from "@/utils/apiClient";
 import { format } from "currency-formatter";
-import LoadingSpinner from "./LoadingSpinner";
 import CurrencySelector from "./CurrencySelector";
 import { useTranslations } from "next-intl";
+import { findCenterOfLargestCluster } from "@/utils/findCenterOfLargestCluster";
+import LoadingSpinner from "@/components/Loading/LoadingSpinner/LoadingSpinner";
 
 export default function MapForTravelers({
   orders,
 }: {
   orders: CompletedOrder[];
 }) {
-  const defaultCenter = { lat: 0, lng: 0 };
   const [currency, setCurrency] = useState("MAD");
+
+  // If no cluster found, fallback to lat=0, lng=0
+  const defaultCenter = { lat: 0, lng: 0 };
+
+  const clusterCenter = useMemo(
+    () => findCenterOfLargestCluster(orders, 5), // 5 km radius
+    [orders]
+  );
+
+  // Decide which center to use
+  const initialCenter = clusterCenter ?? defaultCenter;
 
   return (
     <div className="px-2">
@@ -36,7 +47,7 @@ export default function MapForTravelers({
         <APIProvider apiKey={process.env.NEXT_PUBLIC_GoogleMaps_API ?? ""}>
           <Map
             defaultZoom={3.5}
-            defaultCenter={defaultCenter}
+            defaultCenter={initialCenter}
             mapId={process.env.NEXT_PUBLIC_GoogleMaps_MAPID}
             fullscreenControl={false}
             mapTypeControl={false}
@@ -69,7 +80,7 @@ function ShowBuyers({
     position: { lat: number; lng: number };
   } | null>(null);
 
-  // Group orders by lat,lng
+  // Group orders by lat,lng (exact matching)
   const groupedOrders = useMemo(() => {
     const groups: Record<string, CompletedOrder[]> = {};
     orders.forEach((order) => {
@@ -161,7 +172,6 @@ function ShowBuyers({
 /**
  * The list of orders displayed in the info window after clicking on a marker
  */
-
 type OrderListProps = {
   activeGroup: {
     orders: CompletedOrder[];
@@ -206,7 +216,12 @@ function OrderList({ activeGroup, travelerCurrency }: OrderListProps) {
     };
   }, [activeGroup.orders, travelerCurrency]);
 
-  if (loading) return <LoadingSpinner />;
+  if (loading)
+    return (
+      <div className="grid place-items-center p-6 max-w-full sm:max-w-md">
+        <LoadingSpinner />
+      </div>
+    );
 
   return (
     <motion.div
@@ -225,7 +240,7 @@ function OrderList({ activeGroup, travelerCurrency }: OrderListProps) {
 
           if (!exchangeRate) {
             return (
-              <li key={order._id}>
+              <li className="grid place-items-center" key={order._id}>
                 <LoadingSpinner />
               </li>
             );

@@ -42,7 +42,7 @@ export default function MapForTravelers({
 }) {
   const t = useTranslations("TravelerTrip.AcceptOrders");
   const defaultCenter = {
-    lat: route.departureLocation.lat || 0,
+    lat: route.destinationLocation.lat || 0,
     lng: route.destinationLocation.lng || 0,
   };
 
