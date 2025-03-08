@@ -33,7 +33,12 @@ export default function MapForTravelers({
   );
 
   // Decide which center to use
-  const initialCenter = clusterCenter ?? defaultCenter;
+  const initialCenter =
+    (clusterCenter &&
+      clusterCenter.lat &&
+      clusterCenter.lng &&
+      clusterCenter) ||
+    defaultCenter;
 
   return (
     <div className="px-2">
