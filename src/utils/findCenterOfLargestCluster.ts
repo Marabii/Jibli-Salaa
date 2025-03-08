@@ -28,12 +28,14 @@ export function findCenterOfLargestCluster(
   orders: CompletedOrder[],
   radiusInKm = 5
 ): { lat: number; lng: number } | null {
+  // Convert lat/lng to numbers
   const points = orders
     .map((o) => o.preferredPickupPlace)
-    .filter((place) => place && place.lat !== null && place.lng !== null) as {
-    lat: number;
-    lng: number;
-  }[];
+    .filter((place) => place && place.lat !== null && place.lng !== null)
+    .map((place) => ({
+      lat: Number(place.lat),
+      lng: Number(place.lng),
+    }));
 
   if (points.length === 0) {
     return null;
