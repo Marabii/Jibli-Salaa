@@ -22,13 +22,13 @@ export default function PayButton({
     setLoading(true);
     try {
       const response = await apiClient(
-        "/api/protected/payment/create-payment",
+        "/api/protected/payment/create-setup-session",
         {
           method: "POST",
           body: JSON.stringify({
-            orderId: orderInfo._id,
             successUrl: `${process.env.NEXT_PUBLIC_CLIENTURL}/buyer/buyer-pay/success`,
             cancelUrl: `${process.env.NEXT_PUBLIC_CLIENTURL}/buyer/buyer-pay/error`,
+            orderId: orderInfo._id,
           }),
           headers: {
             "Content-Type": "application/json",

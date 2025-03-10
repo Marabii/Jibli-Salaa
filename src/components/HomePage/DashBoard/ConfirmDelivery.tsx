@@ -2,6 +2,7 @@
 import { useTransition } from "react";
 import { confirmDeliveryAction } from "./confirmDeliveryAction";
 import { useTranslations } from "next-intl";
+import { toast } from "react-toastify";
 
 export default function ConfirmDelivery({ orderId }: { orderId: string }) {
   const t = useTranslations("HomePage.DashboardPage.ConfirmDelivery");
@@ -11,9 +12,10 @@ export default function ConfirmDelivery({ orderId }: { orderId: string }) {
     startTransition(async () => {
       try {
         await confirmDeliveryAction(orderId);
+        toast.success("Delivery confirmed successfully!");
       } catch (error) {
         console.error(error);
-        alert(t("error"));
+        toast.error(t("error"));
       }
     });
   };
