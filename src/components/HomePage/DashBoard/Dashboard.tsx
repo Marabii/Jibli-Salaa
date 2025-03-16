@@ -7,11 +7,7 @@ import { Trip } from "@/interfaces/Traveler/Traveler";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import { getTranslations } from "next-intl/server";
 
-export default async function DashboardHomePage({
-  locale,
-}: {
-  locale: string;
-}) {
+export default async function DashboardHomePage() {
   const t = await getTranslations("HomePage.DashboardPage");
 
   let orders: CompletedOrder[] = [];

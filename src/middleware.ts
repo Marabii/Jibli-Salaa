@@ -24,6 +24,7 @@ const protectedPaths = [
   "/contact",
   "/negotiate",
   "/negotiate/validate-negotiations",
+  "/profile",
 ];
 
 const nextIntlMiddleware = createMiddleware(routing);
@@ -112,5 +113,6 @@ export const config = {
     "/negotiate/:path*",
     "/register/:path*",
     "/traveler/:path*",
+    "/profile/:path*",
   ],
 };

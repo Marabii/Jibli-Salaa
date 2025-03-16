@@ -15,8 +15,8 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
       {
-        protocol: "https",
-        hostname: "t4.ftcdn.net",
+        protocol: "http",
+        hostname: "localhost",
         pathname: "/**",
       },
       {

@@ -5,7 +5,6 @@ import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import NotificationsDropdown from "./NotificationsDropdown";
 import { ROLE } from "@/interfaces/userInfo/userRole";
-import { FaBars, FaTimes } from "react-icons/fa";
 import { UserInfo } from "@/interfaces/userInfo/userInfo";
 import useOutsideClick from "@/hooks/useOutsideClick";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
@@ -13,6 +12,22 @@ import apiClient from "@/utils/apiClient";
 import { toast } from "react-toastify";
 import { useTranslations } from "next-intl";
 import LocaleSwitcher from "./LocaleSwitcher";
+import { FloatingDock } from "@/components/floating-dock";
+import {
+  FiClipboard,
+  FiMap,
+  FiCompass,
+  FiShoppingCart,
+  FiPhone,
+  FiLogIn,
+} from "react-icons/fi";
+
+// Define the FloatingDockI interface
+interface FloatingDockI {
+  title: string;
+  icon: React.ReactNode;
+  href: string;
+}
 
 interface MobileHeaderProps {
   userInfo: UserInfo | null;
@@ -30,10 +45,7 @@ export default function MobileHeader({
   handleLogout,
 }: MobileHeaderProps) {
   const t = useTranslations("Header");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
-
-  const toggleMobileMenu = () => setMobileMenuOpen((prev) => !prev);
   const toggleProfileDropdown = () => setShowProfileDropdown((prev) => !prev);
 
   const checkBalance = async () => {
@@ -66,12 +78,50 @@ export default function MobileHeader({
   const headerRef = useRef<HTMLDivElement>(null);
   useOutsideClick(headerRef, () => setShowProfileDropdown(false));
 
+  // Build the floating dock items based on authentication and role.
+  let floatingDockItems: FloatingDockI[] = [];
+
+  if (isUserAuthenticated) {
+    if (userInfo?.role === ROLE.TRAVELER) {
+      floatingDockItems = [
+        {
+          title: t("travelerOrders"),
+          icon: <FiClipboard />,
+          href: "/traveler/manage-orders",
+        },
+        { title: t("trips"), icon: <FiMap />, href: "/traveler/select-trip" },
+        { title: t("planTrip"), icon: <FiCompass />, href: "/traveler" },
+        { title: t("contact"), icon: <FiPhone />, href: "/contact" },
+      ];
+    } else if (userInfo?.role === ROLE.BUYER) {
+      floatingDockItems = [
+        { title: t("buyerOrder"), icon: <FiShoppingCart />, href: "/buyer" },
+        {
+          title: t("buyerOrders"),
+          icon: <FiClipboard />,
+          href: "/buyer/manage-orders",
+        },
+        { title: t("contact"), icon: <FiPhone />, href: "/contact" },
+      ];
+    } else {
+      floatingDockItems = [
+        { title: t("contact"), icon: <FiPhone />, href: "/contact" },
+      ];
+    }
+  } else {
+    // For non-authenticated users we include a login option.
+    floatingDockItems = [
+      { title: t("login"), icon: <FiLogIn />, href: "/login" },
+      { title: t("contact"), icon: <FiPhone />, href: "/contact" },
+    ];
+  }
+
   return (
     <>
-      {/* Mobile Header (Top Bar) */}
+      {/* Mobile Header Top Bar */}
       <header
         ref={headerRef}
-        className="md:hidden sticky top-0 left-0 z-50 bg-gray-800 shadow-md px-4 py-3 flex items-center justify-between"
+        className="md:hidden sticky w-screen top-0 left-0 z-50 bg-black shadow-md px-4 py-3 flex items-center justify-between"
       >
         <Link href="/">
           <h1 className="text-xl font-bold text-white cursor-pointer hover:text-indigo-400 transition-colors">
@@ -80,17 +130,19 @@ export default function MobileHeader({
         </Link>
         <div className="flex relative items-center gap-4">
           {isUserAuthenticated && <NotificationsDropdown />}
-
           {isUserAuthenticated && userInfo?.profilePicture && (
             <div className="relative">
-              <Image
-                src={userInfo.profilePicture}
-                alt={t("profileAlt")}
-                className="rounded-full cursor-pointer"
-                onClick={toggleProfileDropdown}
-                width={32}
-                height={32}
-              />
+              <div className="relative">
+                <div className="bg-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -z-10 blur-sm w-8 h-8 flex items-center justify-center rounded-full"></div>
+                <Image
+                  src={userInfo?.profilePicture || ""}
+                  alt={t("profileAlt")}
+                  className="rounded-full h-8 w-8 cursor-pointer"
+                  onClick={toggleProfileDropdown}
+                  width={32}
+                  height={32}
+                />
+              </div>
               {showProfileDropdown && (
                 <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-2 z-50">
                   {userInfo?.role === ROLE.TRAVELER && (
@@ -118,125 +170,9 @@ export default function MobileHeader({
             </div>
           )}
           <LocaleSwitcher />
-          <button
-            onClick={toggleMobileMenu}
-            className="text-white focus:outline-none"
-          >
-            {mobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
-          </button>
+          <FloatingDock items={floatingDockItems} mobileClassName="" />
         </div>
       </header>
-
-      {/* Mobile Fullscreen Menu Overlay */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-gray-900 text-white h-screen w-full overflow-auto p-6">
-          <div className="flex items-center justify-between mb-8">
-            <Link href="/">
-              <h1
-                className="text-2xl font-bold cursor-pointer hover:text-indigo-400 transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {t("brand")}
-              </h1>
-            </Link>
-            <button
-              onClick={toggleMobileMenu}
-              className="text-white focus:outline-none"
-            >
-              <FaTimes size={28} />
-            </button>
-          </div>
-          <nav>
-            <ul className="flex flex-col space-y-6 text-lg font-medium">
-              {userInfo?.role === ROLE.TRAVELER && (
-                <>
-                  <li>
-                    <Link href="/traveler/manage-orders">
-                      <span
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="cursor-pointer hover:text-indigo-400 transition-colors"
-                      >
-                        {t("travelerOrders")}
-                      </span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/traveler/select-trip">
-                      <span
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="cursor-pointer hover:text-indigo-400 transition-colors"
-                      >
-                        {t("trips")}
-                      </span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/traveler">
-                      <span
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="cursor-pointer hover:text-indigo-400 transition-colors"
-                      >
-                        {t("planTrip")}
-                      </span>
-                    </Link>
-                  </li>
-                </>
-              )}
-
-              {userInfo?.role === ROLE.BUYER && (
-                <>
-                  <li>
-                    <Link href="/buyer">
-                      <span
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="cursor-pointer hover:text-indigo-400 transition-colors"
-                      >
-                        {t("buyerOrder")}
-                      </span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/buyer/manage-orders">
-                      <span
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="cursor-pointer hover:text-indigo-400 transition-colors"
-                      >
-                        {t("buyerOrders")}
-                      </span>
-                    </Link>
-                  </li>
-                </>
-              )}
-
-              {userInfo && (
-                <li>
-                  <Link href="/contact">
-                    <span
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="cursor-pointer hover:text-indigo-400 transition-colors"
-                    >
-                      {t("contact")}
-                    </span>
-                  </Link>
-                </li>
-              )}
-            </ul>
-          </nav>
-
-          <div className="sm:mt-10">
-            {!isUserAuthenticated && (
-              <Link href="/login">
-                <div
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-lg cursor-pointer hover:text-indigo-400 transition-colors"
-                >
-                  {t("login")}
-                </div>
-              </Link>
-            )}
-          </div>
-        </div>
-      )}
     </>
   );
 }

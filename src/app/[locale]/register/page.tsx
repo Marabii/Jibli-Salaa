@@ -7,7 +7,6 @@ import {
   RegisterFormInputs,
 } from "./Utilis/handleRegisterAction";
 import FormErrorHandler from "@/components/Form/FormErrorHandler";
-import "react-phone-number-input/style.css";
 import SubmitButtonRegister from "./Components/SubmitButtonRegister";
 import CountrySelector from "./Components/CountrySelector";
 import RoleAndCurrencySelectors from "./Components/RoleAndCurrencySelectors";

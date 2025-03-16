@@ -7,31 +7,26 @@ import HowItWorksSection from "@/components/HomePage/HowItWorksSection";
 import Dashboard from "@/components/HomePage/DashBoard/Dashboard";
 import OrdersMap from "@/components/HomePage/OrdersMap/OrdersMap";
 
-type Props = {
-  params: Promise<{ locale: string }>;
-};
-
-export default async function HomePage({ params }: Props) {
-  const { locale } = await params;
+export default async function HomePage() {
   return (
-    <div className="font-sans bg-gray-50 dark:bg-primary text-gray-900 dark:text-white">
+    <div className="font-sans bg-gray-50 text-gray-900">
       {/* Dashboard Section*/}
-      <Dashboard locale={locale} />
+      <Dashboard />
 
       {/* Hero Section */}
-      <HeroSection locale={locale} />
+      <HeroSection />
 
       {/* All orders around the world displayed on the map */}
-      <OrdersMap locale={locale} />
+      <OrdersMap />
 
       {/* About Section */}
-      <AboutSection locale={locale} />
+      <AboutSection />
 
       {/* How It Works Section */}
-      <HowItWorksSection locale={locale} />
+      <HowItWorksSection />
 
       {/* Call to Action Section */}
-      <CallToActionSection locale={locale} />
+      <CallToActionSection />
     </div>
   );
 }

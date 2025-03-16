@@ -4,11 +4,7 @@ import { motion } from "framer-motion";
 import { FaGlobe, FaWallet, FaLeaf } from "react-icons/fa";
 import { useTranslations } from "next-intl";
 
-type AboutSectionProps = {
-  locale: string;
-};
-
-const AboutSection = ({ locale }: AboutSectionProps) => {
+const AboutSection = () => {
   const t = useTranslations("HomePage.AboutSection");
 
   const features = [
@@ -30,10 +26,7 @@ const AboutSection = ({ locale }: AboutSectionProps) => {
   ];
 
   return (
-    <section
-      dir={locale === "ar" ? "rtl" : "ltr"}
-      className="py-20 bg-gray-100"
-    >
+    <section dir="auto" className="py-20 bg-gray-100">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold mb-8 text-black">
           {t("sectionHeading")}

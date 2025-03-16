@@ -5,11 +5,7 @@ import { motion } from "framer-motion";
 import { FaClipboardList, FaCheckCircle, FaDollarSign } from "react-icons/fa";
 import { useTranslations } from "next-intl";
 
-type HowItWorksSectionProps = {
-  locale: string;
-};
-
-const HowItWorksSection = ({ locale }: HowItWorksSectionProps) => {
+const HowItWorksSection = () => {
   const t = useTranslations("HomePage.HowItWorksSection");
 
   const steps = [
@@ -31,11 +27,7 @@ const HowItWorksSection = ({ locale }: HowItWorksSectionProps) => {
   ];
 
   return (
-    <section
-      dir={locale === "ar" ? "rtl" : "ltr"}
-      id="how-it-works"
-      className="py-20 bg-gray-100"
-    >
+    <section dir="auto" id="how-it-works" className="py-20 bg-gray-100">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl text-black font-bold mb-8">
           {t("sectionHeading")}

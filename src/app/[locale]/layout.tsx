@@ -7,8 +7,6 @@ import ReduxProvider from "@/store/ReduxProvider";
 import ToastWrapper from "../../components/ToastWrapper";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
-import { headers } from "next/headers"; // needed import
-import { notFound } from "next/navigation"; // needed import
 
 const poppins = Poppins({
   subsets: ["latin"],

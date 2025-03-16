@@ -1,21 +1,22 @@
 import "server-only";
+
 import { Link } from "@/i18n/navigation";
 import { FaArrowRight } from "react-icons/fa";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
-export default async function HeroSection({ locale }: { locale: string }) {
+export default async function HeroSection() {
   const t = await getTranslations("HomePage.HeroSection");
 
   return (
-    <section className="bg-black text-white py-6 md:py-24 xl:py-32">
-      <div className="container gap-5 mx-auto px-4 flex flex-col-reverse md:flex-row items-center">
+    <section className="grid bg-black place-items-center h-svh md:h-auto md:py-20 text-white">
+      <div className="gap-5 w-full max-w-screen-2xl mx-auto px-4 flex flex-col-reverse md:flex-row items-center">
         {/* Text Content */}
-        <div dir={locale === "ar" ? "rtl" : "ltr"} className="md:w-1/2">
-          <h1 className="text-5xl font-bold mb-4 text-balance motion-preset-slide-right motion-duration-1000">
+        <div dir="auto" className="md:w-1/2">
+          <h1 className="text-3xl md:text-5xl font-bold mb-4 text-balance motion-preset-slide-right motion-duration-1000">
             {t("heroHeading")}
           </h1>
-          <p className="text-lg mb-8 text-balance motion-preset-slide-right motion-duration-1000">
+          <p className="text-md md:text-lg mb-8 text-balance motion-preset-slide-right motion-duration-1000">
             {t("heroParagraph")}
           </p>
           <div className="motion-preset-slide-right motion-duration-1000">
@@ -34,6 +35,7 @@ export default async function HeroSection({ locale }: { locale: string }) {
             className="rounded-3xl object-cover"
             fill
             src="/Hero.png"
+            priority
             alt={t("heroImageAlt")}
             sizes="(max-width: 768px) 100vw, 50vw"
           />

@@ -4,15 +4,11 @@ import { Link } from "@/i18n/navigation";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 
-type CallToActionSectionProps = {
-  locale: string;
-};
-
-const CallToActionSection = ({ locale }: CallToActionSectionProps) => {
+const CallToActionSection = () => {
   const t = useTranslations("HomePage.CallToActionSection");
 
   return (
-    <section dir={locale === "ar" ? "rtl" : "ltr"} className="py-20 bg-black">
+    <section dir="auto" className="py-20 bg-black">
       <div className="container mx-auto px-4 text-center">
         <h2 className="text-4xl text-white font-bold mb-4">
           {t("sectionHeading")}
