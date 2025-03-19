@@ -7,6 +7,7 @@ import SockJS from "sockjs-client";
 import Stomp, { Client } from "stompjs";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 import { RootState } from "@/store/store";
 import apiClient from "@/utils/apiClient";
@@ -33,13 +34,13 @@ export default function NegotiatePage(): JSX.Element {
   const t = useTranslations("Negotiate.Page");
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId") || "";
-  const recipientId = searchParams.get("recipientId") || "";
   const IS_PRODUCTION = JSON.parse(
     process.env.NEXT_PUBLIC_IS_PRODUCTION || "false"
   );
+  const router = useRouter();
 
   // Validate required search parameters
-  if (!orderId || !recipientId) {
+  if (!orderId) {
     throw new Error(t("missingParameters"));
   }
 
@@ -75,13 +76,13 @@ export default function NegotiatePage(): JSX.Element {
       });
 
       const reloadTimer = setTimeout(() => {
-        window.location.reload();
+        router.refresh();
         setRefreshInterval((prev) => prev * 2); // Double the interval after each attempt
       }, refreshInterval);
 
       return () => clearTimeout(reloadTimer);
     }
-  }, [criticalError, refreshInterval]);
+  }, [criticalError, refreshInterval, router]);
 
   // --- Countdown Timer for Refresh ---
   useEffect(() => {
@@ -110,7 +111,7 @@ export default function NegotiatePage(): JSX.Element {
         setUserInfo(userResponse.data);
 
         const recipientResponse: ApiResponse<UserInfo> = await apiClient(
-          `/api/protected/getUserInfo/${recipientId}`
+          `/api/protected/getUserInfo/${orderInfo?.buyerId}`
         );
         setRecipientInfo(recipientResponse.data);
       } catch (error) {
@@ -118,8 +119,8 @@ export default function NegotiatePage(): JSX.Element {
         setCriticalError(t("failedFetchUser"));
       }
     }
-    fetchUserInfo();
-  }, [recipientId, t]);
+    orderInfo && orderInfo.buyerId && fetchUserInfo();
+  }, [orderInfo, t]);
 
   // --- Helper: Fetch Order Info ---
   const fetchOrderInfo = useCallback(async () => {
@@ -190,7 +191,7 @@ export default function NegotiatePage(): JSX.Element {
     async function fetchChatHistory() {
       try {
         const result: ApiResponse<ChatMessage[]> = await apiClient(
-          `/api/protected/getUserChatHistory/${recipientId}`
+          `/api/protected/getUserChatHistory/${orderInfo?.buyerId}`
         );
         setMessages(result.data || []);
       } catch (error) {
@@ -198,16 +199,17 @@ export default function NegotiatePage(): JSX.Element {
         setCriticalError(t("failedFetchChat"));
       }
     }
-    if (recipientId) {
+    if (orderInfo?.buyerId) {
       fetchChatHistory();
     }
-  }, [recipientId, t]);
+  }, [orderInfo, t]);
 
   // --- Send Message Handler ---
   const sendMessage = (content: string) => {
     if (criticalError || !content.trim() || !connectionEstablished || !userInfo)
       return;
 
+    const recipientId = orderInfo?.buyerId;
     const chatMessage: Partial<ChatMessage> = {
       orderId,
       recipientId,
@@ -219,6 +221,17 @@ export default function NegotiatePage(): JSX.Element {
     stompClientRef.current?.send("/app/chat", {}, JSON.stringify(chatMessage));
     setMessages((prev) => [...prev, chatMessage as ChatMessage]);
   };
+
+  if (userInfo && recipientInfo && userInfo?._id === recipientInfo?._id) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="max-w-md w-full bg-red-50 border border-red-300 text-red-700 px-6 py-4 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-2">Oops!</h2>
+          <p>You cannot message yourself.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

@@ -9,5 +9,10 @@ export default async function UserDetails() {
   );
   const userInfo = userInfoResponse.data;
 
-  return <UserDetailsForm userInfo={userInfo} />;
+  return (
+    <div className="flex px-2 pb-36 w-full flex-col items-center pt-10 text-center">
+      <h1 className="font-playfair text-5xl mb-10 font-bold">Your Profile</h1>
+      <UserDetailsForm userInfo={userInfo} />
+    </div>
+  );
 }

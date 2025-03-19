@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -11,6 +11,7 @@ import {
 } from "@/components/Select";
 import emojiFlags from "emoji-flags";
 import { useTranslations } from "next-intl";
+import { UserInfo } from "@/interfaces/userInfo/userInfo";
 
 interface CountryOption {
   label: string;
@@ -45,9 +46,13 @@ const countryOptionsByLetter: CountryOptionsByLetter = emojiFlags.data
     {} as CountryOptionsByLetter
   );
 
-export default function CountrySelector() {
+export default function CountrySelector({ userInfo }: { userInfo: UserInfo }) {
   const t = useTranslations("RegisterPage.CountrySelector");
   const [selectedCountry, setSelectedCountry] = useState<string>("");
+
+  useEffect(() => {
+    setSelectedCountry(userInfo.countryCode);
+  }, [userInfo]);
 
   const handleChange = (value: string) => {
     setSelectedCountry(value);
@@ -56,7 +61,7 @@ export default function CountrySelector() {
   return (
     <div>
       <label
-        className="mb-2 block text-2xl font-bold text-gray-700"
+        className="mb-2 block font-playfair text-lg font-bold"
         htmlFor="userCountry"
       >
         {t("label")}
@@ -67,7 +72,7 @@ export default function CountrySelector() {
         value={selectedCountry}
         onValueChange={handleChange}
       >
-        <SelectTrigger className="rounded-lg h-[67.7px] w-full border-2 border-gray-300 p-4 focus:outline-none focus:ring-2 focus:ring-pink-400 transition">
+        <SelectTrigger className="rounded-none h-[67.7px] w-full border-2 border-black p-5">
           <SelectValue placeholder={t("placeholder")} />
         </SelectTrigger>
         <SelectContent>

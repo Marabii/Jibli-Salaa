@@ -108,7 +108,7 @@ export default async function ManageOrders() {
               {canNegotiate && (
                 <div className="mt-4 text-right">
                   <Link
-                    href={`/negotiate?recipientId=${order.buyerId}&orderId=${order._id}`}
+                    href={`/negotiate?orderId=${order._id}`}
                     className="inline-block bg-black text-white py-2 px-4 rounded shadow hover:bg-gray-800 transition duration-300"
                   >
                     {t("negotiate")}

@@ -14,6 +14,7 @@ import SubmitButtonProfileUpdate from "./SubmitButtonProfileUpdate";
 import ProfilePictureUploader from "./ProfilePictureUploader";
 
 export default function UserDetailsForm({ userInfo }: { userInfo: UserInfo }) {
+  const userInfoCpy: UserInfo = { ...userInfo };
   return (
     <>
       <ProfilePictureUploader initialImage={userInfo.profilePicture} />
@@ -34,6 +35,7 @@ export default function UserDetailsForm({ userInfo }: { userInfo: UserInfo }) {
           <Input
             className="w-full border-2 border-black p-5"
             name="name"
+            value={userInfoCpy.name}
             label="You can change your name here"
             labelBgColor="rgb(249 250 251)"
             required
@@ -53,6 +55,7 @@ export default function UserDetailsForm({ userInfo }: { userInfo: UserInfo }) {
           <Input
             className="w-full border-2 border-black p-5"
             type="email"
+            value={userInfoCpy.email}
             name="email"
             label="You can change your email here"
             labelBgColor="rgb(249 250 251)"
@@ -63,13 +66,13 @@ export default function UserDetailsForm({ userInfo }: { userInfo: UserInfo }) {
         </div>
 
         {/* Phone Number */}
-        <PhoneNumberInput />
+        <PhoneNumberInput userInfo={userInfoCpy} />
 
         {/* Country Selector */}
-        <CountrySelector />
+        <CountrySelector userInfo={userInfoCpy} />
 
         {/* Currency Selector */}
-        <CurrencySelector userRole={userInfo.role} />
+        <CurrencySelector userInfo={userInfoCpy} />
 
         {/* Error Handler */}
         <FormErrorHandler />

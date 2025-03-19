@@ -18,9 +18,11 @@ export default function MessageBubble({
     : "bg-gray-300 text-black justify-self-end";
 
   return (
-    <div className={`max-w-[70%] bg-gray-300 p-3 rounded-lg ${bubbleClasses}`}>
-      <p className="text-sm break-words">{message.content}</p>
-      <span className="block mt-1 text-xs opacity-70 text-right">
+    <div
+      className={`max-w-[70%] w-fit bg-gray-300 p-3 rounded-lg ${bubbleClasses}`}
+    >
+      <p className="text-sm w-fit break-words">{message.content}</p>
+      <span className="block w-fit mt-1 text-xs opacity-70 text-right">
         {new Date(message.timestamp).toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",

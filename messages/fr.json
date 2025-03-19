@@ -71,8 +71,8 @@
         "error": "Quelque chose s'est mal passé, impossible de confirmer la commande"
       }
     },
-    "OrdersMap": {
-      "title": "Jetez un œil à toutes les commandes en ligne en cours",
+    "OnlineTransactions": {
+      "title": "Jetez un œil à toutes les transactions en ligne en cours",
       "CurrencySelector": {
         "selectCurrency": "Dans quelle devise souhaitez-vous voir les prix des commandes ?"
       },
@@ -322,7 +322,7 @@
   },
   "Negotiate": {
     "Page": {
-      "missingParameters": "Paramètres requis manquants : recipientId ou orderId",
+      "missingParameters": "Paramètre requis manquant: orderId",
       "failedFetchUser": "Échec de la récupération des informations utilisateur. Veuillez réessayer plus tard.",
       "failedFetchOrder": "Échec de la récupération des détails de la commande. Veuillez réessayer plus tard.",
       "failedFetchChat": "Échec de la récupération de l'historique de discussion. Veuillez réessayer plus tard.",

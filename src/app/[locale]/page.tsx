@@ -5,7 +5,7 @@ import CallToActionSection from "@/components/HomePage/CallToActionSection";
 import HeroSection from "@/components/HomePage/HeroSection";
 import HowItWorksSection from "@/components/HomePage/HowItWorksSection";
 import Dashboard from "@/components/HomePage/DashBoard/Dashboard";
-import OrdersMap from "@/components/HomePage/OrdersMap/OrdersMap";
+import OrdersMap from "@/components/HomePage/OnlineTransactions/OnlineTransactions";
 
 export default async function HomePage() {
   return (
@@ -16,14 +16,14 @@ export default async function HomePage() {
       {/* Hero Section */}
       <HeroSection />
 
+      {/* How It Works Section */}
+      <HowItWorksSection />
+
       {/* All orders around the world displayed on the map */}
       <OrdersMap />
 
       {/* About Section */}
       <AboutSection />
-
-      {/* How It Works Section */}
-      <HowItWorksSection />
 
       {/* Call to Action Section */}
       <CallToActionSection />

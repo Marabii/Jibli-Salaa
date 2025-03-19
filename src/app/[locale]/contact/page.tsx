@@ -55,7 +55,7 @@ export default async function Contact() {
                 <OrderDetails orderId={contact.orderId} />
                 <Link
                   dir="auto"
-                  href={`/negotiate?recipientId=${contact.contactId}&orderId=${contact.orderId}`}
+                  href={`/negotiate?orderId=${contact.orderId}`}
                   className="text-sm gap-3 items-center bg-purple-500 text-white px-6 py-3 rounded-full flex justify-center hover:bg-purple-600 transition"
                 >
                   <svg

@@ -10,6 +10,7 @@ export interface UserInfo {
   _id: string;
   role: ROLE;
   contacts: Contact[];
+  countryCode: string;
   userBankCurrency: string;
 }
 

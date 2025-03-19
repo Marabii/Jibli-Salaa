@@ -16,11 +16,18 @@ import {
 } from "@/components/Select";
 import { useState, useEffect, useMemo } from "react";
 import { useTranslations } from "next-intl";
+import { UserInfo } from "@/interfaces/userInfo/userInfo";
 
-export default function CurrencySelector({ userRole }: { userRole: ROLE }) {
+export default function CurrencySelector({ userInfo }: { userInfo: UserInfo }) {
   const t = useTranslations("RegisterPage.RoleAndCurrencySelectors");
-  const [selectedCurrency, setSelectedCurrency] = useState<string>("");
 
+  // Initialize using uppercase to match option values (e.g., "EUR")
+  const [selectedCurrency, setSelectedCurrency] = useState<string>(
+    userInfo.userBankCurrency ? userInfo.userBankCurrency.toUpperCase() : ""
+  );
+  const userRole = userInfo.role;
+
+  // Get the list of currencies based on the user's role.
   const currencies = useMemo(() => {
     return userRole === ROLE.TRAVELER
       ? stripeConnectPayoutCurrencies
@@ -29,6 +36,7 @@ export default function CurrencySelector({ userRole }: { userRole: ROLE }) {
       : [];
   }, [userRole]);
 
+  // Build the options, showing the currency and flag.
   const currencyOptions = useMemo(() => {
     return currencies.map((currency) => {
       const countryCode = currencyToCountry[currency];
@@ -42,28 +50,28 @@ export default function CurrencySelector({ userRole }: { userRole: ROLE }) {
     });
   }, [currencies]);
 
+  // If the user doesn't have a set currency, use the first available option.
   useEffect(() => {
-    if (userRole) {
-      setSelectedCurrency(currencyOptions[0]?.value || "");
+    if (!userInfo.userBankCurrency && currencyOptions.length > 0) {
+      setSelectedCurrency(currencyOptions[0].value);
     }
-  }, [currencyOptions, userRole]);
+  }, [currencyOptions, userInfo.userBankCurrency]);
 
   return (
     <div className="mt-6">
       <label
-        className="mb-2 block text-2xl font-bold text-gray-700"
+        className="mb-2 block font-playfair text-lg font-bold"
         htmlFor="userBankCurrency"
       >
         {t("currencyLabel")}
       </label>
       <Select
         name="userBankCurrency"
-        key={selectedCurrency}
         value={selectedCurrency}
         onValueChange={setSelectedCurrency}
       >
         <SelectTrigger
-          className={`rounded-lg h-[67.7px] w-full border-2 border-gray-300 p-4 focus:outline-none focus:ring-2 focus:ring-pink-400 transition ${
+          className={`rounded-none h-[67.7px] w-full border-2 border-black p-5 ${
             !userRole ? "opacity-50 pointer-events-none" : ""
           }`}
           disabled={!userRole}

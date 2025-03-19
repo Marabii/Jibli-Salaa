@@ -71,7 +71,7 @@
         "error": "حدث خطأ ما، تعذر تأكيد الطلب"
       }
     },
-    "OrdersMap": {
+    "OnlineTransactions": {
       "title": "ألقِ نظرة على جميع الطلبات عبر الإنترنت الحالية",
       "CurrencySelector": {
         "selectCurrency": "ما هي العملة التي تريد رؤية أسعار الطلبات بها؟"
@@ -322,7 +322,7 @@
   },
   "Negotiate": {
     "Page": {
-      "missingParameters": "المعلمات المطلوبة مفقودة: recipientId أو orderId",
+      "missingParameters": "المعلمات المطلوبة مفقودة: orderId",
       "failedFetchUser": "فشل في جلب معلومات المستخدم. الرجاء المحاولة مرة أخرى لاحقًا.",
       "failedFetchOrder": "فشل في جلب تفاصيل الطلب. الرجاء المحاولة مرة أخرى لاحقًا.",
       "failedFetchChat": "فشل في جلب سجل الدردشة. الرجاء المحاولة مرة أخرى لاحقًا.",

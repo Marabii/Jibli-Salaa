@@ -71,8 +71,8 @@
         "error": "Something went wrong, couldn't confirm order"
       }
     },
-    "OrdersMap": {
-      "title": "Have a look at all current online orders",
+    "OnlineTransactions": {
+      "title": "Have a look at all current online transactions",
       "CurrencySelector": {
         "selectCurrency": "What currency do you want to see the order prices in?"
       },
@@ -322,7 +322,7 @@
   },
   "Negotiate": {
     "Page": {
-      "missingParameters": "Missing required parameters: recipientId or orderId",
+      "missingParameters": "Missing required parameter: orderId",
       "failedFetchUser": "Failed to fetch user information. Please try again later.",
       "failedFetchOrder": "Failed to fetch order details. Please try again later.",
       "failedFetchChat": "Failed to fetch chat history. Please try again later.",

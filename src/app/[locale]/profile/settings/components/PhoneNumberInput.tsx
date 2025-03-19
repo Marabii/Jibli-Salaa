@@ -1,12 +1,19 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PhoneInput from "react-phone-number-input";
 import { useTranslations } from "next-intl";
 import "react-phone-number-input/style.css";
+import { UserInfo } from "@/interfaces/userInfo/userInfo";
 
-export default function PhoneNumberInput() {
+export default function PhoneNumberInput({ userInfo }: { userInfo: UserInfo }) {
   const [phoneNumber, setPhoneNumber] = useState<string | undefined>("");
   const t = useTranslations("RegisterPage.PhoneNumberInput");
+
+  useEffect(() => {
+    if (userInfo) {
+      setPhoneNumber(userInfo.phoneNumber);
+    }
+  }, [userInfo]);
 
   return (
     <div>
