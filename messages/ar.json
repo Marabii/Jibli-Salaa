@@ -76,11 +76,21 @@
       "CurrencySelector": {
         "selectCurrency": "ما هي العملة التي تريد رؤية أسعار الطلبات بها؟"
       },
-      "OrderList": {
-        "ordersTitle": "{count, plural, one {# طلب} other {# طلبات}}",
-        "ordersCount": "{count, plural, one {# طلب} other {# طلبات}}",
-        "youllGet": "ستحصل على:",
-        "price": "السعر:"
+      "CurrentTravelers": {
+        "currentScheduledTrips": "الرحلات المجدولة"
+      },
+      "CurrentOrders": {
+        "currentOrders": "الطلبات الحالية",
+        "buyerWillingPay": "المشتري مستعد لدفع: {value} لتوصيلها إليه",
+        "moreInfo": "المزيد من المعلومات",
+        "orderDetails": "تفاصيل الطلب",
+        "description": "الوصف:",
+        "quantity": "الكمية:",
+        "productPrice": "سعر المنتج:",
+        "deliveryInstructions": "تعليمات التوصيل:",
+        "productLink": "رابط المنتج:",
+        "viewProduct": "عرض المنتج",
+        "pickupPlace": "مكان الاستلام:"
       }
     },
     "AboutSection": {

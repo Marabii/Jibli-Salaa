@@ -3,6 +3,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import LoadingSpinner2 from "@/components/Loading/LoadingSpinner2/LoadingSpinner2";
+import { useTranslations } from "next-intl";
 
 const World = dynamic(() => import("./globe").then((m) => m.World), {
   ssr: false,
@@ -14,6 +15,7 @@ const World = dynamic(() => import("./globe").then((m) => m.World), {
 });
 
 export default function CurrentTravelers() {
+  const t = useTranslations("HomePage.OnlineTransactions.CurrentTravelers");
   const globeConfig = {
     pointSize: 4,
     globeColor: "#062056",
@@ -418,7 +420,7 @@ export default function CurrentTravelers() {
           className="div"
         >
           <h2 className="text-center text-xl md:text-4xl font-bold text-white">
-            Current Scheduled Trips
+            {t("currentScheduledTrips")}
           </h2>
         </motion.div>
         <div className="absolute w-full bottom-0 inset-x-0 h-40 bg-gradient-to-b pointer-events-none select-none from-transparent to-black z-40" />

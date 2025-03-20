@@ -76,11 +76,21 @@
       "CurrencySelector": {
         "selectCurrency": "Dans quelle devise souhaitez-vous voir les prix des commandes ?"
       },
-      "OrderList": {
-        "ordersTitle": "{count, plural, one {# Commande} other {# Commandes}}",
-        "ordersCount": "{count, plural, one {# Commande} other {# Commandes}}",
-        "youllGet": "Vous recevrez :",
-        "price": "Prix :"
+      "CurrentTravelers": {
+        "currentScheduledTrips": "Voyages prévus:"
+      },
+      "CurrentOrders": {
+        "currentOrders": "Commandes en cours",
+        "buyerWillingPay": "L'acheteur est prêt à payer : {value} pour se faire livrer",
+        "moreInfo": "Plus d'infos",
+        "orderDetails": "Détails de la commande",
+        "description": "Description :",
+        "quantity": "Quantité :",
+        "productPrice": "Prix du produit :",
+        "deliveryInstructions": "Instructions de livraison :",
+        "productLink": "Lien du produit :",
+        "viewProduct": "Voir le produit",
+        "pickupPlace": "Lieu de retrait :"
       }
     },
     "AboutSection": {

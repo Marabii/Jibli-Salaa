@@ -73,14 +73,24 @@
     },
     "OnlineTransactions": {
       "title": "Have a look at all current online transactions",
+      "CurrentTravelers": {
+        "currentScheduledTrips": "Current Scheduled Trips"
+      },
       "CurrencySelector": {
         "selectCurrency": "What currency do you want to see the order prices in?"
       },
-      "OrderList": {
-        "ordersTitle": "{count, plural, one {# Order} other {# Orders}}",
-        "ordersCount": "{count, plural, one {# Order} other {# Orders}}",
-        "youllGet": "You'll get:",
-        "price": "Price:"
+      "CurrentOrders": {
+        "currentOrders": "Current Orders",
+        "buyerWillingPay": "Buyer is willing to pay: {value} to have it delivered to them",
+        "moreInfo": "More Info",
+        "orderDetails": "Order Details",
+        "description": "Description:",
+        "quantity": "Quantity:",
+        "productPrice": "Product Price:",
+        "deliveryInstructions": "Delivery Instructions:",
+        "productLink": "Product Link:",
+        "viewProduct": "View Product",
+        "pickupPlace": "Pickup Place:"
       }
     },
     "AboutSection": {

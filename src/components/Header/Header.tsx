@@ -30,9 +30,11 @@ export default async function Header() {
   }
 
   return (
-    <HeaderInteractive
-      userInfo={userInfo}
-      isUserAuthenticated={isUserAuthenticated}
-    />
+    <header>
+      <HeaderInteractive
+        userInfo={userInfo}
+        isUserAuthenticated={isUserAuthenticated}
+      />
+    </header>
   );
 }

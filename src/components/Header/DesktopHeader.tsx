@@ -103,7 +103,7 @@ export default function DesktopHeader({
   }
 
   return (
-    <header
+    <div
       ref={headerRef}
       className="hidden bg-black md:flex sticky w-screen top-0 left-0 z-50 shadow-md px-10 py-4 items-center justify-between"
     >
@@ -177,6 +177,6 @@ export default function DesktopHeader({
           </>
         )}
       </div>
-    </header>
+    </div>
   );
 }

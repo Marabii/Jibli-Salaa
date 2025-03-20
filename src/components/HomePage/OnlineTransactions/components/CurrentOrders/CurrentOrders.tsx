@@ -1,4 +1,3 @@
-// CurrentOrders.tsx
 "use client";
 import React, { JSX, useEffect, useId, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,6 +10,7 @@ import { format } from "currency-formatter";
 import apiClient from "@/utils/apiClient";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import LoadingSpinner from "@/components/Loading/LoadingSpinner2/LoadingSpinner2";
+import { useTranslations } from "next-intl";
 
 interface Card {
   orderId: string;
@@ -32,16 +32,17 @@ export default function CurrentOrders({
   const [loading, setLoading] = useState<boolean>(true);
   const ref = useRef<HTMLDivElement>(null);
   const id = useId();
+  const t = useTranslations("HomePage.OnlineTransactions.CurrentOrders");
 
   // Fetch cards when orders or selected currency change
   useEffect(() => {
     async function fetchCards() {
-      const generatedCards = await generateCards({ orders, currency });
+      const generatedCards = await generateCards({ orders, currency, t });
       setCards(generatedCards);
       setLoading(false);
     }
     fetchCards();
-  }, [orders, currency]);
+  }, [orders, currency, t]);
 
   // Handle Escape key and body scrolling when a card is active
   useEffect(() => {
@@ -61,7 +62,7 @@ export default function CurrentOrders({
     return (
       <div className="w-fit order-2 md:order-1 h-fit sticky top-0 py-20 mx-auto">
         <h2 className="text-center text-xl md:text-4xl font-bold text-white">
-          Current Orders
+          {t("currentOrders")}
         </h2>
         <CurrencySelector setCurrency={setCurrency} />
         <div className="flex justify-center items-center h-40">
@@ -74,7 +75,7 @@ export default function CurrentOrders({
   return (
     <div className="w-fit order-2 md:order-1 h-fit sticky top-0 py-20 mx-auto">
       <h2 className="text-center text-xl md:text-4xl font-bold text-white">
-        Current Orders
+        {t("currentOrders")}
       </h2>
       <CurrencySelector setCurrency={setCurrency} />
       <AnimatePresence>
@@ -128,7 +129,7 @@ export default function CurrentOrders({
                       href={`/negotiate?orderId=${active.orderId}`}
                       className="px-4 py-3 text-nowrap text-sm rounded-full font-bold bg-purple-600 text-white"
                     >
-                      More Info
+                      {t("moreInfo")}
                     </motion.a>
                   </div>
                   <div className="pt-4 relative px-4">
@@ -155,11 +156,19 @@ export default function CurrentOrders({
             key={`card-${card.title}-${id}`}
             onClick={() => setActive(card)}
             className="p-4 flex flex-col md:flex-row justify-between items-center bg-neutral-800 rounded-xl cursor-pointer"
+            style={{
+              willChange: "transform, opacity",
+              transform: "translateZ(0)",
+            }}
           >
             <div className="flex gap-4 flex-col md:flex-row ">
               <motion.div
                 className="flex items-center justify-center"
                 layoutId={`image-${card.title}-${id}`}
+                style={{
+                  willChange: "transform, opacity",
+                  transform: "translateZ(0)",
+                }}
               >
                 <Image
                   width={100}
@@ -188,7 +197,7 @@ export default function CurrentOrders({
               layoutId={`button-${card.title}-${id}`}
               className="px-4 py-2 text-sm rounded-full font-bold bg-gray-100 hover:bg-purple-600 hover:text-white text-black mt-4 md:mt-0"
             >
-              More Info
+              {t("moreInfo")}
             </motion.button>
           </motion.div>
         ))}
@@ -231,23 +240,41 @@ function Modal({ children }: { children: React.ReactNode }) {
   );
 }
 
+interface GenerateCardsParams {
+  orders: CompletedOrder[];
+  currency: string;
+  t: (key: string, options?: any) => string;
+}
+
 async function generateCards({
   orders,
   currency,
-}: {
-  orders: CompletedOrder[];
-  currency: string;
-}): Promise<Card[]> {
-  const cardsPromises = orders.map(async (orderInfo) => {
-    const exchangeRateResponse: ApiResponse<any> = await apiClient(
-      `/api/exchange-rate?target=${currency}&source=${orderInfo.currency}`
-    );
-    const exchangeRate = exchangeRateResponse.data;
+  t,
+}: GenerateCardsParams): Promise<Card[]> {
+  const exchangeRateCache: { [sourceCurrency: string]: any } = {};
+
+  const uniqueCurrencies = Array.from(
+    new Set(orders.map((order) => order.currency))
+  );
+
+  await Promise.all(
+    uniqueCurrencies.map(async (sourceCurrency) => {
+      const response: ApiResponse<any> = await apiClient(
+        `/api/exchange-rate?target=${currency}&source=${sourceCurrency}`
+      );
+      exchangeRateCache[sourceCurrency] = response.data;
+    })
+  );
+
+  return orders.map((orderInfo) => {
+    const exchangeRate = exchangeRateCache[orderInfo.currency];
     return {
-      initialDeliveryFee: `Buyer is willing to pay: ${format(
-        Number((orderInfo.initialDeliveryFee * exchangeRate.rate).toFixed(2)),
-        { code: exchangeRate.target }
-      )} to have it delivered to them`,
+      initialDeliveryFee: t("buyerWillingPay", {
+        value: format(
+          Number((orderInfo.initialDeliveryFee * exchangeRate.rate).toFixed(2)),
+          { code: exchangeRate.target }
+        ),
+      }),
       title: orderInfo.productName,
       src: orderInfo.images[0],
       orderId: orderInfo._id!,
@@ -260,24 +287,24 @@ async function generateCards({
             className="bg-neutral-800 w-full p-4 md:p-6 rounded-3xl shadow-2xl text-white"
           >
             <h1 className="text-2xl sm:text-3xl font-extrabold mb-4 sm:mb-6 text-center border-b border-gray-600 pb-2">
-              Order Details
+              {t("orderDetails")}
             </h1>
             <div className="space-y-3 sm:space-y-4 text-sm sm:text-base p-2 sm:p-4 rounded-md">
               {orderInfo.description && (
                 <p>
-                  <span className="font-bold">Description:</span>{" "}
+                  <span className="font-bold">{t("description")}</span>{" "}
                   {orderInfo.description}
                 </p>
               )}
               {orderInfo.quantity && (
                 <p>
-                  <span className="font-bold">Quantity:</span>{" "}
+                  <span className="font-bold">{t("quantity")}</span>{" "}
                   {orderInfo.quantity}
                 </p>
               )}
               {productValue > 0 && (
                 <p>
-                  <span className="font-bold">Product Price:</span>{" "}
+                  <span className="font-bold">{t("productPrice")}</span>{" "}
                   {format(
                     Number((productValue * exchangeRate.rate).toFixed(2)),
                     {
@@ -288,25 +315,25 @@ async function generateCards({
               )}
               {orderInfo.deliveryInstructions && (
                 <p>
-                  <span className="font-bold">Delivery Instructions:</span>{" "}
+                  <span className="font-bold">{t("deliveryInstructions")}</span>{" "}
                   {orderInfo.deliveryInstructions}
                 </p>
               )}
               {orderInfo.productURL && (
                 <p className="text-blue-400 underline">
-                  <span className="font-bold">Product Link:</span>{" "}
+                  <span className="font-bold">{t("productLink")}</span>{" "}
                   <a
                     href={orderInfo.productURL}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    View Product
+                    {t("viewProduct")}
                   </a>
                 </p>
               )}
               {orderInfo.preferredPickupPlace && (
                 <p>
-                  <span className="font-bold">Pickup Place:</span>{" "}
+                  <span className="font-bold">{t("pickupPlace")}</span>{" "}
                   {orderInfo.preferredPickupPlace.formatted_address}
                 </p>
               )}
@@ -316,6 +343,4 @@ async function generateCards({
       },
     };
   });
-
-  return Promise.all(cardsPromises);
 }

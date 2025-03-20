@@ -119,7 +119,7 @@ export default function MobileHeader({
   return (
     <>
       {/* Mobile Header Top Bar */}
-      <header
+      <div
         ref={headerRef}
         className="md:hidden sticky w-screen top-0 left-0 z-50 bg-black shadow-md px-4 py-3 flex items-center justify-between"
       >
@@ -172,7 +172,7 @@ export default function MobileHeader({
           <LocaleSwitcher />
           <FloatingDock items={floatingDockItems} mobileClassName="" />
         </div>
-      </header>
+      </div>
     </>
   );
 }
