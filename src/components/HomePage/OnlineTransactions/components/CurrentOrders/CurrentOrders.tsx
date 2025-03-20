@@ -1,16 +1,16 @@
+// CurrentOrders.tsx
 "use client";
-
-import Image from "next/image";
 import React, { JSX, useEffect, useId, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import ReactDOM from "react-dom";
+import CurrencySelector from "./CurrencySelector";
 import useOutsideClick from "@/hooks/useOutsideClick";
 import { CompletedOrder } from "@/interfaces/Order/order";
 import { format } from "currency-formatter";
-import CurrencySelector from "./CurrencySelector";
-import { ExchangeRate } from "@/interfaces/userInfo/userInfo";
 import apiClient from "@/utils/apiClient";
 import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
-import ReactDOM from "react-dom";
+import LoadingSpinner from "@/components/Loading/LoadingSpinner2/LoadingSpinner2";
 
 interface Card {
   orderId: string;
@@ -29,14 +29,16 @@ export default function CurrentOrders({
   const [currency, setCurrency] = useState<string>("MAD");
   const [active, setActive] = useState<Card | null>(null);
   const [cards, setCards] = useState<Card[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const ref = useRef<HTMLDivElement>(null);
   const id = useId();
 
-  // Fetch the cards whenever orders or the selected currency change
+  // Fetch cards when orders or selected currency change
   useEffect(() => {
     async function fetchCards() {
       const generatedCards = await generateCards({ orders, currency });
       setCards(generatedCards);
+      setLoading(false);
     }
     fetchCards();
   }, [orders, currency]);
@@ -48,19 +50,29 @@ export default function CurrentOrders({
         setActive(null);
       }
     }
-    if (active) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
+    document.body.style.overflow = active ? "hidden" : "auto";
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [active]);
 
   useOutsideClick(ref, () => setActive(null));
 
+  if (loading) {
+    return (
+      <div className="w-fit order-2 md:order-1 h-fit sticky top-0 py-20 mx-auto">
+        <h2 className="text-center text-xl md:text-4xl font-bold text-white">
+          Current Orders
+        </h2>
+        <CurrencySelector setCurrency={setCurrency} />
+        <div className="flex justify-center items-center h-40">
+          <LoadingSpinner />
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-fit h-fit sticky top-0 py-20 mx-auto">
+    <div className="w-fit order-2 md:order-1 h-fit sticky top-0 py-20 mx-auto">
       <h2 className="text-center text-xl md:text-4xl font-bold text-white">
         Current Orders
       </h2>
@@ -80,13 +92,11 @@ export default function CurrentOrders({
               >
                 <CloseIcon />
               </motion.button>
-
               <motion.div
                 layoutId={`card-${active.title}-${id}`}
                 ref={ref}
                 className="w-full max-w-[500px] md:max-h-[90%] h-fit flex flex-col bg-neutral-900 sm:rounded-3xl overflow-hidden"
               >
-                {/* Image */}
                 <motion.div layoutId={`image-${active.title}-${id}`}>
                   <Image
                     priority
@@ -97,8 +107,6 @@ export default function CurrentOrders({
                     className="w-full h-80 lg:h-80 sm:rounded-tr-lg sm:rounded-tl-lg object-cover object-top"
                   />
                 </motion.div>
-
-                {/* Title, Fee, and CTA */}
                 <div>
                   <div className="flex items-center justify-between gap-2 p-4">
                     <div>
@@ -123,8 +131,6 @@ export default function CurrentOrders({
                       More Info
                     </motion.a>
                   </div>
-
-                  {/* Scrollable details container */}
                   <div className="pt-4 relative px-4">
                     <motion.div
                       layout
@@ -142,9 +148,7 @@ export default function CurrentOrders({
           </Modal>
         )}
       </AnimatePresence>
-
-      {/* Card list */}
-      <ul className="max-w-2xl w-full gap-4">
+      <ul className="max-w-2xl space-y-2 w-full gap-4">
         {cards.map((card) => (
           <motion.div
             layoutId={`card-${card.title}-${id}`}
@@ -220,9 +224,7 @@ export const CloseIcon = () => {
 function Modal({ children }: { children: React.ReactNode }) {
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-50">
-      {/* Overlay */}
       <div className="absolute inset-0 bg-black/20" />
-      {/* Modal content */}
       <div className="relative grid place-items-center h-full">{children}</div>
     </div>,
     document.body
@@ -237,7 +239,7 @@ async function generateCards({
   currency: string;
 }): Promise<Card[]> {
   const cardsPromises = orders.map(async (orderInfo) => {
-    const exchangeRateResponse: ApiResponse<ExchangeRate> = await apiClient(
+    const exchangeRateResponse: ApiResponse<any> = await apiClient(
       `/api/exchange-rate?target=${currency}&source=${orderInfo.currency}`
     );
     const exchangeRate = exchangeRateResponse.data;
@@ -255,7 +257,7 @@ async function generateCards({
         return (
           <div
             dir="auto"
-            className="bg-neutral-800 p-4 md:p-6 rounded-3xl shadow-2xl text-white"
+            className="bg-neutral-800 w-full p-4 md:p-6 rounded-3xl shadow-2xl text-white"
           >
             <h1 className="text-2xl sm:text-3xl font-extrabold mb-4 sm:mb-6 text-center border-b border-gray-600 pb-2">
               Order Details

@@ -2,9 +2,15 @@
 import React from "react";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
+import LoadingSpinner2 from "@/components/Loading/LoadingSpinner2/LoadingSpinner2";
 
 const World = dynamic(() => import("./globe").then((m) => m.World), {
   ssr: false,
+  loading: () => (
+    <div className="flex justify-center items-center h-full">
+      <LoadingSpinner2 />
+    </div>
+  ),
 });
 
 export default function CurrentTravelers() {
@@ -396,7 +402,7 @@ export default function CurrentTravelers() {
 
   return (
     <div className="py-20 h-auto bg-black relative w-full">
-      <div className="max-w-7xl mx-auto w-[20rem] md:w-full relative overflow-hidden h-[20rem] md:h-[40rem] px-4">
+      <div className="max-w-7xl flex flex-col items-center mx-auto w-[20rem] md:w-full relative overflow-hidden h-[20rem] md:h-[40rem]">
         <motion.div
           initial={{
             opacity: 0,
