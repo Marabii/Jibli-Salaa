@@ -8,6 +8,7 @@ import { getTranslations } from "next-intl/server";
 import { ORDER_STATUS } from "@/interfaces/Order/ORDER_STATUS";
 import { Link } from "@/i18n/navigation";
 import NegotiatePageClient from "./components/NegotiatePageClient";
+import { ROLE } from "@/interfaces/userInfo/userRole";
 
 interface ErrorCardProps {
   title: string;
@@ -64,6 +65,17 @@ export default async function NegotiatePage({
       );
     }
     throw new Error("An unexpected error occurred. Please contact support.");
+  }
+
+  //The buyer can only access details of their own order
+  if (userInfo.role === ROLE.BUYER && orderInfo.buyerId !== userInfo._id) {
+    return (
+      <ErrorCard
+        title="Invalid Role"
+        message={`It appears you signed up as a buyer but is trying to negotiate as a traveler. Please create a new account as a traveler.`}
+        showLink={true}
+      />
+    );
   }
 
   // For pending orders, ensure that the recipient ID is provided and valid
