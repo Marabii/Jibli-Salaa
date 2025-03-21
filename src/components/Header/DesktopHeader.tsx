@@ -105,7 +105,7 @@ export default function DesktopHeader({
   return (
     <div
       ref={headerRef}
-      className="hidden bg-black md:flex sticky w-screen top-0 left-0 z-50 shadow-md px-10 py-4 items-center justify-between"
+      className="hidden bg-black md:flex sticky w-full top-0 left-0 z-50 shadow-md px-10 py-4 items-center justify-between"
     >
       {/* Logo / Brand */}
       <Link href="/">
