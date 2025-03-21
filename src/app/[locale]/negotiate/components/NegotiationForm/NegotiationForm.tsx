@@ -68,6 +68,7 @@ export default function NegotiationForm({
         name="actualValue"
         label={t("actualValueLabel", { symbol: currencyDetails.symbol })}
         labelBgColor="transparent"
+        errorClassName="text-lg text-white"
         labelTextColor="white"
         required
         pattern={String(/^\d+(\.\d+)?$/)}
@@ -75,8 +76,9 @@ export default function NegotiationForm({
       />
 
       <Input
-        className="w-full outline-none border-b-2 border-white p-4"
+        className="w-full capitalize outline-none border-b-2 border-white p-4"
         type="number"
+        errorClassName="text-lg text-white"
         name="actualDeliveryFee"
         label={t("actualDeliveryFeeLabel", { symbol: currencyDetails.symbol })}
         labelBgColor="transparent"

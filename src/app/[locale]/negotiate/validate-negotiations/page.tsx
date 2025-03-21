@@ -108,7 +108,9 @@ const ValidateNegotiations: React.FC = () => {
       });
       setSuccessMessage(t("successAccepted"));
       setError(null);
-      router.replace(`/negotiate?orderId=${orderId}`);
+      router.replace(
+        `/negotiate?recipientId=${orderInfo.buyerId}&orderId=${orderId}`
+      );
     } catch (err) {
       console.error("Error accepting negotiation:", err);
       setError(t("errorAccept"));
@@ -124,7 +126,9 @@ const ValidateNegotiations: React.FC = () => {
       });
       setSuccessMessage(t("successRejected"));
       setError(null);
-      router.replace(`/negotiate?orderId=${orderId}`);
+      router.replace(
+        `/negotiate?recipientId=${orderInfo.buyerId}&orderId=${orderId}`
+      );
     } catch (err) {
       console.error("Error rejecting negotiation:", err);
       setError(t("errorReject"));

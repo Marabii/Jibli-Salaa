@@ -148,7 +148,7 @@ export default function NotificationsDropdown() {
                                   e.stopPropagation();
                                   markAsRead(notification.id);
                                 }}
-                                href={`/negotiate?orderId=${orderId}`}
+                                href={`/negotiate?recipientId=${senderId}&orderId=${orderId}`}
                                 className="mt-2 text-balance text-center sm:mt-0 px-2 py-1 text-xs font-semibold text-purple-500 border border-purple-500 rounded hover:bg-purple-500 hover:text-white transition-colors duration-200"
                               >
                                 {t("negotiatePage")}
@@ -299,7 +299,7 @@ export default function NotificationsDropdown() {
                                   e.stopPropagation();
                                   markAsRead(notification.id);
                                 }}
-                                href={`/negotiate?orderId=${orderId}`}
+                                href={`/negotiate?recipientId=${buyerId}&orderId=${orderId}`}
                                 className="mt-2 text-balance text-center sm:mt-0 px-2 py-1 text-xs font-semibold text-purple-500 border border-purple-500 rounded hover:bg-purple-500 hover:text-white transition-colors duration-200"
                               >
                                 {t("negotiatePage")}

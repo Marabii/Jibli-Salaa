@@ -18,7 +18,6 @@ import {
   removeNotification,
 } from "@/store/slices/notificationsSlice";
 import type { AppDispatch } from "@/store/store";
-import { NotificationContent } from "../interfaces/Websockets/Notification";
 
 export function useNotifications() {
   const dispatch = useDispatch<AppDispatch>();
@@ -103,13 +102,12 @@ export function useNotifications() {
         async (message: Message) => {
           try {
             const newNotification: Notification = JSON.parse(message.body);
-
             if (newNotification.notificationType === NotificationType.MESSAGE) {
               const messageNotificationContent =
                 newNotification.notificationData as MessageNotificationContent;
 
               if (
-                pathnameRef.current === "/negotiate" &&
+                pathnameRef.current.includes("/negotiate") &&
                 searchParamsRef.current.get("recipientId") ===
                   messageNotificationContent.senderId
               ) {

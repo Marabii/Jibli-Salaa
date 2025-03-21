@@ -1,5 +1,6 @@
 "use client";
-import React, { JSX, useEffect, useId, useRef, useState } from "react";
+
+import { JSX, useEffect, useId, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import ReactDOM from "react-dom";
@@ -14,6 +15,7 @@ import { useTranslations } from "next-intl";
 
 interface Card {
   orderId: string;
+  buyerId: string;
   initialDeliveryFee: string;
   title: string;
   src: string;
@@ -126,7 +128,7 @@ export default function CurrentOrders({
                     </div>
                     <motion.a
                       layoutId={`button-${active.title}-${id}`}
-                      href={`/negotiate?orderId=${active.orderId}`}
+                      href={`/negotiate?orderId=${active.orderId}&recipientId=${active.buyerId}`}
                       className="px-4 py-3 text-nowrap text-sm rounded-full font-bold bg-purple-600 text-white"
                     >
                       {t("moreInfo")}
@@ -277,6 +279,7 @@ async function generateCards({
       }),
       title: orderInfo.productName,
       src: orderInfo.images[0],
+      buyerId: orderInfo.buyerId,
       orderId: orderInfo._id!,
       ctaLink: orderInfo.productURL || "",
       content: () => {

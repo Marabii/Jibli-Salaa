@@ -6,19 +6,18 @@ import OrderDetails from "./OrderDetails";
 
 import { UserInfo } from "@/interfaces/userInfo/userInfo";
 import { CompletedOrder } from "@/interfaces/Order/order";
+import revalidateOrderAction from "../utils/revalidateOrderAction";
 
 interface NegotiationPanelProps {
   userInfo: UserInfo | null;
   recipientInfo: UserInfo | null;
   orderInfo: CompletedOrder | null;
-  fetchOrderInfo: () => Promise<void>; // or () => void
 }
 
 export default function NegotiationPanel({
   userInfo,
   recipientInfo,
   orderInfo,
-  fetchOrderInfo,
 }: NegotiationPanelProps) {
   return (
     <motion.div
@@ -30,7 +29,7 @@ export default function NegotiationPanel({
         userInfo={userInfo}
         recipientInfo={recipientInfo}
         orderInfo={orderInfo}
-        onSuccess={fetchOrderInfo}
+        onSuccess={revalidateOrderAction}
       />
 
       {orderInfo && (
