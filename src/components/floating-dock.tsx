@@ -12,6 +12,9 @@ import { Link } from "@/i18n/navigation";
 import { useRef, useState } from "react";
 import useOutsideClick from "@/hooks/useOutsideClick";
 
+// Create a motion-enabled Link component
+const MotionLink = motion(Link);
+
 export const FloatingDock = ({
   items,
   desktopClassName,
@@ -59,9 +62,10 @@ const FloatingDockMobile = ({
                 }}
                 transition={{ delay: (items.length - 1 - idx) * 0.05 }}
               >
-                <Link
+                <MotionLink
                   href={item.href}
                   key={item.title}
+                  whileTap={{ scale: 0.95 }}
                   className="flex w-full rounded-full items-center justify-between gap-2 p-2 bg-neutral-900"
                 >
                   <div className="px-2 py-0.5 w-full text-center whitespace-pre rounded-md border bg-neutral-600 text-white text-xs border-gray-800">
@@ -70,7 +74,7 @@ const FloatingDockMobile = ({
                   <div className="flex w-6 h-6 text-white items-center justify-center">
                     {item.icon}
                   </div>
-                </Link>
+                </MotionLink>
               </motion.div>
             ))}
           </motion.div>
@@ -166,7 +170,7 @@ function IconContainer({
   const [hovered, setHovered] = useState(false);
 
   return (
-    <Link href={href}>
+    <MotionLink href={href} whileTap={{ scale: 0.9 }}>
       <motion.div
         ref={ref}
         style={{ width, height, y: offsetY }}
@@ -193,6 +197,6 @@ function IconContainer({
           {icon}
         </motion.div>
       </motion.div>
-    </Link>
+    </MotionLink>
   );
 }

@@ -49,10 +49,11 @@
   },
   "HomePage": {
     "HeroSection": {
-      "heroHeading": "Connectez-vous avec des voyageurs, faites-vous livrer des produits",
-      "heroParagraph": "Jeebware est une plateforme qui met en relation les acheteurs avec les voyageurs pour une livraison fluide de produits, tant au niveau local qu'international.",
-      "heroButton": "Découvrez comment ça fonctionne",
-      "heroImageAlt": "Image principale"
+      "heroHeading": "Connectez-vous avec des voyageurs et faites livrer vos produits",
+      "heroParagraph": "Jeebware relie facilement les acheteurs et les voyageurs pour des livraisons rapides, sécurisées et pratiques, où que vous soyez dans le monde.",
+      "heroButton": "Découvrez comment ça marche",
+      "heroImageAlt": "Un voyageur en train de livrer un colis",
+      "flipWords": "[\"immédiatement\", \"sans effort\", \"à l'échelle mondiale\", \"à la demande\"]"
     },
     "DashboardPage": {
       "dashboardTitle": "Votre Tableau de Bord",

@@ -49,10 +49,11 @@
   },
   "HomePage": {
     "HeroSection": {
-      "heroHeading": "Connect with Travelers, Get Products Delivered",
-      "heroParagraph": "Jeebware is a platform that connects buyers with travelers for seamless delivery of products, both locally and internationally.",
+      "heroHeading": "Connect with Travelers, Get Your Products Delivered",
+      "heroParagraph": "Jeebware seamlessly links buyers and travelers for quick, secure, and convenient deliveries—wherever you are in the world.",
       "heroButton": "Learn How It Works",
-      "heroImageAlt": "Hero Image"
+      "heroImageAlt": "A traveler delivering a package",
+      "flipWords": "[\"instantly\", \"effortlessly\", \"globally\", \"on-demand\"]"
     },
     "DashboardPage": {
       "dashboardTitle": "Your Dashboard",
