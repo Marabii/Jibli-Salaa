@@ -45,7 +45,7 @@ export default async function HeroSection() {
             <Image
               className="rounded-3xl object-cover"
               fill
-              src="/Hero3.png"
+              src="/Hero.png"
               priority
               alt={t("heroImageAlt")}
               sizes="(max-width: 768px) 100vw, 50vw"

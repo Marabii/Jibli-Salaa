@@ -6,6 +6,7 @@ import HeroSection from "@/components/HomePage/HeroSection";
 import HowItWorksSection from "@/components/HomePage/HowItWorksSection";
 import Dashboard from "@/components/HomePage/DashBoard/Dashboard";
 import OrdersMap from "@/components/HomePage/OnlineTransactions/OnlineTransactions";
+import { BestDeals } from "@/components/HomePage/BestDeals/BestDeals";
 
 export default async function HomePage() {
   return (
@@ -15,6 +16,9 @@ export default async function HomePage() {
 
       {/* Hero Section */}
       <HeroSection />
+
+      {/* Best Deals */}
+      <BestDeals />
 
       {/* How It Works Section */}
       <HowItWorksSection />
