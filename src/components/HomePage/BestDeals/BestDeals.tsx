@@ -4,6 +4,18 @@ import Carousel, { SlideData } from "./carousel";
 export function BestDeals() {
   const slideData: SlideData[] = [
     {
+      productName: "ASUS ROG Zephyrus G16 RTX 4090",
+      country1: "United Kingdom",
+      country2: "USA",
+      price1: 7039.06,
+      price2: 4354,
+      productImage: "/g16.jpg",
+      linkProduct1:
+        "https://www.amazon.co.uk/dp/B0DB67J77H?tag=haggle-web-en-21&linkCode=osi&th=1&language=en_GB",
+      linkProduct2:
+        "https://www.newegg.com/gray-asus-rog-zephyrus-g16-gu605my-gaming-entertainment/p/2WC-000N-0EHR1?srsltid=AfmBOop7bV4cVMYl9jacssplytwTm1F_ayzoK01NXRbXe7ZDBILqJDej",
+    },
+    {
       productName: "Apple Apple 11-inch iPad Pro",
       country1: "USA",
       country2: "Argentina",

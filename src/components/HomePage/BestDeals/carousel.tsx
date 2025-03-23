@@ -80,7 +80,7 @@ const Slide = ({ slide, index, current, handleSlideClick }: SlideProps) => {
     <div className="[perspective:1200px] [transform-style:preserve-3d]">
       <li
         ref={slideRef}
-        className="flex flex-1 flex-col items-center justify-center relative text-center text-white opacity-100 transition-all duration-300 ease-in-out w-[70vmin] h-[70vmin] mx-[4vmin] z-10"
+        className="flex flex-1 flex-col items-center justify-center relative text-center text-white opacity-100 transition-all duration-300 ease-in-out w-[90vmin] h-[90vmin] md:w-[70vmin] md:h-[70vmin] mx-[4vmin] z-10"
         onClick={() => handleSlideClick(index)}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
@@ -103,10 +103,7 @@ const Slide = ({ slide, index, current, handleSlideClick }: SlideProps) => {
           }}
         >
           <Image
-            className="absolute inset-0 w-[120%] h-[120%] object-cover opacity-0 transition-opacity duration-600 ease-in-out"
-            style={{
-              opacity: current === index ? 1 : 0.5,
-            }}
+            className="absolute inset-0 w-[120%] h-[120%] opacity-100 object-cover transition-opacity duration-600 ease-in-out"
             alt={productName}
             src={productImage}
             onLoad={imageLoaded}
@@ -114,9 +111,11 @@ const Slide = ({ slide, index, current, handleSlideClick }: SlideProps) => {
             loading="eager"
             decoding="sync"
           />
-          {current === index && (
-            <div className="absolute inset-0 bg-black/50 transition-all duration-1000" />
-          )}
+          <div
+            className={`absolute inset-0 bg-black transition-all duration-1000 ${
+              current === index ? "opacity-50" : "opacity-0"
+            }`}
+          />
         </div>
 
         <article
@@ -230,7 +229,7 @@ export default function Carousel({ slides }: CarouselProps) {
 
   return (
     <div
-      className="relative w-[70vmin] h-[70vmin] mx-auto"
+      className="relative w-[90vmin] h-[90vmin] md:w-[70vmin] md:h-[70vmin] mx-auto"
       aria-labelledby={`carousel-heading-${id}`}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}

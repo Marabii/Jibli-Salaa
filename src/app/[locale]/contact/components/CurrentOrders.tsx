@@ -4,20 +4,21 @@ import { JSX, useEffect, useId, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import ReactDOM from "react-dom";
-import CurrencySelector from "./CurrencySelector";
 import useOutsideClick from "@/hooks/useOutsideClick";
 import { CompletedOrder } from "@/interfaces/Order/order";
 import { format } from "currency-formatter";
-import apiClient from "@/utils/apiClient";
-import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import LoadingSpinner from "@/components/Loading/LoadingSpinner2/LoadingSpinner2";
 import { useTranslations } from "next-intl";
+import { ContactDetails } from "../page";
+import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
+import apiClient from "@/utils/apiClient";
 import { ExchangeRate } from "@/interfaces/userInfo/userInfo";
 
 interface Card {
   orderId: string;
-  buyerId: string;
-  initialDeliveryFee: string;
+  contactId: string;
+  contactName: string;
+  priceDetails: string;
   title: string;
   src: string;
   ctaLink: string;
@@ -25,11 +26,12 @@ interface Card {
 }
 
 export default function CurrentOrders({
-  orders,
+  contactDetails,
+  userCurrency,
 }: {
-  orders: CompletedOrder[];
+  contactDetails: ContactDetails[];
+  userCurrency: string;
 }) {
-  const [currency, setCurrency] = useState<string>("MAD");
   const [active, setActive] = useState<Card | null>(null);
   const [cards, setCards] = useState<Card[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -40,12 +42,16 @@ export default function CurrentOrders({
   // Fetch cards when orders or selected currency change
   useEffect(() => {
     async function fetchCards() {
-      const generatedCards = await generateCards({ orders, currency, t });
+      const generatedCards = await generateCards({
+        contactDetails,
+        userCurrency,
+        t,
+      });
       setCards(generatedCards);
       setLoading(false);
     }
     fetchCards();
-  }, [orders, currency, t]);
+  }, [contactDetails, t, userCurrency]);
 
   // Handle Escape key and body scrolling when a card is active
   useEffect(() => {
@@ -64,10 +70,6 @@ export default function CurrentOrders({
   if (loading) {
     return (
       <div className="w-fit order-2 md:order-1 h-fit sticky top-0 py-20 mx-auto">
-        <h2 className="text-center text-xl md:text-4xl font-bold text-white">
-          {t("currentOrders")}
-        </h2>
-        <CurrencySelector setCurrency={setCurrency} />
         <div className="flex justify-center items-center h-40">
           <LoadingSpinner />
         </div>
@@ -76,11 +78,7 @@ export default function CurrentOrders({
   }
 
   return (
-    <div className="w-fit order-2 md:order-1 h-fit sticky top-0 py-20 mx-auto">
-      <h2 className="text-center text-xl md:text-4xl font-bold text-white">
-        {t("currentOrders")}
-      </h2>
-      <CurrencySelector setCurrency={setCurrency} />
+    <div className="w-fit order-2 md:order-1 h-fit mx-auto">
       <AnimatePresence>
         {active && (
           <Modal>
@@ -121,18 +119,18 @@ export default function CurrentOrders({
                         {active.title}
                       </motion.h3>
                       <motion.p
-                        layoutId={`description-${active.initialDeliveryFee}-${id}`}
+                        layoutId={`description-${active.priceDetails}-${id}`}
                         className="text-neutral-400"
                       >
-                        {active.initialDeliveryFee}
+                        {active.priceDetails}
                       </motion.p>
                     </div>
                     <motion.a
                       layoutId={`button-${active.title}-${id}`}
-                      href={`/negotiate?orderId=${active.orderId}&recipientId=${active.buyerId}`}
+                      href={`/negotiate?orderId=${active.orderId}&recipientId=${active.contactId}`}
                       className="px-4 py-3 text-nowrap text-sm rounded-full font-bold bg-purple-600 text-white"
                     >
-                      {t("moreInfo")}
+                      Negotiate with {active.contactName}
                     </motion.a>
                   </div>
                   <div className="pt-4 relative px-4">
@@ -158,7 +156,7 @@ export default function CurrentOrders({
             layoutId={`card-${card.title}-${id}`}
             key={`card-${card.title}-${id}`}
             onClick={() => setActive(card)}
-            className="p-4 flex flex-col md:flex-row justify-between items-center bg-neutral-800 rounded-xl cursor-pointer"
+            className="p-4 flex space-x-3 flex-col md:flex-row justify-between items-center bg-neutral-800 rounded-xl cursor-pointer"
             style={{
               willChange: "transform, opacity",
               transform: "translateZ(0)",
@@ -189,10 +187,10 @@ export default function CurrentOrders({
                   {card.title}
                 </motion.h3>
                 <motion.p
-                  layoutId={`description-${card.initialDeliveryFee}-${id}`}
+                  layoutId={`description-${card.priceDetails}-${id}`}
                   className="text-neutral-400 max-w-sm text-balance text-center md:text-left"
                 >
-                  {card.initialDeliveryFee}
+                  {card.priceDetails}
                 </motion.p>
               </div>
             </div>
@@ -244,47 +242,54 @@ function Modal({ children }: { children: React.ReactNode }) {
 }
 
 interface GenerateCardsParams {
-  orders: CompletedOrder[];
-  currency: string;
+  contactDetails: ContactDetails[];
+  userCurrency: string;
   t: (key: string, options?: any) => string;
 }
 
 async function generateCards({
-  orders,
-  currency,
+  contactDetails,
+  userCurrency,
   t,
 }: GenerateCardsParams): Promise<Card[]> {
   const exchangeRateCache: { [sourceCurrency: string]: ExchangeRate } = {};
 
   const uniqueCurrencies = Array.from(
-    new Set(orders.map((order) => order.currency))
+    new Set(contactDetails.map((contactInfo) => contactInfo.orderInfo.currency))
   );
 
   await Promise.all(
     uniqueCurrencies.map(async (sourceCurrency) => {
       const response: ApiResponse<ExchangeRate> = await apiClient(
-        `/api/exchange-rate?target=${currency}&source=${sourceCurrency}`
+        `/api/exchange-rate?target=${userCurrency}&source=${sourceCurrency}`
       );
       exchangeRateCache[sourceCurrency] = response.data;
     })
   );
 
-  return orders.map((orderInfo) => {
+  return contactDetails.map((contactInfo) => {
+    const orderInfo = contactInfo.orderInfo;
     const exchangeRate = exchangeRateCache[orderInfo.currency];
+
+    const productValue =
+      (orderInfo.actualValue || orderInfo.estimatedValue) * exchangeRate.rate;
+    const deliveryFee =
+      (orderInfo.actualDeliveryFee || orderInfo.initialDeliveryFee) *
+      exchangeRate.rate;
+
     return {
-      initialDeliveryFee: t("buyerWillingPay", {
-        value: format(
-          Number((orderInfo.initialDeliveryFee * exchangeRate.rate).toFixed(2)),
-          { code: exchangeRate.target }
-        ),
-      }),
+      priceDetails: `Product price: ${format(productValue, {
+        code: exchangeRate.target,
+      })}, \n Delivery fee: ${format(deliveryFee, {
+        code: exchangeRate.target,
+      })}`,
       title: orderInfo.productName,
       src: orderInfo.images[0],
-      buyerId: orderInfo.buyerId,
+      contactId: contactInfo.contactId,
+      contactName: contactInfo.contactName,
       orderId: orderInfo._id!,
       ctaLink: orderInfo.productURL || "",
       content: () => {
-        const productValue = orderInfo.estimatedValue;
         return (
           <div
             dir="auto"
@@ -309,12 +314,9 @@ async function generateCards({
               {productValue > 0 && (
                 <p>
                   <span className="font-bold">{t("productPrice")}</span>{" "}
-                  {format(
-                    Number((productValue * exchangeRate.rate).toFixed(2)),
-                    {
-                      code: exchangeRate.target,
-                    }
-                  )}
+                  {format(Number(productValue.toFixed(2)), {
+                    code: orderInfo.currency,
+                  })}
                 </p>
               )}
               {orderInfo.deliveryInstructions && (

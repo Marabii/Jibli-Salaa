@@ -3,7 +3,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useRef, useEffect } from "react";
 
-import MessageBubble from "./MessageBubble";
 import MessageInput from "./MessageInput";
 import { ChatMessage } from "@/interfaces/Websockets/ChatMessage";
 import { useTranslations } from "next-intl";
@@ -49,14 +48,25 @@ export default function ChatSection({
         <AnimatePresence>
           {messages.map((msg, index) => {
             const isSender = msg.senderId === userInfoId;
+            const bubbleClasses = isSender
+              ? "bg-white text-black justify-self-start"
+              : "bg-gray-300 text-black justify-self-end";
+
             return (
               <motion.div
                 key={msg.id || index}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
+                className={`max-w-[70%] w-fit bg-gray-300 p-3 rounded-lg ${bubbleClasses}`}
               >
-                <MessageBubble message={msg} isSender={isSender} />
+                <p className="text-sm w-fit break-words">{msg.content}</p>
+                <span className="block w-fit mt-1 text-xs opacity-70 text-right">
+                  {new Date(msg.timestamp).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
               </motion.div>
             );
           })}
