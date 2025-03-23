@@ -128,7 +128,7 @@ export default function CurrentOrders({
                     <motion.a
                       layoutId={`button-${active.title}-${id}`}
                       href={`/negotiate?orderId=${active.orderId}&recipientId=${active.contactId}`}
-                      className="px-4 py-3 text-nowrap text-sm rounded-full font-bold bg-purple-600 text-white"
+                      className="px-4 py-3 max-w-32 text-sm text-center rounded-full font-bold bg-purple-600 text-white"
                     >
                       Negotiate with {active.contactName}
                     </motion.a>
