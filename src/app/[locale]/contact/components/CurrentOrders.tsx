@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import ReactDOM from "react-dom";
 import useOutsideClick from "@/hooks/useOutsideClick";
-import { CompletedOrder } from "@/interfaces/Order/order";
 import { format } from "currency-formatter";
 import LoadingSpinner from "@/components/Loading/LoadingSpinner2/LoadingSpinner2";
 import { useTranslations } from "next-intl";
@@ -14,11 +13,12 @@ import { ApiResponse } from "@/interfaces/Apis/ApiResponse";
 import apiClient from "@/utils/apiClient";
 import { ExchangeRate } from "@/interfaces/userInfo/userInfo";
 
+// Updated interface: productDetails is now a function that returns a JSX Element.
 interface Card {
   orderId: string;
   contactId: string;
   contactName: string;
-  priceDetails: string;
+  productDetails: () => JSX.Element;
   title: string;
   src: string;
   ctaLink: string;
@@ -84,7 +84,7 @@ export default function CurrentOrders({
           <Modal>
             <div className="fixed z-50 inset-0 grid place-items-center">
               <motion.button
-                key={`button-${active.title}-${id}`}
+                key={`button-${active.title}-${active.contactId}`}
                 layout
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -95,13 +95,14 @@ export default function CurrentOrders({
                 <CloseIcon />
               </motion.button>
               <motion.div
-                layoutId={`card-${active.title}-${id}`}
+                layoutId={`card-${active.title}-${active.contactId}`}
                 ref={ref}
                 className="w-full max-w-[500px] md:max-h-[90%] h-fit flex flex-col bg-neutral-900 sm:rounded-3xl overflow-hidden"
               >
-                <motion.div layoutId={`image-${active.title}-${id}`}>
+                <motion.div
+                  layoutId={`image-${active.title}-${active.contactId}`}
+                >
                   <Image
-                    priority
                     width={200}
                     height={200}
                     src={active.src}
@@ -113,20 +114,20 @@ export default function CurrentOrders({
                   <div className="flex items-center justify-between gap-2 p-4">
                     <div>
                       <motion.h3
-                        layoutId={`title-${active.title}-${id}`}
+                        layoutId={`title-${active.title}-${active.contactId}`}
                         className="font-bold text-neutral-200"
                       >
                         {active.title}
                       </motion.h3>
-                      <motion.p
-                        layoutId={`description-${active.priceDetails}-${id}`}
+                      <motion.div
+                        layoutId={`description-${active.title}-${active.contactId}`}
                         className="text-neutral-400"
                       >
-                        {active.priceDetails}
-                      </motion.p>
+                        {active.productDetails()}
+                      </motion.div>
                     </div>
                     <motion.a
-                      layoutId={`button-${active.title}-${id}`}
+                      layoutId={`button-${active.title}-${active.contactId}`}
                       href={`/negotiate?orderId=${active.orderId}&recipientId=${active.contactId}`}
                       className="px-4 py-3 max-w-32 text-sm text-center rounded-full font-bold bg-purple-600 text-white"
                     >
@@ -153,8 +154,8 @@ export default function CurrentOrders({
       <ul className="max-w-2xl space-y-2 w-full gap-4">
         {cards.map((card) => (
           <motion.div
-            layoutId={`card-${card.title}-${id}`}
-            key={`card-${card.title}-${id}`}
+            layoutId={`card-${card.title}-${card.contactId}`}
+            key={`card-${card.title}-${card.contactId}`}
             onClick={() => setActive(card)}
             className="p-4 flex space-x-3 flex-col md:flex-row justify-between items-center bg-neutral-800 rounded-xl cursor-pointer"
             style={{
@@ -165,7 +166,7 @@ export default function CurrentOrders({
             <div className="flex gap-4 flex-col md:flex-row ">
               <motion.div
                 className="flex items-center justify-center"
-                layoutId={`image-${card.title}-${id}`}
+                layoutId={`image-${card.title}-${card.contactName}`}
                 style={{
                   willChange: "transform, opacity",
                   transform: "translateZ(0)",
@@ -181,21 +182,21 @@ export default function CurrentOrders({
               </motion.div>
               <div>
                 <motion.h3
-                  layoutId={`title-${card.title}-${id}`}
+                  layoutId={`title-${card.title}-${card.contactName}`}
                   className="font-medium text-neutral-200 text-center md:text-left"
                 >
                   {card.title}
                 </motion.h3>
-                <motion.p
-                  layoutId={`description-${card.priceDetails}-${id}`}
+                <motion.div
+                  layoutId={`description-${card.title}-${card.contactName}`}
                   className="text-neutral-400 max-w-sm text-balance text-center md:text-left"
                 >
-                  {card.priceDetails}
-                </motion.p>
+                  {card.productDetails()}
+                </motion.div>
               </div>
             </div>
             <motion.button
-              layoutId={`button-${card.title}-${id}`}
+              layoutId={`button-${card.title}-${card.contactName}`}
               className="px-4 py-2 text-sm rounded-full font-bold bg-gray-100 hover:bg-purple-600 hover:text-white text-black mt-4 md:mt-0"
             >
               {t("moreInfo")}
@@ -278,11 +279,19 @@ async function generateCards({
       exchangeRate.rate;
 
     return {
-      priceDetails: `Product price: ${format(productValue, {
-        code: exchangeRate.target,
-      })}, \n Delivery fee: ${format(deliveryFee, {
-        code: exchangeRate.target,
-      })}`,
+      productDetails: () => (
+        <div>
+          <p className="text-white text-sm">
+            Contact: {contactInfo.contactName}
+          </p>
+          <p>
+            Product price: {format(productValue, { code: exchangeRate.target })}
+          </p>
+          <p>
+            Delivery fee: {format(deliveryFee, { code: exchangeRate.target })}
+          </p>
+        </div>
+      ),
       title: orderInfo.productName,
       src: orderInfo.images[0],
       contactId: contactInfo.contactId,
